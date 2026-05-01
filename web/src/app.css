@@ -1,27 +1,27 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @theme {
-	--color-cream: #F6EFE2;
-	--color-cream-soft: #EFE6D2;
-	--color-cream-deep: #E5D9BE;
-	--color-ink: #1F2417;
-	--color-ink-soft: #3F4636;
-	--color-ink-muted: #6B7361;
-	--color-moss: #3F6B43;
-	--color-moss-deep: #2C4D30;
-	--color-moss-soft: #5C8A5F;
-	--color-sunny: #E8B547;
-	--color-sunny-deep: #C8932C;
-	--color-coral: #D86B5A;
-	--color-coral-soft: #E89186;
-	--color-sky: #7BA7C7;
-	--color-plum: #8C5A89;
-	--color-board-light: #EBDDB9;
-	--color-board-dark: #7A8B5A;
-	--color-board-light-alt: #F0E4C9;
-	--color-board-dark-alt: #6B7C4E;
+	--color-cream: #f6efe2;
+	--color-cream-soft: #efe6d2;
+	--color-cream-deep: #e5d9be;
+	--color-ink: #1f2417;
+	--color-ink-soft: #3f4636;
+	--color-ink-muted: #6b7361;
+	--color-moss: #3f6b43;
+	--color-moss-deep: #2c4d30;
+	--color-moss-soft: #5c8a5f;
+	--color-sunny: #e8b547;
+	--color-sunny-deep: #c8932c;
+	--color-coral: #d86b5a;
+	--color-coral-soft: #e89186;
+	--color-sky: #7ba7c7;
+	--color-plum: #8c5a89;
+	--color-board-light: #ebddb9;
+	--color-board-dark: #7a8b5a;
+	--color-board-light-alt: #f0e4c9;
+	--color-board-dark-alt: #6b7c4e;
 
-	--font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
-	--font-body: 'Geist', -apple-system, system-ui, sans-serif;
-	--font-mono: 'Geist Mono', ui-monospace, monospace;
+	--font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+	--font-body: "Geist", -apple-system, system-ui, sans-serif;
+	--font-mono: "Geist Mono", ui-monospace, monospace;
 }

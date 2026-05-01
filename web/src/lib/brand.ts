@@ -21,14 +21,14 @@ export const Brand = {
 		boardLight: '#EBDDB9',
 		boardDark: '#7A8B5A',
 		boardLightAlt: '#F0E4C9',
-		boardDarkAlt: '#6B7C4E'
+		boardDarkAlt: '#6B7C4E',
 	},
 
 	fonts: {
 		display: "'Fraunces', 'Iowan Old Style', Georgia, serif",
 		body: "'Geist', -apple-system, system-ui, sans-serif",
-		mono: "'Geist Mono', ui-monospace, monospace"
-	}
+		mono: "'Geist Mono', ui-monospace, monospace",
+	},
 } as const;
 
 export type BrandColors = typeof Brand.colors;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Brand } from '$lib/brand';
+import { Brand } from '$lib/brand';
 </script>
 
 <svelte:head>
