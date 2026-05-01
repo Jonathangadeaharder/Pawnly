@@ -10,22 +10,22 @@ describe('route stubs', () => {
 		expect(getByText('Learn')).toBeInTheDocument();
 	});
 
-	it('learn page has pb-28 for TabBar clearance', () => {
+	it('learn page has overflow-y-auto for scrolling', () => {
 		const { getByText } = render(Learn);
-		const wrapper = getByText('Learn').closest('[class*="pb-28"]');
+		const wrapper = getByText('Learn').closest('[class*="overflow-y-auto"]');
 		expect(wrapper).not.toBeNull();
 	});
 
-	it('learn page uses font-display', () => {
+	it('learn page uses font-family display', () => {
 		const { getByText } = render(Learn);
 		const heading = getByText('Learn');
-		expect(heading.className).toContain('font-display');
+		expect(heading.style.fontFamily).toContain('Fraunces');
 	});
 
-	it('learn page uses text-ink', () => {
+	it('learn page uses ink color', () => {
 		const { getByText } = render(Learn);
 		const heading = getByText('Learn');
-		expect(heading.className).toContain('text-ink');
+		expect(heading.style.color).toBe('rgb(31, 36, 23)');
 	});
 
 	it('train page renders heading', () => {
