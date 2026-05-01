@@ -7,7 +7,7 @@ let {
 	color,
 }: {
 	size?: number;
-	mood?: 'happy' | 'thinking' | 'celebrating' | 'sleepy' | 'surprised';
+	mood?: 'happy' | 'thinking' | 'celebrating' | 'sleepy' | 'surprised' | 'teaching';
 	color?: string;
 } = $props();
 
@@ -19,6 +19,7 @@ const eyePaths = $derived.by(() => ({
 	celebrating: `<path d="M37 47 q3 -3 6 0" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M53 47 q3 -3 6 0" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
 	sleepy: `<path d="M37 49 h6" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/><path d="M53 49 h6" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/>`,
 	surprised: `<circle cx="40" cy="48" r="3.2" fill="${c}"/><circle cx="56" cy="48" r="3.2" fill="${c}"/>`,
+	teaching: `<circle cx="40" cy="48" r="2.6" fill="${c}"/><circle cx="56" cy="48" r="2.6" fill="${c}"/>`,
 }));
 
 const mouthPaths = $derived.by(() => ({
@@ -27,6 +28,7 @@ const mouthPaths = $derived.by(() => ({
 	celebrating: `<path d="M40 55 q8 9 16 0 q-8 4 -16 0 z" fill="${c}"/>`,
 	sleepy: `<circle cx="48" cy="58" r="1.8" fill="${c}"/>`,
 	surprised: `<ellipse cx="48" cy="58" rx="3" ry="4" fill="${c}"/>`,
+	teaching: `<path d="M43 56 q5 4 10 0" stroke="${c}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
 }));
 </script>
 
