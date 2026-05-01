@@ -1,8 +1,47 @@
 <script lang="ts">
 import '../app.css';
+import { page } from '$app/stores';
+import TabBar from '$lib/components/TabBar.svelte';
+import { goto } from '$app/navigation';
+
 let { children } = $props();
+
+const activeTab = $derived.by(() => {
+	const path = $page.url.pathname;
+	if (path === '/') return 'home';
+	if (path.startsWith('/play')) return 'play';
+	if (path.startsWith('/learn')) return 'learn';
+	if (path.startsWith('/train')) return 'train';
+	if (path.startsWith('/you')) return 'you';
+	return 'home';
+});
+
+function handleTabChange(id: string) {
+	const routes: Record<string, string> = {
+		home: '/',
+		play: '/play',
+		learn: '/learn',
+		train: '/train',
+		you: '/you',
+	};
+	goto(routes[id] || '/');
+}
 </script>
 
-<div class="min-h-screen bg-cream bg-[radial-gradient(circle_at_20%_10%,rgba(232,181,71,0.06)_0px,transparent_40%),radial-gradient(circle_at_80%_90%,rgba(63,107,67,0.05)_0px,transparent_50%)]">
+<div class="app-shell">
 	{@render children()}
+	<TabBar active={activeTab} onChange={handleTabChange} />
 </div>
+
+<style>
+	.app-shell {
+		height: 100%;
+		width: 100%;
+		position: relative;
+		min-height: 100vh;
+		background: var(--color-cream);
+		background-image:
+			radial-gradient(circle at 20% 10%, rgba(232, 181, 71, 0.06) 0px, transparent 40%),
+			radial-gradient(circle at 80% 90%, rgba(63, 107, 67, 0.05) 0px, transparent 50%);
+	}
+</style>
