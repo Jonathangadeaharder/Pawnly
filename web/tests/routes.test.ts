@@ -39,16 +39,16 @@ describe('route stubs', () => {
 		expect(wrapper).not.toBeNull();
 	});
 
-	it('train page uses font-display', () => {
+	it('train page uses font-family display', () => {
 		const { getByText } = render(Train);
 		const heading = getByText('Train');
-		expect(heading.className).toContain('font-display');
+		expect(heading.style.fontFamily).toContain('Fraunces');
 	});
 
-	it('train page uses text-ink', () => {
+	it('train page uses ink color', () => {
 		const { getByText } = render(Train);
 		const heading = getByText('Train');
-		expect(heading.className).toContain('text-ink');
+		expect(heading.style.color).toBe('rgb(31, 36, 23)');
 	});
 
 	it('you page renders heading', () => {

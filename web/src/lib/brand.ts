@@ -14,6 +14,7 @@ export const Brand = {
 		mossSoft: '#5C8A5F',
 		sunny: '#E8B547',
 		sunnyDeep: '#C8932C',
+		sunset: '#E87A41',
 		coral: '#D86B5A',
 		coralSoft: '#E89186',
 		sky: '#7BA7C7',
