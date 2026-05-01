@@ -1,0 +1,23 @@
+/**
+ * Predefined chess positions for lessons and demos
+ */
+
+/** Italian opening after 1.e4 e5 2.Nf3 Nc6 3.Bc4 */
+export const italian: Record<string, string> = {
+	a8: 'r', d8: 'q', e8: 'k', f8: 'b', h8: 'r',
+	a7: 'p', b7: 'p', c7: 'p', d7: 'p', f7: 'p', g7: 'p', h7: 'p',
+	c6: 'n',
+	e5: 'p',
+	c4: 'b', e4: 'p',
+	f3: 'n',
+	a2: 'p', b2: 'p', c2: 'p', d2: 'p', f2: 'p', g2: 'p', h2: 'p',
+	a1: 'r', b1: 'n', c1: 'b', d1: 'q', e1: 'k',
+};
+
+/** Starting position */
+export const starting: Record<string, string> = {
+	a8: 'r', b8: 'n', c8: 'b', d8: 'q', e8: 'k', f8: 'b', g8: 'n', h8: 'r',
+	a7: 'p', b7: 'p', c7: 'p', d7: 'p', e7: 'p', f7: 'p', g7: 'p', h7: 'p',
+	a2: 'P', b2: 'P', c2: 'P', d2: 'P', e2: 'P', f2: 'P', g2: 'P', h2: 'P',
+	a1: 'R', b1: 'N', c1: 'B', d1: 'Q', e1: 'K', f1: 'B', g1: 'N', h1: 'R',
+};
