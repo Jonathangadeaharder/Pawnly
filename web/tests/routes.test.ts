@@ -51,26 +51,26 @@ describe('route stubs', () => {
 		expect(heading.style.color).toBe('rgb(31, 36, 23)');
 	});
 
-	it('you page renders heading', () => {
+	it('you page renders profile name', () => {
 		const { getByText } = render(You);
-		expect(getByText('You')).toBeInTheDocument();
+		expect(getByText('Maya')).toBeInTheDocument();
 	});
 
-	it('you page has pb-28 for TabBar clearance', () => {
-		const { getByText } = render(You);
-		const wrapper = getByText('You').closest('[class*="pb-28"]');
+	it('you page has padding-bottom for TabBar clearance', () => {
+		const { container } = render(You);
+		const wrapper = container.querySelector('[style*="padding-bottom: 120px"]');
 		expect(wrapper).not.toBeNull();
 	});
 
-	it('you page uses font-display', () => {
+	it('you page renders stats', () => {
 		const { getByText } = render(You);
-		const heading = getByText('You');
-		expect(heading.className).toContain('font-display');
+		expect(getByText('1140')).toBeInTheDocument();
+		expect(getByText('23')).toBeInTheDocument();
+		expect(getByText('12')).toBeInTheDocument();
 	});
 
-	it('you page uses text-ink', () => {
+	it('you page renders achievements', () => {
 		const { getByText } = render(You);
-		const heading = getByText('You');
-		expect(heading.className).toContain('text-ink');
+		expect(getByText('Achievements')).toBeInTheDocument();
 	});
 });
