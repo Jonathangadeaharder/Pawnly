@@ -11,6 +11,9 @@ importers:
       chess.js:
         specifier: ^1.4.0
         version: 1.4.0
+      stockfish:
+        specifier: ^18.0.7
+        version: 18.0.7
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.4.13
@@ -1153,6 +1156,10 @@ packages:
   std-env@4.1.0:
     resolution: {integrity: sha512-Rq7ybcX2RuC55r9oaPVEW7/xu3tj8u4GeBYHBWCychFtzMIr86A7e3PPEBPT37sHStKX3+TiX/Fr/ACmJLVlLQ==}
 
+  stockfish@18.0.7:
+    resolution: {integrity: sha512-tJ+bfMAHs4fV7QYiLcHUicx1RzKOQwj8twx/z0iUTauMG+SE3l1rEtRSg+WER81ke3bc5tqKBWEWntUbydkgZg==}
+    hasBin: true
+
   strip-indent@3.0.0:
     resolution: {integrity: sha512-laJTa3Jb+VQpaC6DseHhF7dXVqHTfJPCRDaEbid/drOhgitgYku/letMUqOXFoWV0zIIUbjpdH2t+tYj4bQMRQ==}
     engines: {node: '>=8'}
@@ -2225,6 +2232,8 @@ snapshots:
   stackback@0.0.2: {}
 
   std-env@4.1.0: {}
+
+  stockfish@18.0.7: {}
 
   strip-indent@3.0.0:
     dependencies:
