@@ -2,6 +2,8 @@
 import '../app.css';
 import { page } from '$app/stores';
 import TabBar from '$lib/components/TabBar.svelte';
+import Overlay from '$lib/components/Overlay.svelte';
+import { overlay } from '$lib/stores/overlay.svelte';
 import { goto } from '$app/navigation';
 
 let { children } = $props();
@@ -31,6 +33,13 @@ function handleTabChange(id: string) {
 <div class="app-shell">
 	{@render children()}
 	<TabBar active={activeTab} onChange={handleTabChange} />
+	<Overlay visible={overlay.current !== null} onClose={() => overlay.close()}>
+		<div class="flex h-full items-center justify-center">
+			<p class="font-body text-lg text-white">
+				{overlay.current ?? ''} overlay
+			</p>
+		</div>
+	</Overlay>
 </div>
 
 <style>
