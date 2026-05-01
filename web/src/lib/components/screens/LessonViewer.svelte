@@ -1,67 +1,37 @@
 <script lang="ts">
 import { Brand } from '$lib/brand';
+import Button from '$lib/components/Button.svelte';
 import Header from '$lib/components/Header.svelte';
 import Mascot from '$lib/components/Mascot.svelte';
 import MiniBoard from '$lib/components/MiniBoard.svelte';
-import Button from '$lib/components/Button.svelte';
+import { fenToPieces, lessons } from '$lib/data/lessons';
 
 let {
 	onClose,
-	lessonId = 'special-moves',
+	lessonId = 'l3',
 }: {
 	onClose: () => void;
 	lessonId?: string;
 } = $props();
 
+const lesson = $derived(lessons.find((l) => l.id === lessonId) ?? lessons[0]);
+
 let step = $state(0);
 
-const steps = [
-	{
-		pieces: {} as Record<string, string>,
-		coach: 'Welcome! Let\'s learn about special moves.',
-		highlights: [] as { square: string }[],
-	},
-	{
-		pieces: {
-			e5: 'wp',
-			d5: 'bp',
-			e8: 'bk',
-			e1: 'wk',
-		} as Record<string, string>,
-		coach: 'En passant is when a pawn captures an enemy pawn that just moved two squares. It looks like the pawn moves diagonally past the enemy!',
-		highlights: [{ square: 'e5' }, { square: 'd6' }],
-	},
-	{
-		pieces: {
-			e1: 'wk',
-			h1: 'wr',
-			a1: 'wr',
-			e8: 'bk',
-		} as Record<string, string>,
-		coach: 'Castling moves the king two squares toward a rook, then the rook jumps to the other side. Great for safety!',
-		highlights: [{ square: 'e1' }, { square: 'g1' }],
-	},
-	{
-		pieces: {
-			e7: 'wp',
-			e8: 'bk',
-			e1: 'wk',
-		} as Record<string, string>,
-		coach: 'Promotion happens when a pawn reaches the other end of the board. It becomes a queen, rook, bishop, or knight!',
-		highlights: [{ square: 'e8' }],
-	},
-];
-
-const currentStep = $derived(steps[step]);
+const currentStep = $derived({
+	pieces: fenToPieces(lesson.steps[step].fen),
+	coach: lesson.steps[step].coach,
+	highlights: lesson.steps[step].highlight.map((square) => ({ square })),
+});
 const isFirstStep = $derived(step === 0);
-const isLastStep = $derived(step === steps.length - 1);
+const isLastStep = $derived(step === lesson.steps.length - 1);
 
 function goBack() {
 	if (step > 0) step--;
 }
 
 function goNext() {
-	if (step < steps.length - 1) {
+	if (step < lesson.steps.length - 1) {
 		step++;
 	} else {
 		onClose();
@@ -70,7 +40,7 @@ function goNext() {
 </script>
 
 <div class="flex h-full flex-col">
-	<Header title="Special moves" onBack={onClose} />
+	<Header title={lesson.title} onBack={onClose} />
 
 	<div style:padding="0 16px">
 		<div
@@ -113,7 +83,7 @@ function goNext() {
 			style:font-size="13px"
 			style:color={Brand.colors.inkMuted}
 		>
-			{step + 1} / {steps.length}
+			{step + 1} / {lesson.steps.length}
 		</div>
 		<Button kind="primary" onclick={goNext}>
 			{isLastStep ? 'Finish' : 'Next'}
