@@ -12,7 +12,7 @@ export const HIGHLIGHT_PROJECT_ID = '1';
 
 const HIGHLIGHT_OTLP_URL = 'http://localhost:8082/otel/v1/traces';
 
-type KeyValue = { key: string; value: KeyValue };
+type KeyValue = { key: string; value: any };
 
 class ReactNativeOTLPTraceExporter implements SpanExporter {
   url: string;
@@ -47,6 +47,7 @@ class ReactNativeOTLPTraceExporter implements SpanExporter {
   }
 
   _buildResourceSpans(spans: ReadableSpan[] = []) {
+    if (spans.length === 0) return JSON.stringify({ resourceSpans: [] });
     const resource = spans[0]?.resource;
     const scope = spans[0]?.instrumentationLibrary;
     return JSON.stringify({
@@ -173,6 +174,13 @@ type ConsoleFn = (...data: any) => void;
 const MAX_RECURSION = 128;
 
 function safeStringify(obj: any): string {
+  let clone: any;
+  try {
+    clone = JSON.parse(JSON.stringify(obj));
+  } catch {
+    return obj.toString();
+  }
+
   function replacer(input: any, depth?: number): any {
     if ((depth ?? 0) > MAX_RECURSION) {
       throw new Error('max recursion exceeded');
@@ -199,7 +207,7 @@ function safeStringify(obj: any): string {
   }
 
   try {
-    return JSON.stringify(replacer(obj));
+    return JSON.stringify(replacer(clone));
   } catch {
     return obj.toString();
   }
@@ -227,6 +235,7 @@ export function error(message: string, attributes = {}) {
 }
 
 let consoleHooked = false;
+let isProcessing = false;
 
 export function hookConsole() {
   if (consoleHooked) return;
@@ -235,24 +244,28 @@ export function hookConsole() {
   for (const [level, highlightLevel] of Object.entries(ConsoleLevels)) {
     const origWrite = console[level as keyof Console] as ConsoleFn;
     (console[level as keyof Console] as ConsoleFn) = function (...data: any[]) {
+      if (isProcessing) return origWrite(...data);
+      isProcessing = true;
       try {
         return origWrite(...data);
       } finally {
-        const o: { stack: any } = { stack: {} };
-        Error.captureStackTrace(o);
+        try {
+          const err = new Error();
+          const message = data.map((d) => (typeof d === 'object' ? safeStringify(d) : d));
+          const attributes = data
+            .filter((d) => typeof d === 'object')
+            .reduce((a, b) => ({ ...a, ...b }), {});
 
-        const message = data.map((d) => (typeof d === 'object' ? safeStringify(d) : d));
-        const attributes = data
-          .filter((d) => typeof d === 'object')
-          .reduce((a, b) => ({ ...a, ...b }), {});
+          if (level === 'error') {
+            attributes['exception.type'] = 'Error';
+            attributes['exception.message'] = message.join('');
+            attributes['exception.stacktrace'] = err.stack;
+          }
 
-        if (level === 'error') {
-          attributes['exception.type'] = 'Error';
-          attributes['exception.message'] = message.join('');
-          attributes['exception.stacktrace'] = JSON.stringify(o.stack);
+          log(highlightLevel, message.join(' '), attributes);
+        } finally {
+          isProcessing = false;
         }
-
-        log(highlightLevel, message.join(' '), attributes);
       }
     };
   }

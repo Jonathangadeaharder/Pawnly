@@ -1,13 +1,13 @@
 <script lang="ts">
-import { Brand } from '$lib/brand';
-import { createGame } from '$lib/game.svelte';
-import { createStockfish, type StockfishDifficulty } from '$lib/stockfish.svelte';
 import { createAnalysis } from '$lib/analysis.svelte';
-import Chessboard from '$lib/components/Chessboard.svelte';
-import Pill from '$lib/components/Pill.svelte';
+import { Brand } from '$lib/brand';
 import Button from '$lib/components/Button.svelte';
 import Card from '$lib/components/Card.svelte';
+import Chessboard from '$lib/components/Chessboard.svelte';
+import Pill from '$lib/components/Pill.svelte';
 import type { Square } from '$lib/game.svelte';
+import { createGame } from '$lib/game.svelte';
+import { createStockfish, type StockfishDifficulty } from '$lib/stockfish.svelte';
 
 let {
 	onExit,
@@ -19,12 +19,14 @@ let {
 	timeControl?: string;
 } = $props();
 
+const initialTimeControl = timeControl;
+
 const game = createGame();
 const engine = createStockfish();
 
 let isThinking = $state(false);
-let whiteTime = $state(parseTimeControl(timeControl));
-let blackTime = $state(parseTimeControl(timeControl));
+let whiteTime = $state(parseTimeControl(initialTimeControl));
+let blackTime = $state(parseTimeControl(initialTimeControl));
 let clockInterval = $state<ReturnType<typeof setInterval> | null>(null);
 let showGameOver = $state(false);
 let gameOverReason = $state<'resign' | 'draw' | 'timeout' | 'engine' | null>(null);
@@ -40,9 +42,7 @@ const boardSize = $derived.by(() => {
 const formattedWhiteTime = $derived(formatTime(whiteTime));
 const formattedBlackTime = $derived(formatTime(blackTime));
 
-const difficultyLabel = $derived(
-	difficulty.charAt(0).toUpperCase() + difficulty.slice(1)
-);
+const difficultyLabel = $derived(difficulty.charAt(0).toUpperCase() + difficulty.slice(1));
 
 const gameOverMessage = $derived.by(() => {
 	if (!showGameOver) return '';

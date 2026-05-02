@@ -168,7 +168,14 @@ describe('UCI message parsing', () => {
 describe('Difficulty to settings mapping', () => {
 	it('maps all difficulty levels', async () => {
 		const { getDifficultySettings } = await import('../src/lib/stockfish.svelte');
-		const difficulties = ['beginner', 'intermediate', 'advanced', 'expert', 'master', 'grandmaster'] as const;
+		const difficulties = [
+			'beginner',
+			'intermediate',
+			'advanced',
+			'expert',
+			'master',
+			'grandmaster',
+		] as const;
 
 		for (const diff of difficulties) {
 			const settings = getDifficultySettings(diff);
@@ -183,7 +190,7 @@ describe('Difficulty to settings mapping', () => {
 	it('beginner has lower depth than grandmaster', async () => {
 		const { getDifficultySettings } = await import('../src/lib/stockfish.svelte');
 		expect(getDifficultySettings('beginner').depth).toBeLessThan(
-			getDifficultySettings('grandmaster').depth
+			getDifficultySettings('grandmaster').depth,
 		);
 	});
 });

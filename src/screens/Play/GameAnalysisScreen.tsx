@@ -14,10 +14,10 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Chess } from 'chess.js';
-import Chessboard from '../../components/organisms/Chessboard';
+import Chessboard, { type Arrow, type Highlight } from '../../components/organisms/Chessboard';
 import DigitalCoachDialog from '../../components/organisms/DigitalCoachDialog';
 import { Colors, Typography, Spacing, BorderRadius } from '../../constants/theme';
-import { analyzeGame, type MoveEvaluation } from '../../services/ai/enhancedAI';
+import { analyzeGame, type MoveEvaluation, getBestMove as getBestMoveAI, evaluatePosition } from '../../services/ai/enhancedAI';
 import { stockfishService, type MoveAnalysis, type GameAnalysis } from '../../services/ai/stockfishService';
 import {
   identifyCriticalPositions,
@@ -25,7 +25,10 @@ import {
   isCriticalMove,
   type CriticalPosition,
 } from '../../services/coach/coachCommentary';
-import type { SimpleGameHistory, CoachPrompt } from '../../types';
+import { getCoachIntervention } from '../../services/coach/coachService';
+import { analyzeMove } from '../../services/chess/symbolicAnalyzer';
+import { generateFeedback } from '../../services/ai/coachEngine';
+import type { SimpleGameHistory, CoachPrompt, Square as ChessSquare } from '../../types';
 
 interface GameAnalysisScreenProps {
   route: {
@@ -48,6 +51,89 @@ export default function GameAnalysisScreen({ route, navigation }: GameAnalysisSc
   const [criticalPositions, setCriticalPositions] = useState<CriticalPosition[]>([]);
   const [showCoach, setShowCoach] = useState(false);
   const [currentCoachPrompt, setCurrentCoachPrompt] = useState<CoachPrompt | null>(null);
+  const [punishmentArrows, setPunishmentArrows] = useState<Arrow[]>([]);
+  const [isShowingPunishment, setIsShowingPunishment] = useState(false);
+
+  // ... rest of state and effects
+
+  const handleShowPunishment = async () => {
+    if (!currentEvaluation || !currentEvaluation.isBlunder) return;
+
+    setIsShowingPunishment(true);
+    const beforeFen = chess.fen();
+    
+    // Find the punishment move using AI
+    try {
+      const bestMoveInfo = getBestMoveAI(chess, 4);
+      if (bestMoveInfo) {
+        setPunishmentArrows([
+          {
+            from: bestMoveInfo.from,
+            to: bestMoveInfo.to,
+            color: 'orange',
+          }
+        ]);
+        
+        // Show the coach explanation for the punishment
+        const analysis = analyzeMove(beforeFen, chess.fen(), currentMove);
+        const feedback = generateFeedback(analysis, 'beginner', 'friendly');
+        
+        setCurrentCoachPrompt({
+          id: 'punishment-explanation',
+          type: 'explanation',
+          text: `If you play ${currentMove}, the opponent can punish it with ${bestMoveInfo.san}. ${feedback.text}`,
+        });
+        setShowCoach(true);
+      }
+    } catch (error) {
+      console.error('Error getting punishment move:', error);
+    }
+  };
+
+  const handleWhyNotMove = async (from: ChessSquare, to: ChessSquare) => {
+    const tempChess = new Chess(chess.fen());
+    const move = tempChess.move({ from, to });
+    
+    if (move) {
+      // Analyze this "Why Not" move
+      const beforeFen = chess.fen();
+      const afterFen = tempChess.fen();
+      
+      try {
+        const bestMoveInfo = getBestMoveAI(tempChess, 3);
+        const evalScore = evaluatePosition(tempChess);
+        
+        // Construct explanation
+        const analysis = analyzeMove(beforeFen, afterFen, move.san);
+        const feedback = generateFeedback(analysis, 'beginner', 'friendly');
+        
+        setCurrentCoachPrompt({
+          id: 'why-not-explanation',
+          type: 'explanation',
+          text: `If you played ${move.san} instead, the evaluation would be ${evalScore / 100}. The opponent's best response is ${bestMoveInfo?.san || 'unknown'}. ${feedback.text}`,
+          visualHighlights: [
+            {
+              type: 'arrow',
+              from,
+              to,
+              color: 'blue',
+              squares: [from, to],
+            },
+            ...(bestMoveInfo ? [{
+              type: 'arrow' as const,
+              from: bestMoveInfo.from,
+              to: bestMoveInfo.to,
+              color: 'orange' as const,
+              squares: [bestMoveInfo.from, bestMoveInfo.to],
+            }] : [])
+          ]
+        });
+        setShowCoach(true);
+      } catch (error) {
+        console.error('Error in Why Not analysis:', error);
+      }
+    }
+  };
 
   // Analyze the game on mount
   useEffect(() => {
@@ -100,6 +186,10 @@ export default function GameAnalysisScreen({ route, navigation }: GameAnalysisSc
         chess.move(game.moves[i]);
       }
     }
+
+    // Reset punishment and interactive states when moving through the game
+    setPunishmentArrows([]);
+    setIsShowingPunishment(false);
 
     // Check if current move is critical and update coach prompt
     const coachPrompt = getCoachPromptForMove(criticalPositions, currentMoveIndex);
@@ -281,16 +371,27 @@ export default function GameAnalysisScreen({ route, navigation }: GameAnalysisSc
           </View>
 
           {/* Coach Insight Button for Critical Positions */}
-          {currentCoachPrompt && (
-            <TouchableOpacity
-              style={styles.coachInsightButton}
-              onPress={() => setShowCoach(true)}
-            >
-              <Ionicons name="school" size={20} color={Colors.primary} />
-              <Text style={styles.coachInsightText}>Get Coach Insight</Text>
-              <Ionicons name="chevron-forward" size={16} color={Colors.primary} />
-            </TouchableOpacity>
-          )}
+          <View style={styles.coachButtonsRow}>
+            {currentCoachPrompt && (
+              <TouchableOpacity
+                style={[styles.coachInsightButton, { flex: 1 }]}
+                onPress={() => setShowCoach(true)}
+              >
+                <Ionicons name="school" size={20} color={Colors.primary} />
+                <Text style={styles.coachInsightText}>Coach Insight</Text>
+              </TouchableOpacity>
+            )}
+
+            {currentEvaluation.isBlunder && (
+              <TouchableOpacity
+                style={[styles.punishmentButton, { flex: 1, marginLeft: Spacing.s }]}
+                onPress={handleShowPunishment}
+              >
+                <Ionicons name="eye" size={20} color={Colors.error} />
+                <Text style={styles.punishmentButtonText}>Show Punishment</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         {/* Chessboard */}
@@ -298,7 +399,13 @@ export default function GameAnalysisScreen({ route, navigation }: GameAnalysisSc
           <Chessboard
             showCoordinates={true}
             isFlipped={game.playerColor === 'black'}
-            interactionMode="tap-tap"
+            interactionMode="both"
+            onMove={handleWhyNotMove}
+            arrows={[
+              ...punishmentArrows,
+              ...(currentCoachPrompt?.visualHighlights?.filter(h => h.type === 'arrow') as Arrow[] || [])
+            ]}
+            highlights={currentCoachPrompt?.visualHighlights?.filter(h => h.type !== 'arrow') as Highlight[] || []}
           />
         </View>
 
@@ -564,6 +671,26 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold,
     color: Colors.primary,
+  },
+  coachButtonsRow: {
+    flexDirection: 'row',
+    marginTop: Spacing.sm,
+  },
+  punishmentButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.xs,
+    backgroundColor: Colors.error + '15',
+    borderWidth: 1,
+    borderColor: Colors.error,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.sm,
+  },
+  punishmentButtonText: {
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.error,
   },
   boardSection: {
     alignItems: 'center',

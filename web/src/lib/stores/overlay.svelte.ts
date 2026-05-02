@@ -2,10 +2,14 @@ export type OverlayType = 'game' | 'lesson' | 'puzzle' | 'celebration' | 'scan' 
 
 function createOverlayStore() {
 	let current: OverlayType = $state(null);
+	let scanLevel: number = $state(1);
 
 	return {
 		get current(): OverlayType {
 			return current;
+		},
+		get scanLevel(): number {
+			return scanLevel;
 		},
 		openGame(): void {
 			current = 'game';
@@ -19,7 +23,8 @@ function createOverlayStore() {
 		openCelebration(): void {
 			current = 'celebration';
 		},
-		openScan(): void {
+		openScan(level = 1): void {
+			scanLevel = level;
 			current = 'scan';
 		},
 		close(): void {

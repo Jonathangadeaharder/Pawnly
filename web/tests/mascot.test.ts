@@ -22,7 +22,7 @@ describe('Mascot', () => {
 
 	it('renders happy mood by default', () => {
 		const { container } = render(Mascot);
-		const svg = container.querySelector('svg');
+		const svg = container.querySelector('svg')!;
 		expect(svg).toBeInTheDocument();
 		// Happy mood has two circle eyes
 		const circles = svg.querySelectorAll('circle');
@@ -31,7 +31,7 @@ describe('Mascot', () => {
 
 	it('renders thinking mood', () => {
 		const { container } = render(Mascot, { props: { mood: 'thinking' } });
-		const svg = container.querySelector('svg');
+		const svg = container.querySelector('svg')!;
 		expect(svg).toBeInTheDocument();
 		// Thinking mood has circle eyes and straight line mouth
 		const circles = svg.querySelectorAll('circle');
@@ -40,7 +40,7 @@ describe('Mascot', () => {
 
 	it('renders celebrating mood', () => {
 		const { container } = render(Mascot, { props: { mood: 'celebrating' } });
-		const svg = container.querySelector('svg');
+		const svg = container.querySelector('svg')!;
 		expect(svg).toBeInTheDocument();
 		// Celebrating mood has arc eyes and open mouth
 		const paths = svg.querySelectorAll('path');
@@ -67,7 +67,7 @@ describe('Mascot', () => {
 
 	it('uses Brand.colors.ink as default color', () => {
 		const { container } = render(Mascot);
-		const svg = container.querySelector('svg');
+		const svg = container.querySelector('svg')!;
 		expect(svg).toBeInTheDocument();
 		// The base path should use Brand.colors.ink
 		const basePath = svg.querySelector('path');
@@ -76,7 +76,7 @@ describe('Mascot', () => {
 
 	it('renders cheek blush circles', () => {
 		const { container } = render(Mascot);
-		const svg = container.querySelector('svg');
+		const svg = container.querySelector('svg')!;
 		// Should have cheek blush circles with coralSoft color
 		const blushCircles = Array.from(svg.querySelectorAll('circle')).filter(
 			(c) => c.getAttribute('fill') === Brand.colors.coralSoft,

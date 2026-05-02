@@ -15,4 +15,4 @@ function onSettings() {
 	<title>{Brand.name} — You</title>
 </svelte:head>
 
-<YouScreen {onSettings} {achievements} {unlocked} />
+<YouScreen {onSettings} />

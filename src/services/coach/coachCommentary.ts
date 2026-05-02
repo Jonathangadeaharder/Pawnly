@@ -6,6 +6,7 @@
 import { Chess } from 'chess.js';
 import type { CoachPrompt, VisualHighlight, Square } from '../../types';
 import { evaluatePosition, getBestMove } from '../ai/enhancedAI';
+import { getCoachIntervention } from './coachService';
 
 export interface CriticalPosition {
   moveIndex: number;
@@ -23,6 +24,10 @@ export function identifyCriticalPositions(
 ): CriticalPosition[] {
   const chess = new Chess(startFen);
   const criticalPositions: CriticalPosition[] = [];
+
+  // TODO: Get real user level and personality from stores
+  const userLevel = 'beginner'; 
+  const personality = 'friendly';
 
   for (let i = 0; i < moves.length; i++) {
     const beforeFen = chess.fen();
@@ -45,9 +50,17 @@ export function identifyCriticalPositions(
         moveIndex: i,
         type: 'blunder',
         severity: evalDiff > 500 ? 'high' : 'medium',
-        coachPrompt: generateBlunderPrompt(beforeFen, movePlayed, bestMoveInfo?.san || '', i),
+        coachPrompt: getCoachIntervention({
+          beforeFen,
+          afterFen,
+          movePlayed,
+          evaluationDrop: evalDiff,
+          userLevel,
+          personality,
+        }),
       });
     }
+    // ... rest of the logic
 
     // Check for missed tactics
     if (evalDiff > 150 && evalDiff <= 300) {

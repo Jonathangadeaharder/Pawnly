@@ -1,12 +1,6 @@
 <script lang="ts">
 import { Brand } from '$lib/brand';
-import {
-	HomeIcon,
-	PlayIcon,
-	LearnIcon,
-	TrainIcon,
-	YouIcon,
-} from '$lib/components/icons';
+import { HomeIcon, LearnIcon, PlayIcon, TrainIcon, YouIcon } from '$lib/components/icons';
 
 let {
 	active = 'home',

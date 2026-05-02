@@ -4,8 +4,9 @@ import { goto } from '$app/navigation';
 import { page } from '$app/stores';
 import { Brand } from '$lib/brand';
 import Overlay from '$lib/components/Overlay.svelte';
-import TabBar from '$lib/components/TabBar.svelte';
 import GameScreen from '$lib/components/screens/GameScreen.svelte';
+import ScanScreen from '$lib/components/screens/ScanScreen.svelte';
+import TabBar from '$lib/components/TabBar.svelte';
 import { auth } from '$lib/stores/auth.svelte';
 import { overlay } from '$lib/stores/overlay.svelte';
 
@@ -55,6 +56,8 @@ function handleTabChange(id: string) {
 		{/if}
 		{#if overlay.current === 'game'}
 			<GameScreen onExit={() => overlay.close()} />
+		{:else if overlay.current === 'scan'}
+			<ScanScreen onClose={() => overlay.close()} level={overlay.scanLevel} />
 		{:else if overlay.current !== null}
 			<Overlay visible={true} onClose={() => overlay.close()}>
 				<div class="flex h-full items-center justify-center">

@@ -1,15 +1,15 @@
 import { render } from '@testing-library/svelte';
 import { describe, expect, it } from 'vitest';
 import { Brand } from '../src/lib/brand';
+import FlameIcon from '../src/lib/components/icons/FlameIcon.svelte';
+import HeartIcon from '../src/lib/components/icons/HeartIcon.svelte';
 import HomeIcon from '../src/lib/components/icons/HomeIcon.svelte';
-import PlayIcon from '../src/lib/components/icons/PlayIcon.svelte';
 import LearnIcon from '../src/lib/components/icons/LearnIcon.svelte';
+import PlayIcon from '../src/lib/components/icons/PlayIcon.svelte';
+import SparkIcon from '../src/lib/components/icons/SparkIcon.svelte';
+import StarIcon from '../src/lib/components/icons/StarIcon.svelte';
 import TrainIcon from '../src/lib/components/icons/TrainIcon.svelte';
 import YouIcon from '../src/lib/components/icons/YouIcon.svelte';
-import FlameIcon from '../src/lib/components/icons/FlameIcon.svelte';
-import StarIcon from '../src/lib/components/icons/StarIcon.svelte';
-import SparkIcon from '../src/lib/components/icons/SparkIcon.svelte';
-import HeartIcon from '../src/lib/components/icons/HeartIcon.svelte';
 
 const strokeIcons = [
 	{ name: 'HomeIcon', component: HomeIcon },

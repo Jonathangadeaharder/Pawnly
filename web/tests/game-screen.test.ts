@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/svelte';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/svelte';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import GameScreen from '../src/lib/components/screens/GameScreen.svelte';
 
 vi.mock('../src/lib/stockfish.svelte', () => ({
@@ -11,7 +11,9 @@ vi.mock('../src/lib/stockfish.svelte', () => ({
 		depth: 0,
 		pv: [],
 		analyze: vi.fn().mockResolvedValue({ evaluation: 0, bestMove: 'e2e4', pv: [], depth: 10 }),
-		getBestMove: vi.fn().mockResolvedValue({ from: 'e7', to: 'e5', san: 'e5', evaluation: 0, depth: 5 }),
+		getBestMove: vi
+			.fn()
+			.mockResolvedValue({ from: 'e7', to: 'e5', san: 'e5', evaluation: 0, depth: 5 }),
 		analyzeGame: vi.fn().mockResolvedValue({
 			moves: [],
 			accuracy: { white: 100, black: 100 },

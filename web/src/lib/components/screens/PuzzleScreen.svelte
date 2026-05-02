@@ -1,8 +1,8 @@
 <script lang="ts">
 import { Brand } from '$lib/brand';
-import { createGame, type Square } from '$lib/game.svelte';
-import Chessboard from '$lib/components/Chessboard.svelte';
 import Button from '$lib/components/Button.svelte';
+import Chessboard from '$lib/components/Chessboard.svelte';
+import { createGame, type Square } from '$lib/game.svelte';
 
 interface PuzzleData {
 	id: string;

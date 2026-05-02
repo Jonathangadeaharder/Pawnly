@@ -24,8 +24,10 @@ let {
 } = $props();
 
 const sq = $derived(size / 8);
-const files = $derived(flip ? ['h','g','f','e','d','c','b','a'] : ['a','b','c','d','e','f','g','h']);
-const ranks = $derived(flip ? [1,2,3,4,5,6,7,8] : [8,7,6,5,4,3,2,1]);
+const files = $derived(
+	flip ? ['h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'] : ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+);
+const ranks = $derived(flip ? [1, 2, 3, 4, 5, 6, 7, 8] : [8, 7, 6, 5, 4, 3, 2, 1]);
 const lightC = $derived(theme === 'warm' ? Brand.colors.boardLightAlt : Brand.colors.boardLight);
 const darkC = $derived(theme === 'warm' ? Brand.colors.boardDarkAlt : Brand.colors.boardDark);
 
@@ -36,8 +38,8 @@ const boardSquares = $derived(
 			fi,
 			ri,
 			isLight: (ri + fi) % 2 === 0,
-		}))
-	)
+		})),
+	),
 );
 
 const highlightMap = $derived(new Map(highlights.map((h) => [h.square, h])));
@@ -49,10 +51,10 @@ const pieceEntries = $derived(
 			const p = pieces[sq.name];
 			return {
 				...sq,
-				color: p === p.toUpperCase() ? 'white' as const : 'black' as const,
+				color: p === p.toUpperCase() ? ('white' as const) : ('black' as const),
 				type: p.toLowerCase() as 'p' | 'n' | 'b' | 'r' | 'q' | 'k',
 			};
-		})
+		}),
 );
 </script>
 
