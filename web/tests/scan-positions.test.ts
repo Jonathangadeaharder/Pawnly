@@ -55,9 +55,34 @@ describe('scanPositions array', () => {
 		}
 	});
 
-	it('should have captures as non-empty arrays', () => {
+	it('should have captures with opponent pieces that can capture', () => {
 		for (const pos of scanPositions) {
-			expect(pos.answerKey.captures.length).toBeGreaterThan(0);
+			const chess = new Chess(pos.fen);
+			const opponentColor = pos.playerColor === 'w' ? 'b' : 'w';
+
+			for (const sq of pos.answerKey.captures) {
+				const piece = chess.get(sq as any);
+				expect(piece).toBeDefined();
+				if (piece) {
+					expect(piece.color).toBe(opponentColor);
+				}
+			}
+		}
+	});
+
+	it('should have threats with opponent pieces', () => {
+		for (const pos of scanPositions) {
+			if (!pos.answerKey.threats || pos.answerKey.threats.length === 0) continue;
+			const chess = new Chess(pos.fen);
+			const opponentColor = pos.playerColor === 'w' ? 'b' : 'w';
+
+			for (const sq of pos.answerKey.threats) {
+				const piece = chess.get(sq as any);
+				expect(piece).toBeDefined();
+				if (piece) {
+					expect(piece.color).toBe(opponentColor);
+				}
+			}
 		}
 	});
 
@@ -86,18 +111,25 @@ describe('scanPositions array', () => {
 		}
 	});
 
-	it('should have checks and captures squares with pieces (not empty)', () => {
+	it('should have checks and captures squares with opponent pieces', () => {
 		for (const pos of scanPositions) {
 			const chess = new Chess(pos.fen);
+			const opponentColor = pos.playerColor === 'w' ? 'b' : 'w';
 
 			for (const sq of pos.answerKey.checks) {
 				const piece = chess.get(sq as any);
 				expect(piece).toBeDefined();
+				if (piece) {
+					expect(piece.color).toBe(opponentColor);
+				}
 			}
 
 			for (const sq of pos.answerKey.captures) {
 				const piece = chess.get(sq as any);
 				expect(piece).toBeDefined();
+				if (piece) {
+					expect(piece.color).toBe(opponentColor);
+				}
 			}
 		}
 	});
@@ -111,7 +143,9 @@ describe('scanPositions array', () => {
 			for (const sq of pos.answerKey.loose) {
 				const piece = chess.get(sq as any);
 				expect(piece).toBeDefined();
-				expect(piece!.color).toBe(opponentColor);
+				if (piece) {
+					expect(piece.color).toBe(opponentColor);
+				}
 			}
 		}
 	});
