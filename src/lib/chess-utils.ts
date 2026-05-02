@@ -27,6 +27,50 @@ export function calculateAccuracy(totalLoss: number, moveCount: number): number 
 	return Math.round(accuracy * 10) / 10;
 }
 
+export interface MoveAnalysisResult {
+	move: string;
+	evaluation: number;
+	previousEval: number;
+	loss: number;
+	classification: 'brilliant' | 'great' | 'best' | 'good' | 'inaccuracy' | 'mistake' | 'blunder';
+	comment: string;
+	bestMove: string;
+	depth: number;
+}
+
+export interface PositionAnalysis {
+	evaluation: number;
+	mate?: number;
+	bestMove: string;
+	depth: number;
+}
+
+export function createMoveAnalysis(
+	move: string,
+	posAnalysis: PositionAnalysis,
+	previousEval: number,
+	isWhite: boolean,
+): MoveAnalysisResult {
+	const rawEval = posAnalysis.mate !== undefined
+		? posAnalysis.mate > 0 ? 10000 : -10000
+		: posAnalysis.evaluation;
+	const normalizedEval = isWhite ? rawEval : -rawEval;
+	const loss = previousEval - normalizedEval;
+	const classification = classifyMove(loss);
+	const comment = getMoveComment(classification, loss);
+
+	return {
+		move,
+		evaluation: rawEval,
+		previousEval,
+		loss,
+		classification,
+		comment,
+		bestMove: posAnalysis.bestMove,
+		depth: posAnalysis.depth,
+	};
+}
+
 export function getMoveComment(classification: MoveClassification, loss: number): string {
 	const comments: Record<MoveClassification, string> = {
 		brilliant: 'Brilliant move! A stunning tactical blow.',

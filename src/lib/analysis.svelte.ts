@@ -5,7 +5,7 @@
 
 import { Chess } from 'chess.js';
 import { createStockfish, type MoveAnalysis } from './stockfish.svelte';
-import { calculateAccuracy, classifyMove, getMoveComment } from './chess-utils';
+import { calculateAccuracy, classifyMove, createMoveAnalysis, getMoveComment } from './chess-utils';
 
 export type { MoveAnalysis, PositionAnalysis } from './stockfish.svelte';
 import type { GameAnalysis } from './stockfish.svelte';
@@ -139,29 +139,9 @@ export function createAnalysis(moves: string[], startFen?: string): AnalysisStat
 			const afterFen = chess.fen();
 
 			const posAnalysis = await stockfish.analyze(afterFen);
-			let rawEval: number;
-			if (posAnalysis.mate !== undefined) {
-				rawEval = posAnalysis.mate > 0 ? 10000 : -10000;
-			} else {
-				rawEval = posAnalysis.evaluation;
-			}
-			const normalizedEval = isWhite ? rawEval : -rawEval;
-			const loss = previousEval - normalizedEval;
-			const classification = classifyMove(loss);
-			const comment = getMoveComment(classification, loss);
-
-			results.push({
-				move,
-				evaluation: rawEval,
-				previousEval,
-				loss,
-				classification,
-				comment,
-				bestMove: posAnalysis.bestMove,
-				depth: posAnalysis.depth,
-			});
-
-			previousEval = normalizedEval;
+			const analysis = createMoveAnalysis(move, posAnalysis, previousEval, isWhite);
+			results.push(analysis);
+			previousEval = isWhite ? analysis.evaluation : -analysis.evaluation;
 			progress = Math.round(((i + 1) / moves.length) * 100);
 		}
 

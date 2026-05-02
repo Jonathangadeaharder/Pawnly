@@ -2,9 +2,10 @@ import type { Square } from 'chess.js';
 import {
 	calculateAccuracy,
 	classifyMove,
+	createMoveAnalysis,
 	getMoveComment,
 } from './chess-utils';
-export { calculateAccuracy, classifyMove } from './chess-utils';
+export { calculateAccuracy, classifyMove, createMoveAnalysis } from './chess-utils';
 
 export type StockfishDifficulty =
 	| 'beginner'
@@ -290,36 +291,17 @@ export function createStockfish() {
 				const afterFen = chess.fen();
 
 				const posAnalysis = await analyze(afterFen, targetDepth);
-				const rawEval =
-					posAnalysis.mate !== undefined
-						? posAnalysis.mate > 0
-							? 10000
-							: -10000
-						: posAnalysis.evaluation;
-				const normalizedEval = isWhite ? rawEval : -rawEval;
-				const loss = previousEval - normalizedEval;
-				const classification = classifyMove(loss);
-				const comment = getMoveComment(classification, loss);
+				const moveAnalysis = createMoveAnalysis(move, posAnalysis, previousEval, isWhite);
 
 				const player = isWhite ? stats.white : stats.black;
 				player.moves++;
-				player.totalLoss += Math.max(0, loss);
-				if (classification === 'blunder') player.blunders++;
-				else if (classification === 'mistake') player.mistakes++;
-				else if (classification === 'inaccuracy') player.inaccuracies++;
+				player.totalLoss += Math.max(0, moveAnalysis.loss);
+				if (moveAnalysis.classification === 'blunder') player.blunders++;
+				else if (moveAnalysis.classification === 'mistake') player.mistakes++;
+				else if (moveAnalysis.classification === 'inaccuracy') player.inaccuracies++;
 
-				analysis.push({
-					move,
-					evaluation: rawEval,
-					previousEval,
-					loss,
-					classification,
-					comment,
-					bestMove: posAnalysis.bestMove,
-					depth: posAnalysis.depth,
-				});
-
-				previousEval = normalizedEval;
+				analysis.push(moveAnalysis);
+				previousEval = isWhite ? moveAnalysis.evaluation : -moveAnalysis.evaluation;
 			}
 
 			return {

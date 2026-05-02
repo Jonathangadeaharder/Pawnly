@@ -4,126 +4,59 @@ import { Brand } from '../src/lib/brand';
 import Header from '../src/lib/components/Header.svelte';
 import { createSnippet } from './helpers';
 
+function renderHeader(props: Record<string, unknown> = {}) {
+	return render(Header, { props: { title: 'Settings', ...props } });
+}
+
+function getTitle(props: Record<string, unknown> = {}) {
+	const { getByText } = renderHeader(props);
+	return getByText((props.title as string) ?? 'Settings');
+}
+
 describe('Header', () => {
 	it('renders title', () => {
-		const { getByText } = render(Header, {
-			props: {
-				title: 'Settings',
-			},
-		});
+		const { getByText } = renderHeader();
 		expect(getByText('Settings')).toBeInTheDocument();
 	});
 
-	it('uses Fraunces display font for title', () => {
-		const { getByText } = render(Header, {
-			props: {
-				title: 'Settings',
-			},
-		});
-		const title = getByText('Settings');
-		expect(title).toHaveStyle({ fontFamily: Brand.fonts.display });
+	it.each([
+		['uses Fraunces display font', { fontFamily: Brand.fonts.display }],
+		['title has font-size 28px', { fontSize: '28px' }],
+		['title has font-weight 600', { fontWeight: '600' }],
+		['title is not italic by default', { fontStyle: 'normal' }],
+	])('%s', (_name, style) => {
+		expect(getTitle()).toHaveStyle(style);
 	});
 
-	it('title has font-size 28px', () => {
-		const { getByText } = render(Header, {
-			props: {
-				title: 'Settings',
-			},
-		});
-		const title = getByText('Settings');
-		expect(title).toHaveStyle({ fontSize: '28px' });
+	it.each([
+		['renders subtitle when sub is provided', { sub: 'Manage your preferences' }, 'Manage your preferences', true],
+		['does not render subtitle when sub is omitted', {}, 'Manage your preferences', false],
+	])('%s', async (_name, props, text, shouldExist) => {
+		const { queryByText } = renderHeader(props);
+		expect(queryByText(text) !== null).toBe(shouldExist);
 	});
 
-	it('title has font-weight 600', () => {
-		const { getByText } = render(Header, {
-			props: {
-				title: 'Settings',
-			},
-		});
-		const title = getByText('Settings');
-		expect(title).toHaveStyle({ fontWeight: '600' });
-	});
-
-	it('renders subtitle when sub is provided', () => {
-		const { getByText } = render(Header, {
-			props: {
-				title: 'Settings',
-				sub: 'Manage your preferences',
-			},
-		});
-		expect(getByText('Manage your preferences')).toBeInTheDocument();
-	});
-
-	it('does not render subtitle when sub is omitted', () => {
-		const { queryByText } = render(Header, {
-			props: {
-				title: 'Settings',
-			},
-		});
-		expect(queryByText('Manage your preferences')).not.toBeInTheDocument();
-	});
-
-	it('renders back button when onBack is provided', () => {
-		const { getByText } = render(Header, {
-			props: {
-				title: 'Settings',
-				onBack: () => {},
-			},
-		});
-		expect(getByText('← Back')).toBeInTheDocument();
-	});
-
-	it('does not render back button when onBack is omitted', () => {
-		const { queryByText } = render(Header, {
-			props: {
-				title: 'Settings',
-			},
-		});
-		expect(queryByText('← Back')).not.toBeInTheDocument();
+	it.each([
+		['renders back button when onBack is provided', { onBack: () => {} }, '← Back', true],
+		['does not render back button when onBack is omitted', {}, '← Back', false],
+	])('%s', async (_name, props, text, shouldExist) => {
+		const { queryByText } = renderHeader(props);
+		expect(queryByText(text) !== null).toBe(shouldExist);
 	});
 
 	it('calls onBack when back button is clicked', async () => {
 		let called = false;
-		const { getByText } = render(Header, {
-			props: {
-				title: 'Settings',
-				onBack: () => {
-					called = true;
-				},
-			},
-		});
+		const { getByText } = renderHeader({ onBack: () => { called = true; } });
 		await fireEvent.click(getByText('← Back'));
 		expect(called).toBe(true);
 	});
 
 	it('renders right slot content', () => {
-		const { getByText } = render(Header, {
-			props: {
-				title: 'Settings',
-				right: createSnippet('Action'),
-			},
-		});
+		const { getByText } = renderHeader({ right: createSnippet('Action') });
 		expect(getByText('Action')).toBeInTheDocument();
 	});
 
-	it('title is not italic by default', () => {
-		const { getByText } = render(Header, {
-			props: {
-				title: 'Settings',
-			},
-		});
-		const title = getByText('Settings');
-		expect(title).toHaveStyle({ fontStyle: 'normal' });
-	});
-
 	it('title is italic when accent is true', () => {
-		const { getByText } = render(Header, {
-			props: {
-				title: 'Settings',
-				accent: true,
-			},
-		});
-		const title = getByText('Settings');
-		expect(title).toHaveStyle({ fontStyle: 'italic' });
+		expect(getTitle({ accent: true })).toHaveStyle({ fontStyle: 'italic' });
 	});
 });

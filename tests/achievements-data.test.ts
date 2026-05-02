@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { achievements, getUnlockedAchievements } from '../src/lib/data/achievements';
 
+const zeroStats = { games: 0, puzzles: 0, lessons: 0, rating: 0, streak: 0 };
+function stats(overrides: Record<string, number> = {}) {
+	return { ...zeroStats, ...overrides };
+}
+
 describe('achievements data', () => {
 	it('exports 6 achievements', () => {
 		expect(achievements).toHaveLength(6);
@@ -28,144 +33,41 @@ describe('achievements data', () => {
 		]);
 	});
 
-	it('labels are non-empty', () => {
+	it.each([
+		['labels', 'label'],
+		['descriptions', 'description'],
+		['conditions', 'condition'],
+	])('%s are non-empty', (_name, field) => {
 		for (const a of achievements) {
-			expect(a.label.length).toBeGreaterThan(0);
-		}
-	});
-
-	it('descriptions are non-empty', () => {
-		for (const a of achievements) {
-			expect(a.description.length).toBeGreaterThan(0);
-		}
-	});
-
-	it('conditions are non-empty', () => {
-		for (const a of achievements) {
-			expect(a.condition.length).toBeGreaterThan(0);
+			expect((a as any)[field].length).toBeGreaterThan(0);
 		}
 	});
 });
 
 describe('getUnlockedAchievements', () => {
 	it('returns empty array when stats are all zero', () => {
-		const unlocked = getUnlockedAchievements({
-			games: 0,
-			puzzles: 0,
-			lessons: 0,
-			rating: 0,
-			streak: 0,
-		});
-		expect(unlocked).toHaveLength(0);
+		expect(getUnlockedAchievements(stats())).toHaveLength(0);
 	});
 
-	it('unlocks streak7 with streak >= 7', () => {
-		const unlocked = getUnlockedAchievements({
-			games: 0,
-			puzzles: 0,
-			lessons: 0,
-			rating: 0,
-			streak: 7,
-		});
-		expect(unlocked.some((a) => a.id === 'streak7')).toBe(true);
-	});
-
-	it('does not unlock streak7 with streak < 7', () => {
-		const unlocked = getUnlockedAchievements({
-			games: 0,
-			puzzles: 0,
-			lessons: 0,
-			rating: 0,
-			streak: 6,
-		});
-		expect(unlocked.some((a) => a.id === 'streak7')).toBe(false);
-	});
-
-	it('unlocks first_game with games >= 1', () => {
-		const unlocked = getUnlockedAchievements({
-			games: 1,
-			puzzles: 0,
-			lessons: 0,
-			rating: 0,
-			streak: 0,
-		});
-		expect(unlocked.some((a) => a.id === 'first_game')).toBe(true);
-	});
-
-	it('unlocks puzzle_master with puzzles >= 50', () => {
-		const unlocked = getUnlockedAchievements({
-			games: 0,
-			puzzles: 50,
-			lessons: 0,
-			rating: 0,
-			streak: 0,
-		});
-		expect(unlocked.some((a) => a.id === 'puzzle_master')).toBe(true);
-	});
-
-	it('does not unlock puzzle_master with puzzles < 50', () => {
-		const unlocked = getUnlockedAchievements({
-			games: 0,
-			puzzles: 49,
-			lessons: 0,
-			rating: 0,
-			streak: 0,
-		});
-		expect(unlocked.some((a) => a.id === 'puzzle_master')).toBe(false);
-	});
-
-	it('unlocks student with lessons >= 5', () => {
-		const unlocked = getUnlockedAchievements({
-			games: 0,
-			puzzles: 0,
-			lessons: 5,
-			rating: 0,
-			streak: 0,
-		});
-		expect(unlocked.some((a) => a.id === 'student')).toBe(true);
-	});
-
-	it('unlocks rising_star with rating >= 1200', () => {
-		const unlocked = getUnlockedAchievements({
-			games: 0,
-			puzzles: 0,
-			lessons: 0,
-			rating: 1200,
-			streak: 0,
-		});
-		expect(unlocked.some((a) => a.id === 'rising_star')).toBe(true);
-	});
-
-	it('does not unlock rising_star with rating < 1200', () => {
-		const unlocked = getUnlockedAchievements({
-			games: 0,
-			puzzles: 0,
-			lessons: 0,
-			rating: 1199,
-			streak: 0,
-		});
-		expect(unlocked.some((a) => a.id === 'rising_star')).toBe(false);
+	it.each([
+		['unlocks streak7 with streak >= 7', { streak: 7 }, 'streak7', true],
+		['does not unlock streak7 with streak < 7', { streak: 6 }, 'streak7', false],
+		['unlocks first_game with games >= 1', { games: 1 }, 'first_game', true],
+		['unlocks puzzle_master with puzzles >= 50', { puzzles: 50 }, 'puzzle_master', true],
+		['does not unlock puzzle_master with puzzles < 50', { puzzles: 49 }, 'puzzle_master', false],
+		['unlocks student with lessons >= 5', { lessons: 5 }, 'student', true],
+		['unlocks rising_star with rating >= 1200', { rating: 1200 }, 'rising_star', true],
+		['does not unlock rising_star with rating < 1200', { rating: 1199 }, 'rising_star', false],
+	])('%s', (_name, overrides, id, expected) => {
+		const unlocked = getUnlockedAchievements(stats(overrides));
+		expect(unlocked.some((a) => a.id === id)).toBe(expected);
 	});
 
 	it('unlocks all achievements when stats are maxed', () => {
-		const unlocked = getUnlockedAchievements({
-			games: 100,
-			puzzles: 100,
-			lessons: 10,
-			rating: 2000,
-			streak: 30,
-		});
-		expect(unlocked).toHaveLength(6);
+		expect(getUnlockedAchievements(stats({ games: 100, puzzles: 100, lessons: 10, rating: 2000, streak: 30 }))).toHaveLength(6);
 	});
 
 	it('unlocks multiple achievements at once', () => {
-		const unlocked = getUnlockedAchievements({
-			games: 1,
-			puzzles: 50,
-			lessons: 5,
-			rating: 1200,
-			streak: 7,
-		});
-		expect(unlocked).toHaveLength(6);
+		expect(getUnlockedAchievements(stats({ games: 1, puzzles: 50, lessons: 5, rating: 1200, streak: 7 }))).toHaveLength(6);
 	});
 });
