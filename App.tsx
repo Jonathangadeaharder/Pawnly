@@ -26,6 +26,7 @@ import { initializeImageOptimization } from './src/utils/imageOptimization';
 import { preloadCriticalScreens } from './src/navigation/LazyRoutes';
 import { initializeBackend } from './src/services/backend/backendService';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
+import { hookConsole } from './src/config/highlight';
 
 function AppContent() {
   const { loadUserProfile, profile } = useUserStore();
@@ -39,6 +40,10 @@ function AppContent() {
         // 1. Initialize error handling first (so we can track initialization errors)
         initializeErrorHandling();
         console.log('[App] Error handling initialized');
+
+        // 1b. Initialize Highlight.io telemetry
+        hookConsole();
+        console.log('[App] Highlight.io telemetry initialized');
 
         // 2. Initialize backend
         await initializeBackend({ provider: 'none' });
