@@ -1,11 +1,32 @@
-.svelte-kit
-build
-node_modules
+.svelte-kit/
+build/
+node_modules/
+coverage/
+.nyc_output/
+
+# Env
 .env
 .env.*
 .env.local
 .env.*.local
+
+# OS
 .DS_Store
+Thumbs.db
+
+# IDE
 .vscode/
 .idea/
+
+# Debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Build
+*.tsbuildinfo
+*.pem
+
+# Misc
+repomix-output.txt
 *.local
