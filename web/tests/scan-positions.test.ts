@@ -61,11 +61,11 @@ describe('scanPositions array', () => {
 			const opponentColor = pos.playerColor === 'w' ? 'b' : 'w';
 
 			for (const sq of pos.answerKey.captures) {
-				const piece = chess.get(sq as any);
-				expect(piece).toBeDefined();
-				if (piece) {
-					expect(piece.color).toBe(opponentColor);
-				}
+const piece = chess.get(sq as any);
+expect(piece).not.toBeNull();
+if (piece) {
+	expect(piece.color).toBe(opponentColor);
+}
 			}
 		}
 	});
