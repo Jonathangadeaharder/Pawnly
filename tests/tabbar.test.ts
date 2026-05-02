@@ -3,101 +3,68 @@ import { describe, expect, it, vi } from 'vitest';
 import { Brand } from '../src/lib/brand';
 import TabBar from '../src/lib/components/TabBar.svelte';
 
+function renderTabBar(active = 'home', props: Record<string, unknown> = {}) {
+	return render(TabBar, { props: { active, ...props } });
+}
+
+function getButton(getByText: (text: string) => HTMLElement, tabName: string) {
+	return getByText(tabName).closest('button')!;
+}
+
 describe('TabBar', () => {
 	it('renders all five tabs', () => {
-		const { getByText } = render(TabBar, {
-			props: { active: 'home' },
-		});
-		expect(getByText('Home')).toBeInTheDocument();
-		expect(getByText('Play')).toBeInTheDocument();
-		expect(getByText('Learn')).toBeInTheDocument();
-		expect(getByText('Train')).toBeInTheDocument();
-		expect(getByText('You')).toBeInTheDocument();
+		const { getByText } = renderTabBar();
+		for (const tab of ['Home', 'Play', 'Learn', 'Train', 'You']) {
+			expect(getByText(tab)).toBeInTheDocument();
+		}
+	});
+
+	it.each([
+		['active tab label has ink color', 'learn', 'Learn', { color: Brand.colors.ink }],
+		['inactive tab label has cream color', 'home', 'Play', { color: Brand.colors.cream }],
+		['active tab label has full opacity', 'train', 'Train', { opacity: '1' }],
+		['inactive tab label has 0.7 opacity', 'home', 'Play', { opacity: '0.7' }],
+	])('%s', (_name, active, tab, style) => {
+		const { getByText } = renderTabBar(active);
+		expect(getByText(tab)).toHaveStyle(style);
 	});
 
 	it('highlights the active tab with sunny background', () => {
-		const { getByText } = render(TabBar, {
-			props: { active: 'play' },
-		});
-		const playBtn = getByText('Play').closest('button');
-		expect(playBtn).toHaveStyle({ background: Brand.colors.sunny });
+		const { getByText } = renderTabBar('play');
+		expect(getButton(getByText, 'Play')).toHaveStyle({ background: Brand.colors.sunny });
 	});
 
 	it('inactive tabs have transparent background', () => {
-		const { getByText } = render(TabBar, {
-			props: { active: 'home' },
-		});
-		const playBtn = getByText('Play').closest('button');
-		expect(playBtn).not.toHaveStyle({ background: Brand.colors.sunny });
-	});
-
-	it('active tab label has ink color', () => {
-		const { getByText } = render(TabBar, {
-			props: { active: 'learn' },
-		});
-		const learnLabel = getByText('Learn');
-		expect(learnLabel).toHaveStyle({ color: Brand.colors.ink });
-	});
-
-	it('inactive tab label has cream color', () => {
-		const { getByText } = render(TabBar, {
-			props: { active: 'home' },
-		});
-		const playLabel = getByText('Play');
-		expect(playLabel).toHaveStyle({ color: Brand.colors.cream });
-	});
-
-	it('active tab label has full opacity', () => {
-		const { getByText } = render(TabBar, {
-			props: { active: 'train' },
-		});
-		const trainLabel = getByText('Train');
-		expect(trainLabel).toHaveStyle({ opacity: '1' });
-	});
-
-	it('inactive tab label has 0.7 opacity', () => {
-		const { getByText } = render(TabBar, {
-			props: { active: 'home' },
-		});
-		const playLabel = getByText('Play');
-		expect(playLabel).toHaveStyle({ opacity: '0.7' });
+		const { getByText } = renderTabBar('home');
+		expect(getButton(getByText, 'Play')).not.toHaveStyle({ background: Brand.colors.sunny });
 	});
 
 	it('calls onChange when a tab is clicked', async () => {
 		const onChange = vi.fn();
-		const { getByText } = render(TabBar, {
-			props: { active: 'home', onChange },
-		});
+		const { getByText } = renderTabBar('home', { onChange });
 		await fireEvent.click(getByText('Play'));
 		expect(onChange).toHaveBeenCalledWith('play');
 	});
 
 	it('calls onChange with correct tab id', async () => {
 		const onChange = vi.fn();
-		const { getByText } = render(TabBar, {
-			props: { active: 'home', onChange },
-		});
+		const { getByText } = renderTabBar('home', { onChange });
 		await fireEvent.click(getByText('Train'));
 		expect(onChange).toHaveBeenCalledWith('train');
 	});
 
 	it('does not throw when onChange is not provided', async () => {
-		const { getByText } = render(TabBar, {
-			props: { active: 'home' },
-		});
+		const { getByText } = renderTabBar();
 		await expect(fireEvent.click(getByText('Play'))).resolves.not.toThrow();
 	});
 
 	it('defaults active to home', () => {
 		const { getByText } = render(TabBar);
-		const homeBtn = getByText('Home').closest('button');
-		expect(homeBtn).toHaveStyle({ background: Brand.colors.sunny });
+		expect(getButton(getByText, 'Home')).toHaveStyle({ background: Brand.colors.sunny });
 	});
 
 	it('has ink pill container', () => {
-		const { container } = render(TabBar, {
-			props: { active: 'home' },
-		});
+		const { container } = renderTabBar();
 		const pill = container.querySelector('.tabbar-pill');
 		expect(pill).toHaveStyle({
 			background: Brand.colors.ink,
@@ -106,26 +73,18 @@ describe('TabBar', () => {
 	});
 
 	it('has gradient fade outer container', () => {
-		const { container } = render(TabBar, {
-			props: { active: 'home' },
-		});
+		const { container } = renderTabBar();
 		const outer = container.querySelector('.tabbar-outer');
 		expect(outer).toHaveStyle({ position: 'absolute', bottom: '0' });
 	});
 
 	it('uses body font for labels', () => {
-		const { getByText } = render(TabBar, {
-			props: { active: 'home' },
-		});
-		const homeLabel = getByText('Home');
-		expect(homeLabel).toHaveStyle({ fontFamily: Brand.fonts.body });
+		const { getByText } = renderTabBar();
+		expect(getByText('Home')).toHaveStyle({ fontFamily: Brand.fonts.body });
 	});
 
 	it('tab buttons have border-radius 16px', () => {
-		const { getByText } = render(TabBar, {
-			props: { active: 'home' },
-		});
-		const homeBtn = getByText('Home').closest('button');
-		expect(homeBtn).toHaveStyle({ borderRadius: '16px' });
+		const { getByText } = renderTabBar();
+		expect(getButton(getByText, 'Home')).toHaveStyle({ borderRadius: '16px' });
 	});
 });

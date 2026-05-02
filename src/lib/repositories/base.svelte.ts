@@ -65,3 +65,44 @@ export function createRepository<T extends { id: string }>(config: RepositoryCon
 		remove,
 	};
 }
+
+export function createProgressRepository<T extends { id: string }>(table: string) {
+	let progress = $state<T[]>([]);
+	let loading = $state(false);
+	let error = $state<string | null>(null);
+
+	async function loadProgress(): Promise<void> {
+		loading = true;
+		error = null;
+		try {
+			const { data, error: err } = await supabase.from(table).select('*');
+			if (err) throw err;
+			progress = data ?? [];
+		} catch (e) {
+			error = e instanceof Error ? e.message : `Failed to load ${table}`;
+		} finally {
+			loading = false;
+		}
+	}
+
+	function addLocalProgress(record: T): void {
+		progress = [...progress, record];
+	}
+
+	return {
+		get progress() {
+			return progress;
+		},
+		set progress(value: T[]) {
+			progress = value;
+		},
+		get loading() {
+			return loading;
+		},
+		get error() {
+			return error;
+		},
+		loadProgress,
+		addLocalProgress,
+	};
+}

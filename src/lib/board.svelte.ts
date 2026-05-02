@@ -6,19 +6,7 @@
 import type { Square } from './game.svelte';
 
 export type { Square };
-
-export interface Arrow {
-	from: Square;
-	to: Square;
-	color?: string;
-	opacity?: number;
-}
-
-export interface Highlight {
-	square: Square;
-	color?: string;
-	opacity?: number;
-}
+export type { Arrow, Highlight } from './game.svelte';
 
 /**
  * Predefined arrow colors

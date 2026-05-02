@@ -8,16 +8,11 @@ import { createStockfish, type MoveAnalysis } from './stockfish.svelte';
 import { calculateAccuracy, classifyMove, getMoveComment } from './chess-utils';
 
 export type { MoveAnalysis, PositionAnalysis } from './stockfish.svelte';
+import type { GameAnalysis } from './stockfish.svelte';
 
-export interface AnalysisState {
+export interface AnalysisState extends GameAnalysis {
 	isAnalyzing: boolean;
 	progress: number;
-	moves: MoveAnalysis[];
-	accuracy: { white: number; black: number };
-	blunders: { white: number; black: number };
-	mistakes: { white: number; black: number };
-	inaccuracies: { white: number; black: number };
-	averageCentipawnLoss: { white: number; black: number };
 	currentMoveIndex: number;
 	currentEvaluation: MoveAnalysis | null;
 	currentPosition: string;

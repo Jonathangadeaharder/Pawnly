@@ -15,96 +15,43 @@ function createChildrenSnippet(text: string) {
 	});
 }
 
+function renderPill(props: Record<string, unknown> = {}) {
+	return render(Pill, {
+		props: { children: createChildrenSnippet('Label'), ...props },
+	});
+}
+
+function getSpan(container: HTMLElement) {
+	return container.querySelector('span')!;
+}
+
 describe('Pill', () => {
 	it('renders children content', () => {
-		const { getByText } = render(Pill, {
-			props: {
-				children: createChildrenSnippet('STREAK'),
-			},
-		});
+		const { getByText } = renderPill({ children: createChildrenSnippet('STREAK') });
 		expect(getByText('STREAK')).toBeInTheDocument();
 	});
 
-	it('uses default background color', () => {
-		const { container } = render(Pill, {
-			props: {
-				children: createChildrenSnippet('Label'),
-			},
-		});
-		const span = container.querySelector('span');
-		expect(span).toHaveStyle({ background: 'rgba(31,36,23,0.06)' });
+	it.each([
+		['default background color', {}, { background: 'rgba(31,36,23,0.06)' }],
+		['Brand.colors.ink as default text color', {}, { color: Brand.colors.ink }],
+		['custom bg prop', { bg: '#FF0000' }, { background: '#FF0000' }],
+		['custom color prop', { color: '#00FF00' }, { color: '#00FF00' }],
+		['Brand.fonts.body as font family', {}, { fontFamily: Brand.fonts.body }],
+	])('%s', (_name, props, expected) => {
+		const { container } = renderPill(props);
+		expect(getSpan(container)).toHaveStyle(expected);
 	});
 
-	it('uses Brand.colors.ink as default text color', () => {
-		const { container } = render(Pill, {
-			props: {
-				children: createChildrenSnippet('Label'),
-			},
-		});
-		const span = container.querySelector('span');
-		expect(span).toHaveStyle({ color: Brand.colors.ink });
-	});
-
-	it('accepts custom bg prop', () => {
-		const { container } = render(Pill, {
-			props: {
-				children: createChildrenSnippet('Label'),
-				bg: '#FF0000',
-			},
-		});
-		const span = container.querySelector('span');
-		expect(span).toHaveStyle({ background: '#FF0000' });
-	});
-
-	it('accepts custom color prop', () => {
-		const { container } = render(Pill, {
-			props: {
-				children: createChildrenSnippet('Label'),
-				color: '#00FF00',
-			},
-		});
-		const span = container.querySelector('span');
-		expect(span).toHaveStyle({ color: '#00FF00' });
-	});
-
-	it('uses Brand.fonts.body as font family', () => {
-		const { container } = render(Pill, {
-			props: {
-				children: createChildrenSnippet('Label'),
-			},
-		});
-		const span = container.querySelector('span');
-		expect(span).toHaveStyle({ fontFamily: Brand.fonts.body });
-	});
-
-	it('has uppercase text styling', () => {
-		const { container } = render(Pill, {
-			props: {
-				children: createChildrenSnippet('Label'),
-			},
-		});
-		const span = container.querySelector('span');
-		expect(span).toHaveClass('uppercase');
-	});
-
-	it('has rounded-full styling', () => {
-		const { container } = render(Pill, {
-			props: {
-				children: createChildrenSnippet('Label'),
-			},
-		});
-		const span = container.querySelector('span');
-		expect(span).toHaveClass('rounded-full');
+	it.each([
+		['uppercase text styling', 'uppercase'],
+		['rounded-full styling', 'rounded-full'],
+	])('%s', (_name, className) => {
+		const { container } = renderPill();
+		expect(getSpan(container)).toHaveClass(className);
 	});
 
 	it('spreads rest props to span element', () => {
-		const { container } = render(Pill, {
-			props: {
-				children: createChildrenSnippet('Label'),
-				'data-testid': 'my-pill',
-			},
-		});
-		const span = container.querySelector('span');
-		expect(span).toHaveAttribute('data-testid', 'my-pill');
+		const { container } = renderPill({ 'data-testid': 'my-pill' });
+		expect(getSpan(container)).toHaveAttribute('data-testid', 'my-pill');
 	});
 });

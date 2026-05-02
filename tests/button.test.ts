@@ -4,194 +4,76 @@ import { Brand } from '../src/lib/brand';
 import Button from '../src/lib/components/Button.svelte';
 import { createSnippet } from './helpers';
 
+function renderButton(props: Record<string, unknown> = {}) {
+	return render(Button, {
+		props: { children: createSnippet('Btn'), ...props },
+	});
+}
+
+function getBtn(container: HTMLElement) {
+	return container.querySelector('button')!;
+}
+
 describe('Button', () => {
 	it('renders children content', () => {
-		const { getByText } = render(Button, {
-			props: {
-				children: createSnippet('Click me'),
-			},
-		});
+		const { getByText } = renderButton({ children: createSnippet('Click me') });
 		expect(getByText('Click me')).toBeInTheDocument();
 	});
 
-	it('defaults to primary variant', () => {
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-			},
-		});
-		const button = container.querySelector('button');
-		expect(button).toHaveStyle({
-			backgroundColor: Brand.colors.ink,
-			color: Brand.colors.cream,
-		});
-	});
-
-	it('applies moss variant styles', () => {
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-				kind: 'moss',
-			},
-		});
-		const button = container.querySelector('button');
-		expect(button).toHaveStyle({
-			backgroundColor: Brand.colors.moss,
-			color: Brand.colors.cream,
-		});
-	});
-
-	it('applies sunny variant styles', () => {
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-				kind: 'sunny',
-			},
-		});
-		const button = container.querySelector('button');
-		expect(button).toHaveStyle({
-			backgroundColor: Brand.colors.sunny,
-			color: Brand.colors.ink,
-		});
+	it.each([
+		['defaults to primary variant', {}, { backgroundColor: Brand.colors.ink, color: Brand.colors.cream }],
+		['applies moss variant styles', { kind: 'moss' }, { backgroundColor: Brand.colors.moss, color: Brand.colors.cream }],
+		['applies sunny variant styles', { kind: 'sunny' }, { backgroundColor: Brand.colors.sunny, color: Brand.colors.ink }],
+		['applies cream variant styles', { kind: 'cream' }, { backgroundColor: Brand.colors.creamSoft, color: Brand.colors.ink }],
+		['has border-radius 14px', {}, { borderRadius: '14px' }],
+		['uses Brand.fonts.body', {}, { fontFamily: Brand.fonts.body }],
+		['sets full width when full is true', { full: true }, { width: '100%' }],
+		['auto width when full is false', { full: false }, { width: 'auto' }],
+	])('%s', (_name, props, expected) => {
+		const { container } = renderButton(props);
+		expect(getBtn(container)).toHaveStyle(expected);
 	});
 
 	it('applies ghost variant styles', () => {
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-				kind: 'ghost',
-			},
-		});
-		const button = container.querySelector('button');
-		expect(button!.style.backgroundColor).toBe('transparent');
+		const { container } = renderButton({ kind: 'ghost' });
+		const button = getBtn(container);
+		expect(button.style.backgroundColor).toBe('transparent');
 		expect(button).toHaveStyle({ color: Brand.colors.ink });
 	});
 
-	it('applies cream variant styles', () => {
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-				kind: 'cream',
-			},
-		});
-		const button = container.querySelector('button');
-		expect(button).toHaveStyle({
-			backgroundColor: Brand.colors.creamSoft,
-			color: Brand.colors.ink,
-		});
-	});
-
-	it('has border-radius 14px', () => {
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-			},
-		});
-		const button = container.querySelector('button');
-		expect(button).toHaveStyle({ borderRadius: '14px' });
-	});
-
-	it('uses Brand.fonts.body', () => {
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-			},
-		});
-		const button = container.querySelector('button');
-		expect(button).toHaveStyle({ fontFamily: Brand.fonts.body });
-	});
-
-	it('sets full width when full is true', () => {
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-				full: true,
-			},
-		});
-		const button = container.querySelector('button');
-		expect(button).toHaveStyle({ width: '100%' });
-	});
-
-	it('auto width when full is false', () => {
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-				full: false,
-			},
-		});
-		const button = container.querySelector('button');
-		expect(button).toHaveStyle({ width: 'auto' });
-	});
-
 	it('translates down on mousedown', async () => {
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-			},
-		});
-		const button = container.querySelector('button');
-		await fireEvent.mouseDown(button!);
+		const { container } = renderButton();
+		const button = getBtn(container);
+		await fireEvent.mouseDown(button);
 		expect(button).toHaveStyle({ transform: 'translateY(2px)' });
 	});
 
-	it('translates back on mouseup', async () => {
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-			},
-		});
-		const button = container.querySelector('button');
-		await fireEvent.mouseDown(button!);
-		await fireEvent.mouseUp(button!);
-		expect(button).toHaveStyle({ transform: 'translateY(0)' });
-	});
-
-	it('translates back on mouseleave', async () => {
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-			},
-		});
-		const button = container.querySelector('button');
-		await fireEvent.mouseDown(button!);
-		await fireEvent.mouseLeave(button!);
+	it.each([
+		['translates back on mouseup', 'mouseUp'],
+		['translates back on mouseleave', 'mouseLeave'],
+	])('%s', async (_name, event) => {
+		const { container } = renderButton();
+		const button = getBtn(container);
+		await fireEvent.mouseDown(button);
+		await fireEvent[event](button);
 		expect(button).toHaveStyle({ transform: 'translateY(0)' });
 	});
 
 	it('renders icon snippet', () => {
-		const { getByText } = render(Button, {
-			props: {
-				children: createSnippet('Save'),
-				icon: createSnippet('→'),
-			},
-		});
+		const { getByText } = renderButton({ children: createSnippet('Save'), icon: createSnippet('→') });
 		expect(getByText('Save')).toBeInTheDocument();
 		expect(getByText('→')).toBeInTheDocument();
 	});
 
 	it('calls onclick handler', async () => {
 		let clicked = false;
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-				onclick: () => {
-					clicked = true;
-				},
-			},
-		});
-		const button = container.querySelector('button');
-		await fireEvent.click(button!);
+		const { container } = renderButton({ onclick: () => { clicked = true; } });
+		await fireEvent.click(getBtn(container));
 		expect(clicked).toBe(true);
 	});
 
 	it('spreads rest props', () => {
-		const { container } = render(Button, {
-			props: {
-				children: createSnippet('Btn'),
-				'data-testid': 'my-btn',
-			},
-		});
-		const button = container.querySelector('button');
-		expect(button).toHaveAttribute('data-testid', 'my-btn');
+		const { container } = renderButton({ 'data-testid': 'my-btn' });
+		expect(getBtn(container)).toHaveAttribute('data-testid', 'my-btn');
 	});
 });

@@ -1,4 +1,5 @@
 import { supabase } from '../supabase';
+import { createProgressRepository } from './base.svelte';
 
 export interface PuzzleProgress {
 	id: string;
@@ -10,26 +11,10 @@ export interface PuzzleProgress {
 }
 
 export function createPuzzleRepository() {
-	let progress = $state<PuzzleProgress[]>([]);
-	let loading = $state(false);
-	let error = $state<string | null>(null);
-
-	async function loadProgress(): Promise<void> {
-		loading = true;
-		error = null;
-		try {
-			const { data, error: err } = await supabase.from('puzzle_progress').select('*');
-			if (err) throw err;
-			progress = data ?? [];
-		} catch (e) {
-			error = e instanceof Error ? e.message : 'Failed to load puzzle progress';
-		} finally {
-			loading = false;
-		}
-	}
+	const base = createProgressRepository<PuzzleProgress>('puzzle_progress');
 
 	async function recordAttempt(puzzleId: string, userId: string, solved: boolean): Promise<void> {
-		const existing = progress.find((p) => p.puzzle_id === puzzleId);
+		const existing = base.progress.find((p) => p.puzzle_id === puzzleId);
 		if (existing) {
 			const updates = {
 				attempts: existing.attempts + 1,
@@ -41,7 +26,7 @@ export function createPuzzleRepository() {
 				.update(updates)
 				.eq('id', existing.id);
 			if (err) throw err;
-			progress = progress.map((p) => (p.id === existing.id ? { ...p, ...updates } : p));
+			base.progress = base.progress.map((p) => (p.id === existing.id ? { ...p, ...updates } : p));
 		} else {
 			const record: PuzzleProgress = {
 				id: crypto.randomUUID(),
@@ -53,31 +38,27 @@ export function createPuzzleRepository() {
 			};
 			const { error: err } = await supabase.from('puzzle_progress').insert(record);
 			if (err) throw err;
-			progress = [...progress, record];
+			base.addLocalProgress(record);
 		}
 	}
 
-	function addLocalProgress(record: PuzzleProgress): void {
-		progress = [...progress, record];
-	}
-
 	function getSolvedCount(): number {
-		return progress.filter((p) => p.solved).length;
+		return base.progress.filter((p) => p.solved).length;
 	}
 
 	return {
 		get progress() {
-			return progress;
+			return base.progress;
 		},
 		get loading() {
-			return loading;
+			return base.loading;
 		},
 		get error() {
-			return error;
+			return base.error;
 		},
-		loadProgress,
+		loadProgress: base.loadProgress,
 		recordAttempt,
-		addLocalProgress,
+		addLocalProgress: base.addLocalProgress,
 		getSolvedCount,
 	};
 }

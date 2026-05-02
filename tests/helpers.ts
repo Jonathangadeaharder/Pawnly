@@ -98,6 +98,92 @@ export function expectBoardWrapper(container: HTMLElement) {
 	};
 }
 
+export function describeClassifyMoveTests(importPath: string) {
+	describe('classifyMove', () => {
+		it('classifies brilliant move (loss < -50)', async () => {
+			const { classifyMove } = await import(importPath);
+			expect(classifyMove(-60)).toBe('brilliant');
+			expect(classifyMove(-100)).toBe('brilliant');
+		});
+
+		it('classifies great move (-50 <= loss < -20)', async () => {
+			const { classifyMove } = await import(importPath);
+			expect(classifyMove(-50)).toBe('great');
+			expect(classifyMove(-30)).toBe('great');
+		});
+
+		it('classifies best move (-20 <= loss < 10)', async () => {
+			const { classifyMove } = await import(importPath);
+			expect(classifyMove(-20)).toBe('best');
+			expect(classifyMove(0)).toBe('best');
+			expect(classifyMove(5)).toBe('best');
+		});
+
+		it('classifies good move (10 <= loss < 40)', async () => {
+			const { classifyMove } = await import(importPath);
+			expect(classifyMove(10)).toBe('good');
+			expect(classifyMove(25)).toBe('good');
+		});
+
+		it('classifies inaccuracy (40 <= loss < 100)', async () => {
+			const { classifyMove } = await import(importPath);
+			expect(classifyMove(40)).toBe('inaccuracy');
+			expect(classifyMove(75)).toBe('inaccuracy');
+		});
+
+		it('classifies mistake (100 <= loss < 300)', async () => {
+			const { classifyMove } = await import(importPath);
+			expect(classifyMove(100)).toBe('mistake');
+			expect(classifyMove(200)).toBe('mistake');
+		});
+
+		it('classifies blunder (loss >= 300)', async () => {
+			const { classifyMove } = await import(importPath);
+			expect(classifyMove(300)).toBe('blunder');
+			expect(classifyMove(500)).toBe('blunder');
+			expect(classifyMove(1000)).toBe('blunder');
+		});
+	});
+}
+
+export function describeCalculateAccuracyTests(importPath: string) {
+	describe('calculateAccuracy', () => {
+		it('returns 100 for zero loss', async () => {
+			const { calculateAccuracy } = await import(importPath);
+			expect(calculateAccuracy(0, 30)).toBe(100);
+		});
+
+		it('returns 100 for zero move count', async () => {
+			const { calculateAccuracy } = await import(importPath);
+			expect(calculateAccuracy(0, 0)).toBe(100);
+		});
+
+		it('decreases accuracy with higher average loss', async () => {
+			const { calculateAccuracy } = await import(importPath);
+			const perfect = calculateAccuracy(0, 10);
+			const smallLoss = calculateAccuracy(100, 10);
+			const bigLoss = calculateAccuracy(1000, 10);
+			expect(perfect).toBeGreaterThan(smallLoss);
+			expect(smallLoss).toBeGreaterThan(bigLoss);
+		});
+
+		it('clamps to minimum 0', async () => {
+			const { calculateAccuracy } = await import(importPath);
+			expect(calculateAccuracy(100000, 1)).toBe(0);
+		});
+
+		it('clamps to maximum 100', async () => {
+			const { calculateAccuracy } = await import(importPath);
+			expect(calculateAccuracy(-500, 10)).toBe(100);
+		});
+
+		it('rounds to one decimal place', async () => {
+			const { calculateAccuracy } = await import(importPath);
+			expect(calculateAccuracy(333, 10)).toBe(96.7);
+		});
+	});
+}
+
 export function describeRepoBasicTests(
 	name: string,
 	modulePath: string,
