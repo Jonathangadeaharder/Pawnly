@@ -16,6 +16,33 @@ import {
 const ALL_MODES: ScanMode[] = ['check', 'capture', 'threat', 'loose', 'doubleAttack'];
 const SQUARE_RE = /^[a-h][1-8]$/;
 
+function expectOpponentPiecesOnSquares(
+	squares: string[],
+	playerColor: 'w' | 'b',
+	fen: string,
+) {
+	const chess = new Chess(fen);
+	const opponentColor = playerColor === 'w' ? 'b' : 'w';
+	for (const sq of squares) {
+		const piece = chess.get(sq as any);
+		expect(piece).toBeDefined();
+		if (piece) {
+			expect(piece.color).toBe(opponentColor);
+		}
+	}
+}
+
+function createMarked(overrides: Partial<Record<ScanMode, Set<string>>> = {}): Record<ScanMode, Set<string>> {
+	return {
+		check: new Set(),
+		capture: new Set(),
+		threat: new Set(),
+		loose: new Set(),
+		doubleAttack: new Set(),
+		...overrides,
+	};
+}
+
 describe('scanPositions array', () => {
 	it('should have 20 positions', () => {
 		expect(scanPositions).toHaveLength(20);
@@ -60,32 +87,14 @@ describe('scanPositions array', () => {
 
 	it('should have captures with opponent pieces that can capture', () => {
 		for (const pos of scanPositions) {
-			const chess = new Chess(pos.fen);
-			const opponentColor = pos.playerColor === 'w' ? 'b' : 'w';
-
-			for (const sq of pos.answerKey.captures) {
-const piece = chess.get(sq as any);
-expect(piece).not.toBeNull();
-if (piece) {
-	expect(piece.color).toBe(opponentColor);
-}
-			}
+			expectOpponentPiecesOnSquares(pos.answerKey.captures, pos.playerColor, pos.fen);
 		}
 	});
 
 	it('should have threats with opponent pieces', () => {
 		for (const pos of scanPositions) {
 			if (!pos.answerKey.threats || pos.answerKey.threats.length === 0) continue;
-			const chess = new Chess(pos.fen);
-			const opponentColor = pos.playerColor === 'w' ? 'b' : 'w';
-
-			for (const sq of pos.answerKey.threats) {
-				const piece = chess.get(sq as any);
-				expect(piece).toBeDefined();
-				if (piece) {
-					expect(piece.color).toBe(opponentColor);
-				}
-			}
+			expectOpponentPiecesOnSquares(pos.answerKey.threats, pos.playerColor, pos.fen);
 		}
 	});
 
@@ -116,40 +125,18 @@ if (piece) {
 
 	it('should have checks and captures squares with opponent pieces', () => {
 		for (const pos of scanPositions) {
-			const chess = new Chess(pos.fen);
-			const opponentColor = pos.playerColor === 'w' ? 'b' : 'w';
-
-			for (const sq of pos.answerKey.checks) {
-				const piece = chess.get(sq as any);
-				expect(piece).toBeDefined();
-				if (piece) {
-					expect(piece.color).toBe(opponentColor);
-				}
-			}
-
-			for (const sq of pos.answerKey.captures) {
-				const piece = chess.get(sq as any);
-				expect(piece).toBeDefined();
-				if (piece) {
-					expect(piece.color).toBe(opponentColor);
-				}
-			}
+			expectOpponentPiecesOnSquares(
+				[...pos.answerKey.checks, ...pos.answerKey.captures],
+				pos.playerColor,
+				pos.fen,
+			);
 		}
 	});
 
 	it('should have loose squares with opponent pieces', () => {
 		for (const pos of scanPositions) {
 			if (!pos.answerKey.loose) continue;
-			const chess = new Chess(pos.fen);
-			const opponentColor = pos.playerColor === 'w' ? 'b' : 'w';
-
-			for (const sq of pos.answerKey.loose) {
-				const piece = chess.get(sq as any);
-				expect(piece).toBeDefined();
-				if (piece) {
-					expect(piece.color).toBe(opponentColor);
-				}
-			}
+			expectOpponentPiecesOnSquares(pos.answerKey.loose, pos.playerColor, pos.fen);
 		}
 	});
 });
@@ -278,58 +265,28 @@ describe('calculateStars', () => {
 	};
 
 	it('should return 3 for all correct with time left', () => {
-		const marked: Record<ScanMode, Set<string>> = {
-			check: new Set(['c4']),
-			capture: new Set(['e5']),
-			threat: new Set(),
-			loose: new Set(),
-			doubleAttack: new Set(),
-		};
+		const marked = createMarked({ check: new Set(['c4']), capture: new Set(['e5']) });
 		expect(calculateStars(['check', 'capture'], marked, 10, answerKey)).toBe(3);
 	});
 
 	it('should return 2 for all correct with no time left', () => {
-		const marked: Record<ScanMode, Set<string>> = {
-			check: new Set(['c4']),
-			capture: new Set(['e5']),
-			threat: new Set(),
-			loose: new Set(),
-			doubleAttack: new Set(),
-		};
+		const marked = createMarked({ check: new Set(['c4']), capture: new Set(['e5']) });
 		expect(calculateStars(['check', 'capture'], marked, 0, answerKey)).toBe(2);
 	});
 
 	it('should return 1 for all correct but with wrong marks', () => {
-		const marked: Record<ScanMode, Set<string>> = {
-			check: new Set(['c4', 'd4']),
-			capture: new Set(['e5']),
-			threat: new Set(),
-			loose: new Set(),
-			doubleAttack: new Set(),
-		};
+		const marked = createMarked({ check: new Set(['c4', 'd4']), capture: new Set(['e5']) });
 		expect(calculateStars(['check', 'capture'], marked, 10, answerKey)).toBe(1);
 	});
 
 	it('should return 0 for less than 50% correct', () => {
-		const marked: Record<ScanMode, Set<string>> = {
-			check: new Set(['d4']),
-			capture: new Set(),
-			threat: new Set(),
-			loose: new Set(),
-			doubleAttack: new Set(),
-		};
+		const marked = createMarked({ check: new Set(['d4']) });
 		expect(calculateStars(['check', 'capture'], marked, 10, answerKey)).toBe(0);
 	});
 
 	it('should return 3 when total is 0 (empty answer keys)', () => {
 		const emptyKey: ScanAnswerKey = { checks: [], captures: [], threats: [] };
-		const marked: Record<ScanMode, Set<string>> = {
-			check: new Set(),
-			capture: new Set(),
-			threat: new Set(),
-			loose: new Set(),
-			doubleAttack: new Set(),
-		};
+		const marked = createMarked();
 		expect(calculateStars(['check', 'capture'], marked, 10, emptyKey)).toBe(3);
 	});
 });

@@ -4,13 +4,8 @@
  */
 
 import { Chess } from 'chess.js';
-import {
-	calculateAccuracy as calcAccuracy,
-	classifyMove as classify,
-	createStockfish,
-	type MoveAnalysis,
-} from './stockfish.svelte';
-import { getMoveComment } from './chess-utils';
+import { createStockfish, type MoveAnalysis } from './stockfish.svelte';
+import { calculateAccuracy, classifyMove, getMoveComment } from './chess-utils';
 
 export type { MoveAnalysis, PositionAnalysis } from './stockfish.svelte';
 
@@ -32,15 +27,7 @@ export interface AnalysisState {
 	analyze: () => Promise<void>;
 }
 
-export function classifyMove(
-	loss: number,
-): 'brilliant' | 'great' | 'best' | 'good' | 'inaccuracy' | 'mistake' | 'blunder' {
-	return classify(loss);
-}
-
-export function calculateAccuracy(totalLoss: number, moveCount: number): number {
-	return calcAccuracy(totalLoss, moveCount);
-}
+export { classifyMove, calculateAccuracy } from './chess-utils';
 
 export function createAnalysis(moves: string[], startFen?: string): AnalysisState {
 	const DEFAULT_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -55,8 +42,8 @@ export function createAnalysis(moves: string[], startFen?: string): AnalysisStat
 		if (moveAnalyses.length === 0) return { white: 100, black: 100 };
 		const stats = computeStats(moveAnalyses);
 		return {
-			white: calcAccuracy(stats.white.totalLoss, stats.white.moves),
-			black: calcAccuracy(stats.black.totalLoss, stats.black.moves),
+			white: calculateAccuracy(stats.white.totalLoss, stats.white.moves),
+			black: calculateAccuracy(stats.black.totalLoss, stats.black.moves),
 		};
 	});
 
@@ -165,7 +152,7 @@ export function createAnalysis(moves: string[], startFen?: string): AnalysisStat
 			}
 			const normalizedEval = isWhite ? rawEval : -rawEval;
 			const loss = previousEval - normalizedEval;
-			const classification = classify(loss);
+			const classification = classifyMove(loss);
 			const comment = getMoveComment(classification, loss);
 
 			results.push({

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describeRepoBasicTests } from './helpers';
 
 vi.mock('../src/lib/supabase', () => ({
 	supabase: {
@@ -185,38 +186,16 @@ describe('GameRepository', () => {
 	});
 });
 
-describe('AchievementRepository', () => {
-	it('exports createAchievementRepository function', async () => {
-		const mod = await import('../src/lib/repositories/achievement.svelte');
-		expect(typeof mod.createAchievementRepository).toBe('function');
-	});
+describeRepoBasicTests(
+	'AchievementRepository',
+	'../src/lib/repositories/achievement.svelte',
+	'createAchievementRepository',
+	[],
+	{ unlocked: [] },
+	['loadAchievements', 'unlock', 'isUnlocked'],
+);
 
-	it('creates an achievement repository', async () => {
-		const { createAchievementRepository } = await import(
-			'../src/lib/repositories/achievement.svelte'
-		);
-		const repo = createAchievementRepository();
-		expect(repo).toBeDefined();
-		expect(repo.unlocked).toEqual([]);
-		expect(repo.loading).toBe(false);
-	});
-
-	it('has loadAchievements method', async () => {
-		const { createAchievementRepository } = await import(
-			'../src/lib/repositories/achievement.svelte'
-		);
-		const repo = createAchievementRepository();
-		expect(typeof repo.loadAchievements).toBe('function');
-	});
-
-	it('has unlock method', async () => {
-		const { createAchievementRepository } = await import(
-			'../src/lib/repositories/achievement.svelte'
-		);
-		const repo = createAchievementRepository();
-		expect(typeof repo.unlock).toBe('function');
-	});
-
+describe('AchievementRepository behavior', () => {
 	it('isUnlocked returns false when not unlocked', async () => {
 		const { createAchievementRepository } = await import(
 			'../src/lib/repositories/achievement.svelte'
@@ -235,38 +214,16 @@ describe('AchievementRepository', () => {
 	});
 });
 
-describe('PuzzleRepository', () => {
-	it('exports createPuzzleRepository function', async () => {
-		const mod = await import('../src/lib/repositories/puzzle.svelte');
-		expect(typeof mod.createPuzzleRepository).toBe('function');
-	});
+describeRepoBasicTests(
+	'PuzzleRepository',
+	'../src/lib/repositories/puzzle.svelte',
+	'createPuzzleRepository',
+	[],
+	{ progress: [] },
+	['loadProgress', 'recordAttempt', 'getSolvedCount'],
+);
 
-	it('creates a puzzle repository', async () => {
-		const { createPuzzleRepository } = await import('../src/lib/repositories/puzzle.svelte');
-		const repo = createPuzzleRepository();
-		expect(repo).toBeDefined();
-		expect(repo.progress).toEqual([]);
-		expect(repo.loading).toBe(false);
-	});
-
-	it('has loadProgress method', async () => {
-		const { createPuzzleRepository } = await import('../src/lib/repositories/puzzle.svelte');
-		const repo = createPuzzleRepository();
-		expect(typeof repo.loadProgress).toBe('function');
-	});
-
-	it('has recordAttempt method', async () => {
-		const { createPuzzleRepository } = await import('../src/lib/repositories/puzzle.svelte');
-		const repo = createPuzzleRepository();
-		expect(typeof repo.recordAttempt).toBe('function');
-	});
-
-	it('has getSolvedCount method', async () => {
-		const { createPuzzleRepository } = await import('../src/lib/repositories/puzzle.svelte');
-		const repo = createPuzzleRepository();
-		expect(typeof repo.getSolvedCount).toBe('function');
-	});
-
+describe('PuzzleRepository behavior', () => {
 	it('getSolvedCount returns 0 when empty', async () => {
 		const { createPuzzleRepository } = await import('../src/lib/repositories/puzzle.svelte');
 		const repo = createPuzzleRepository();
@@ -296,38 +253,16 @@ describe('PuzzleRepository', () => {
 	});
 });
 
-describe('LessonRepository', () => {
-	it('exports createLessonRepository function', async () => {
-		const mod = await import('../src/lib/repositories/lesson.svelte');
-		expect(typeof mod.createLessonRepository).toBe('function');
-	});
+describeRepoBasicTests(
+	'LessonRepository',
+	'../src/lib/repositories/lesson.svelte',
+	'createLessonRepository',
+	[],
+	{ progress: [] },
+	['loadProgress', 'markCompleted', 'getCompletedCount'],
+);
 
-	it('creates a lesson repository', async () => {
-		const { createLessonRepository } = await import('../src/lib/repositories/lesson.svelte');
-		const repo = createLessonRepository();
-		expect(repo).toBeDefined();
-		expect(repo.progress).toEqual([]);
-		expect(repo.loading).toBe(false);
-	});
-
-	it('has loadProgress method', async () => {
-		const { createLessonRepository } = await import('../src/lib/repositories/lesson.svelte');
-		const repo = createLessonRepository();
-		expect(typeof repo.loadProgress).toBe('function');
-	});
-
-	it('has markCompleted method', async () => {
-		const { createLessonRepository } = await import('../src/lib/repositories/lesson.svelte');
-		const repo = createLessonRepository();
-		expect(typeof repo.markCompleted).toBe('function');
-	});
-
-	it('has getCompletedCount method', async () => {
-		const { createLessonRepository } = await import('../src/lib/repositories/lesson.svelte');
-		const repo = createLessonRepository();
-		expect(typeof repo.getCompletedCount).toBe('function');
-	});
-
+describe('LessonRepository behavior', () => {
 	it('getCompletedCount returns 0 when empty', async () => {
 		const { createLessonRepository } = await import('../src/lib/repositories/lesson.svelte');
 		const repo = createLessonRepository();

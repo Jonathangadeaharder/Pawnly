@@ -2,6 +2,7 @@ import { fireEvent, render } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
 import { Brand } from '../src/lib/brand';
 import Chessboard from '../src/lib/components/Chessboard.svelte';
+import { expectBoardSvg, expectBoardWrapper } from './helpers';
 
 const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
@@ -14,36 +15,31 @@ describe('Chessboard', () => {
 	it('renders with default size 400', async () => {
 		const game = await createTestGame();
 		const { container } = render(Chessboard, { props: { game } });
-		const wrapper = container.firstElementChild as HTMLElement;
-		expect(wrapper).toHaveStyle({ width: '400px', height: '400px' });
+		expectBoardWrapper(container).toHaveSize(400, 400);
 	});
 
 	it('renders with custom size', async () => {
 		const game = await createTestGame();
 		const { container } = render(Chessboard, { props: { game, size: 600 } });
-		const wrapper = container.firstElementChild as HTMLElement;
-		expect(wrapper).toHaveStyle({ width: '600px', height: '600px' });
+		expectBoardWrapper(container).toHaveSize(600, 600);
 	});
 
 	it('has border-radius 12px', async () => {
 		const game = await createTestGame();
 		const { container } = render(Chessboard, { props: { game } });
-		const wrapper = container.firstElementChild as HTMLElement;
-		expect(wrapper).toHaveStyle({ borderRadius: '12px' });
+		expectBoardWrapper(container).toHaveBorderRadius();
 	});
 
 	it('has overflow hidden', async () => {
 		const game = await createTestGame();
 		const { container } = render(Chessboard, { props: { game } });
-		const wrapper = container.firstElementChild as HTMLElement;
-		expect(wrapper).toHaveStyle({ overflow: 'hidden' });
+		expectBoardWrapper(container).toHaveOverflowHidden();
 	});
 
 	it('has box-shadow', async () => {
 		const game = await createTestGame();
 		const { container } = render(Chessboard, { props: { game } });
-		const wrapper = container.firstElementChild as HTMLElement;
-		expect(wrapper.style.boxShadow).toContain('24px');
+		expectBoardWrapper(container).toHaveBoxShadow();
 	});
 
 	it('has aria-label Chessboard', async () => {
@@ -56,16 +52,13 @@ describe('Chessboard', () => {
 	it('renders 64 board squares in SVG', async () => {
 		const game = await createTestGame();
 		const { container } = render(Chessboard, { props: { game } });
-		const rects = container.querySelectorAll('svg rect');
-		expect(rects.length).toBeGreaterThanOrEqual(64);
+		expectBoardSvg(container).toHaveSquares(64);
 	});
 
 	it('renders default board colors', async () => {
 		const game = await createTestGame();
 		const { container } = render(Chessboard, { props: { game } });
-		const svg = container.querySelector('svg')!;
-		const firstRect = svg.querySelector('rect')!;
-		expect(firstRect).toHaveAttribute('fill', Brand.colors.boardLight);
+		expectBoardSvg(container).toHaveDefaultColors();
 	});
 
 	it('renders pieces for starting position', async () => {
@@ -79,7 +72,7 @@ describe('Chessboard', () => {
 		const game = await createTestGame('8/8/8/4K3/4k3/8/8/8 w - - 0 1');
 		const { container } = render(Chessboard, { props: { game } });
 		const pieceDivs = container.querySelectorAll('svg ~ div[style*="pointer-events"]');
-		expect(pieceDivs.length).toBe(2); // Only kings
+		expect(pieceDivs.length).toBe(2);
 	});
 
 	it('renders SVG with data-board attribute', async () => {
@@ -94,26 +87,19 @@ describe('Chessboard coordinates', () => {
 	it('shows coordinates by default', async () => {
 		const game = await createTestGame();
 		const { container } = render(Chessboard, { props: { game } });
-		const texts = container.querySelectorAll('svg text');
-		expect(texts.length).toBe(16);
+		expectBoardSvg(container).toHaveCoords(16);
 	});
 
 	it('hides coordinates when showCoords is false', async () => {
 		const game = await createTestGame();
 		const { container } = render(Chessboard, { props: { game, showCoords: false } });
-		const texts = container.querySelectorAll('svg text');
-		expect(texts.length).toBe(0);
+		expectBoardSvg(container).toHaveCoords(0);
 	});
 
 	it('renders coordinate labels with correct content', async () => {
 		const game = await createTestGame();
 		const { container } = render(Chessboard, { props: { game } });
-		const texts = container.querySelectorAll('svg text');
-		const textContents = Array.from(texts).map((t) => t.textContent);
-		expect(textContents).toContain('8');
-		expect(textContents).toContain('1');
-		expect(textContents).toContain('a');
-		expect(textContents).toContain('h');
+		expectBoardSvg(container).toHaveCoordLabels();
 	});
 });
 
@@ -123,10 +109,9 @@ describe('Chessboard arrows', () => {
 		const { container } = render(Chessboard, {
 			props: { game, arrows: [{ from: 'e2', to: 'e4' }] },
 		});
-		const lines = container.querySelectorAll('svg line');
-		expect(lines.length).toBe(1);
-		const polygons = container.querySelectorAll('svg polygon');
-		expect(polygons.length).toBe(1);
+		const board = expectBoardSvg(container);
+		board.toHaveArrowCount(1);
+		board.toHaveArrowPolygon();
 	});
 
 	it('renders arrow with custom color', async () => {
@@ -167,15 +152,13 @@ describe('Chessboard arrows', () => {
 				],
 			},
 		});
-		const lines = container.querySelectorAll('svg line');
-		expect(lines.length).toBe(2);
+		expectBoardSvg(container).toHaveArrowCount(2);
 	});
 
 	it('renders no arrows by default', async () => {
 		const game = await createTestGame();
 		const { container } = render(Chessboard, { props: { game } });
-		const lines = container.querySelectorAll('svg line');
-		expect(lines.length).toBe(0);
+		expectBoardSvg(container).toHaveArrowCount(0);
 	});
 });
 
@@ -188,10 +171,7 @@ describe('Chessboard highlights', () => {
 				highlights: [{ square: 'e4', color: '#ff0000', opacity: 0.5 }],
 			},
 		});
-		const rects = container.querySelectorAll('svg rect');
-		const redRects = Array.from(rects).filter((r) => r.getAttribute('fill') === '#ff0000');
-		expect(redRects.length).toBe(1);
-		expect(redRects[0]).toHaveAttribute('opacity', '0.5');
+		expectBoardSvg(container).toHaveRectsWithFill('#ff0000', 1);
 	});
 
 	it('uses default highlight color (moss)', async () => {
@@ -199,9 +179,7 @@ describe('Chessboard highlights', () => {
 		const { container } = render(Chessboard, {
 			props: { game, highlights: [{ square: 'd4' }] },
 		});
-		const rects = container.querySelectorAll('svg rect');
-		const mossRects = Array.from(rects).filter((r) => r.getAttribute('fill') === Brand.colors.moss);
-		expect(mossRects.length).toBe(1);
+		expectBoardSvg(container).toHaveRectsWithFill(Brand.colors.moss, 1);
 	});
 
 	it('uses default highlight opacity 0.4', async () => {
@@ -221,21 +199,13 @@ describe('Chessboard last move', () => {
 		game.selectSquare('e2');
 		game.selectSquare('e4');
 		const { container } = render(Chessboard, { props: { game } });
-		const rects = container.querySelectorAll('svg rect');
-		const sunnyRects = Array.from(rects).filter(
-			(r) => r.getAttribute('fill') === Brand.colors.sunny,
-		);
-		expect(sunnyRects.length).toBe(2);
+		expectBoardSvg(container).toHaveRectsWithFill(Brand.colors.sunny, 2);
 	});
 
 	it('no last move highlight at start', async () => {
 		const game = await createTestGame();
 		const { container } = render(Chessboard, { props: { game } });
-		const rects = container.querySelectorAll('svg rect');
-		const sunnyRects = Array.from(rects).filter(
-			(r) => r.getAttribute('fill') === Brand.colors.sunny,
-		);
-		expect(sunnyRects.length).toBe(0);
+		expectBoardSvg(container).toHaveRectsWithFill(Brand.colors.sunny, 0);
 	});
 });
 
@@ -243,21 +213,13 @@ describe('Chessboard check indicator', () => {
 	it('shows check indicator on king in check', async () => {
 		const game = await createTestGame('4k3/8/8/8/4Q3/8/8/4K3 b - - 0 1');
 		const { container } = render(Chessboard, { props: { game } });
-		const rects = container.querySelectorAll('svg rect');
-		const coralRects = Array.from(rects).filter(
-			(r) => r.getAttribute('fill') === Brand.colors.coral,
-		);
-		expect(coralRects.length).toBe(1);
+		expectBoardSvg(container).toHaveRectsWithFill(Brand.colors.coral, 1);
 	});
 
 	it('no check indicator when not in check', async () => {
 		const game = await createTestGame();
 		const { container } = render(Chessboard, { props: { game } });
-		const rects = container.querySelectorAll('svg rect');
-		const coralRects = Array.from(rects).filter(
-			(r) => r.getAttribute('fill') === Brand.colors.coral,
-		);
-		expect(coralRects.length).toBe(0);
+		expectBoardSvg(container).toHaveRectsWithFill(Brand.colors.coral, 0);
 	});
 });
 
@@ -341,10 +303,8 @@ describe('Chessboard onMove callback', () => {
 		const game = await createTestGame();
 		const onMove = vi.fn();
 		render(Chessboard, { props: { game, onMove } });
-		// Simulate a move through the game API and verify the board responds
 		game.selectSquare('e2');
 		game.makeMove('e2', 'e4');
-		// The component should reflect the new position
 		expect(game.fen).toContain('4P3');
 	});
 });

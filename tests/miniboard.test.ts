@@ -2,31 +2,27 @@ import { render } from '@testing-library/svelte';
 import { describe, expect, it } from 'vitest';
 import { Brand } from '../src/lib/brand';
 import MiniBoard from '../src/lib/components/MiniBoard.svelte';
+import { expectBoardSvg, expectBoardWrapper } from './helpers';
 
 describe('MiniBoard', () => {
 	it('renders with default size 240', () => {
 		const { container } = render(MiniBoard);
-		const wrapper = container.firstElementChild as HTMLElement;
-		expect(wrapper).toHaveStyle({ width: '240px', height: '240px' });
+		expectBoardWrapper(container).toHaveSize(240, 240);
 	});
 
 	it('renders with custom size', () => {
 		const { container } = render(MiniBoard, { props: { size: 400 } });
-		const wrapper = container.firstElementChild as HTMLElement;
-		expect(wrapper).toHaveStyle({ width: '400px', height: '400px' });
+		expectBoardWrapper(container).toHaveSize(400, 400);
 	});
 
 	it('renders 64 board squares in SVG', () => {
 		const { container } = render(MiniBoard);
-		const rects = container.querySelectorAll('svg rect');
-		expect(rects.length).toBeGreaterThanOrEqual(64);
+		expectBoardSvg(container).toHaveSquares(64);
 	});
 
 	it('renders default board colors', () => {
 		const { container } = render(MiniBoard);
-		const svg = container.querySelector('svg')!;
-		const firstRect = svg.querySelector('rect')!;
-		expect(firstRect).toHaveAttribute('fill', Brand.colors.boardLight);
+		expectBoardSvg(container).toHaveDefaultColors();
 	});
 
 	it('renders warm theme colors', () => {
@@ -59,11 +55,7 @@ describe('MiniBoard', () => {
 				lastMove: { from: 'e2', to: 'e4' },
 			},
 		});
-		const rects = container.querySelectorAll('svg rect');
-		const sunnyRects = Array.from(rects).filter(
-			(r) => r.getAttribute('fill') === Brand.colors.sunny,
-		);
-		expect(sunnyRects.length).toBe(2);
+		expectBoardSvg(container).toHaveRectsWithFill(Brand.colors.sunny, 2);
 	});
 
 	it('applies square highlights', () => {
@@ -72,10 +64,7 @@ describe('MiniBoard', () => {
 				highlights: [{ square: 'e4', color: '#ff0000', opacity: 0.5 }],
 			},
 		});
-		const rects = container.querySelectorAll('svg rect');
-		const redRects = Array.from(rects).filter((r) => r.getAttribute('fill') === '#ff0000');
-		expect(redRects.length).toBe(1);
-		expect(redRects[0]).toHaveAttribute('opacity', '0.5');
+		expectBoardSvg(container).toHaveRectsWithFill('#ff0000', 1);
 	});
 
 	it('uses default highlight color (moss)', () => {
@@ -84,9 +73,7 @@ describe('MiniBoard', () => {
 				highlights: [{ square: 'd4' }],
 			},
 		});
-		const rects = container.querySelectorAll('svg rect');
-		const mossRects = Array.from(rects).filter((r) => r.getAttribute('fill') === Brand.colors.moss);
-		expect(mossRects.length).toBe(1);
+		expectBoardSvg(container).toHaveRectsWithFill(Brand.colors.moss, 1);
 	});
 
 	it('uses default highlight opacity 0.4', () => {
@@ -106,10 +93,9 @@ describe('MiniBoard', () => {
 				arrows: [{ from: 'e2', to: 'e4' }],
 			},
 		});
-		const lines = container.querySelectorAll('svg line');
-		expect(lines.length).toBe(1);
-		const polygons = container.querySelectorAll('svg polygon');
-		expect(polygons.length).toBe(1);
+		const board = expectBoardSvg(container);
+		board.toHaveArrowCount(1);
+		board.toHaveArrowPolygon();
 	});
 
 	it('renders arrow with custom color', () => {
@@ -155,26 +141,19 @@ describe('MiniBoard', () => {
 		const { container } = render(MiniBoard, {
 			props: { showCoords: true },
 		});
-		const texts = container.querySelectorAll('svg text');
-		expect(texts.length).toBe(16);
+		expectBoardSvg(container).toHaveCoords(16);
 	});
 
 	it('hides coordinates by default', () => {
 		const { container } = render(MiniBoard);
-		const texts = container.querySelectorAll('svg text');
-		expect(texts.length).toBe(0);
+		expectBoardSvg(container).toHaveCoords(0);
 	});
 
 	it('renders coordinate labels with correct content', () => {
 		const { container } = render(MiniBoard, {
 			props: { showCoords: true },
 		});
-		const texts = container.querySelectorAll('svg text');
-		const textContents = Array.from(texts).map((t) => t.textContent);
-		expect(textContents).toContain('8');
-		expect(textContents).toContain('1');
-		expect(textContents).toContain('a');
-		expect(textContents).toContain('h');
+		expectBoardSvg(container).toHaveCoordLabels();
 	});
 
 	it('renders multiple pieces', () => {
@@ -198,25 +177,21 @@ describe('MiniBoard', () => {
 				],
 			},
 		});
-		const lines = container.querySelectorAll('svg line');
-		expect(lines.length).toBe(2);
+		expectBoardSvg(container).toHaveArrowCount(2);
 	});
 
 	it('has border-radius 12px', () => {
 		const { container } = render(MiniBoard);
-		const wrapper = container.firstElementChild as HTMLElement;
-		expect(wrapper).toHaveStyle({ borderRadius: '12px' });
+		expectBoardWrapper(container).toHaveBorderRadius();
 	});
 
 	it('has overflow hidden', () => {
 		const { container } = render(MiniBoard);
-		const wrapper = container.firstElementChild as HTMLElement;
-		expect(wrapper).toHaveStyle({ overflow: 'hidden' });
+		expectBoardWrapper(container).toHaveOverflowHidden();
 	});
 
 	it('has box-shadow', () => {
 		const { container } = render(MiniBoard);
-		const wrapper = container.firstElementChild as HTMLElement;
-		expect(wrapper.style.boxShadow).toContain('24px');
+		expectBoardWrapper(container).toHaveBoxShadow();
 	});
 });

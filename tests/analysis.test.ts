@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 
 const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
-vi.mock('../src/lib/stockfish.svelte', () => {
+vi.mock('../src/lib/stockfish.svelte', async () => {
+	const actual = await vi.importActual<typeof import('../src/lib/chess-utils')>(
+		'../src/lib/chess-utils',
+	);
 	return {
 		createStockfish: () => ({
 			isReady: true,
@@ -15,21 +18,8 @@ vi.mock('../src/lib/stockfish.svelte', () => {
 			}),
 			quit: vi.fn(),
 		}),
-		classifyMove: (loss: number) => {
-			if (loss < -50) return 'brilliant';
-			if (loss < -20) return 'great';
-			if (loss < 10) return 'best';
-			if (loss < 40) return 'good';
-			if (loss < 100) return 'inaccuracy';
-			if (loss < 300) return 'mistake';
-			return 'blunder';
-		},
-		calculateAccuracy: (totalLoss: number, moveCount: number) => {
-			if (moveCount === 0) return 100;
-			const avgLoss = totalLoss / moveCount;
-			const accuracy = Math.max(0, Math.min(100, 100 - avgLoss / 10));
-			return Math.round(accuracy * 10) / 10;
-		},
+		classifyMove: actual.classifyMove,
+		calculateAccuracy: actual.calculateAccuracy,
 	};
 });
 

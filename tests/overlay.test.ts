@@ -1,18 +1,9 @@
 import { fireEvent, render } from '@testing-library/svelte';
-import { createRawSnippet } from 'svelte';
 import { describe, expect, it, vi } from 'vitest';
 import Overlay from '../src/lib/components/Overlay.svelte';
+import { createDivSnippet } from './helpers';
 
-function createSnippet(text: string) {
-	return createRawSnippet(() => {
-		return {
-			render: () => `<div>${text}</div>`,
-			setup: (node) => {
-				node.textContent = text;
-			},
-		};
-	});
-}
+const createSnippet = createDivSnippet;
 
 describe('Overlay', () => {
 	it('renders children when visible', () => {

@@ -1,5 +1,10 @@
 import type { Square } from 'chess.js';
-import { getMoveComment } from './chess-utils';
+import {
+	calculateAccuracy,
+	classifyMove,
+	getMoveComment,
+} from './chess-utils';
+export { calculateAccuracy, classifyMove } from './chess-utils';
 
 export type StockfishDifficulty =
 	| 'beginner'
@@ -103,25 +108,6 @@ export function parseInfoLine(line: string): ParsedInfo | null {
 	const pv = pvMatch ? pvMatch[1].split(' ') : [];
 
 	return { depth, score, mate, pv };
-}
-
-export function classifyMove(
-	loss: number,
-): 'brilliant' | 'great' | 'best' | 'good' | 'inaccuracy' | 'mistake' | 'blunder' {
-	if (loss < -50) return 'brilliant';
-	if (loss < -20) return 'great';
-	if (loss < 10) return 'best';
-	if (loss < 40) return 'good';
-	if (loss < 100) return 'inaccuracy';
-	if (loss < 300) return 'mistake';
-	return 'blunder';
-}
-
-export function calculateAccuracy(totalLoss: number, moveCount: number): number {
-	if (moveCount === 0) return 100;
-	const avgLoss = totalLoss / moveCount;
-	const accuracy = Math.max(0, Math.min(100, 100 - avgLoss / 10));
-	return Math.round(accuracy * 10) / 10;
 }
 
 export function getDifficultySettings(difficulty: StockfishDifficulty): DifficultySettings {

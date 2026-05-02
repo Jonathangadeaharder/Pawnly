@@ -1,19 +1,8 @@
 import { render } from '@testing-library/svelte';
-import { createRawSnippet } from 'svelte';
 import { describe, expect, it } from 'vitest';
 import { Brand } from '../src/lib/brand';
 import Card from '../src/lib/components/Card.svelte';
-
-function createSnippet(text: string) {
-	return createRawSnippet(() => {
-		return {
-			render: () => `<span>${text}</span>`,
-			setup: (node) => {
-				node.textContent = text;
-			},
-		};
-	});
-}
+import { createSnippet } from './helpers';
 
 describe('Card', () => {
 	it('renders children content', () => {

@@ -8,6 +8,25 @@ type MoveClassification =
 	| 'blunder'
 	| 'missed-win';
 
+export function classifyMove(
+	loss: number,
+): 'brilliant' | 'great' | 'best' | 'good' | 'inaccuracy' | 'mistake' | 'blunder' {
+	if (loss < -50) return 'brilliant';
+	if (loss < -20) return 'great';
+	if (loss < 10) return 'best';
+	if (loss < 40) return 'good';
+	if (loss < 100) return 'inaccuracy';
+	if (loss < 300) return 'mistake';
+	return 'blunder';
+}
+
+export function calculateAccuracy(totalLoss: number, moveCount: number): number {
+	if (moveCount === 0) return 100;
+	const avgLoss = totalLoss / moveCount;
+	const accuracy = Math.max(0, Math.min(100, 100 - avgLoss / 10));
+	return Math.round(accuracy * 10) / 10;
+}
+
 export function getMoveComment(classification: MoveClassification, loss: number): string {
 	const comments: Record<MoveClassification, string> = {
 		brilliant: 'Brilliant move! A stunning tactical blow.',

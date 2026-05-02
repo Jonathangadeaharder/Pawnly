@@ -1,20 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
+import { mockSupabaseAuth } from './helpers';
 
-vi.mock('$lib/supabase', () => ({
-	supabase: {
-		auth: {
-			signInWithPassword: vi.fn(),
-			signUp: vi.fn(),
-			signInWithOtp: vi.fn(),
-			signOut: vi.fn(),
-			getSession: vi.fn().mockResolvedValue({ data: { session: null } }),
-			onAuthStateChange: vi.fn().mockReturnValue({
-				data: { subscription: { unsubscribe: vi.fn() } },
-			}),
-		},
-	},
-}));
+mockSupabaseAuth();
 
 vi.mock('$app/navigation', () => ({
 	goto: vi.fn(),

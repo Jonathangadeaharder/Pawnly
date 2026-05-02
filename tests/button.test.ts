@@ -1,19 +1,8 @@
 import { fireEvent, render } from '@testing-library/svelte';
-import { createRawSnippet } from 'svelte';
 import { describe, expect, it } from 'vitest';
 import { Brand } from '../src/lib/brand';
 import Button from '../src/lib/components/Button.svelte';
-
-function createSnippet(text: string) {
-	return createRawSnippet(() => {
-		return {
-			render: () => `<span>${text}</span>`,
-			setup: (node) => {
-				node.textContent = text;
-			},
-		};
-	});
-}
+import { createSnippet } from './helpers';
 
 describe('Button', () => {
 	it('renders children content', () => {
