@@ -187,7 +187,8 @@ export function createStockfish() {
 
 				case 'bestmove': {
 					isThinking = false;
-					const parsed = parseBestMove(msg.data!);
+					if (!msg.data) break;
+					const parsed = parseBestMove(msg.data);
 					const result: StockfishMove = {
 						from: uciToSquare(parsed.bestMove),
 						to: uciToSquare(parsed.bestMove.slice(2)),
@@ -220,7 +221,8 @@ export function createStockfish() {
 				}
 
 				case 'info': {
-					const parsed = parseInfoLine(msg.data!);
+					if (!msg.data) break;
+					const parsed = parseInfoLine(msg.data);
 					if (parsed) {
 						currentDepth = parsed.depth;
 						if (parsed.score !== undefined) currentScore = parsed.score;
