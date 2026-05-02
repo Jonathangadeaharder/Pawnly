@@ -1,24 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { describeCalculateAccuracyTests, describeClassifyMoveTests } from './helpers';
+import { describeCalculateAccuracyTests, describeClassifyMoveTests, describeExportsTests } from './helpers';
 
 const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
-describe('stockfish module exports', () => {
-	it('exports createStockfish function', async () => {
-		const mod = await import('../src/lib/stockfish.svelte');
-		expect(typeof mod.createStockfish).toBe('function');
-	});
-
-	it('exports classifyMove helper', async () => {
-		const mod = await import('../src/lib/stockfish.svelte');
-		expect(typeof mod.classifyMove).toBe('function');
-	});
-
-	it('exports calculateAccuracy helper', async () => {
-		const mod = await import('../src/lib/stockfish.svelte');
-		expect(typeof mod.calculateAccuracy).toBe('function');
-	});
-});
+describeExportsTests('../src/lib/stockfish.svelte', ['createStockfish', 'classifyMove', 'calculateAccuracy']);
 
 describeClassifyMoveTests('../src/lib/stockfish.svelte');
 

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { describeCalculateAccuracyTests, describeClassifyMoveTests } from './helpers';
+import { describeCalculateAccuracyTests, describeClassifyMoveTests, describeExportsTests } from './helpers';
 
 const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
@@ -24,22 +24,7 @@ vi.mock('../src/lib/stockfish.svelte', async () => {
 	};
 });
 
-describe('analysis module exports', () => {
-	it('exports createAnalysis function', async () => {
-		const mod = await import('../src/lib/analysis.svelte');
-		expect(typeof mod.createAnalysis).toBe('function');
-	});
-
-	it('exports classifyMove helper', async () => {
-		const mod = await import('../src/lib/analysis.svelte');
-		expect(typeof mod.classifyMove).toBe('function');
-	});
-
-	it('exports calculateAccuracy helper', async () => {
-		const mod = await import('../src/lib/analysis.svelte');
-		expect(typeof mod.calculateAccuracy).toBe('function');
-	});
-});
+describeExportsTests('../src/lib/analysis.svelte', ['createAnalysis', 'classifyMove', 'calculateAccuracy']);
 
 describeClassifyMoveTests('../src/lib/analysis.svelte');
 describeCalculateAccuracyTests('../src/lib/analysis.svelte');

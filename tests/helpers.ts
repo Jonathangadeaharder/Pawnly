@@ -217,3 +217,14 @@ export function describeRepoBasicTests(
 		}
 	});
 }
+
+export function describeExportsTests(modulePath: string, exports: string[]) {
+	describe('module exports', () => {
+		for (const name of exports) {
+			it(`exports ${name} helper`, async () => {
+				const mod = await import(modulePath);
+				expect(typeof mod[name]).toBe('function');
+			});
+		}
+	});
+}
