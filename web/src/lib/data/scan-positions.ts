@@ -1,9 +1,9 @@
 export type ScanMode = 'check' | 'capture' | 'threat' | 'loose' | 'doubleAttack';
 
 export interface ScanAnswerKey {
-	checks: string[];
-	captures: string[];
-	threats: string[];
+	checks?: string[];
+	captures?: string[];
+	threats?: string[];
 	loose?: string[];
 	doubleAttack?: string[];
 }
