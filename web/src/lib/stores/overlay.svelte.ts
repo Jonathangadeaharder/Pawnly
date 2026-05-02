@@ -1,4 +1,4 @@
-export type OverlayType = 'game' | 'lesson' | 'puzzle' | 'celebration' | null;
+export type OverlayType = 'game' | 'lesson' | 'puzzle' | 'celebration' | 'scan' | null;
 
 function createOverlayStore() {
 	let current: OverlayType = $state(null);
@@ -18,6 +18,9 @@ function createOverlayStore() {
 		},
 		openCelebration(): void {
 			current = 'celebration';
+		},
+		openScan(): void {
+			current = 'scan';
 		},
 		close(): void {
 			current = null;
