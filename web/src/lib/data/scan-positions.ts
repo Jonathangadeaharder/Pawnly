@@ -13,7 +13,6 @@ export interface ScanPosition {
 	fen: string;
 	playerColor: 'w' | 'b';
 	level: number;
-	targetTime: number;
 	answerKey: ScanAnswerKey;
 	hint?: string;
 }
@@ -63,7 +62,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
 		playerColor: 'b',
 		level: 1,
-		targetTime: 20,
 		answerKey: { checks: ['c4'], captures: ['c4', 'f6', 'c6'], threats: [] },
 	},
 	{
@@ -71,7 +69,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'rnbqkb1r/ppp2ppp/3p4/4p3/2B1n3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4',
 		playerColor: 'b',
 		level: 1,
-		targetTime: 20,
 		answerKey: { checks: [], captures: ['e4', 'c4'], threats: [] },
 	},
 	{
@@ -79,7 +76,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
 		playerColor: 'b',
 		level: 1,
-		targetTime: 20,
 		answerKey: { checks: ['c4'], captures: ['c4', 'f6', 'c6', 'c5'], threats: [] },
 	},
 	{
@@ -87,7 +83,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: '2r3k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1',
 		playerColor: 'b',
 		level: 2,
-		targetTime: 20,
 		answerKey: { checks: ['e1'], captures: ['e1'], threats: [] },
 	},
 	{
@@ -95,7 +90,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bq1rk1/ppp2ppp/2n1pn2/3p4/2PP4/4BN2/PP3PPP/RN1QKB1R w KQ - 0 1',
 		playerColor: 'b',
 		level: 2,
-		targetTime: 20,
 		answerKey: { checks: [], captures: ['d4', 'c4', 'f6', 'e6', 'c6'], threats: [] },
 	},
 	{
@@ -103,7 +97,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r2qkb1r/ppp2ppp/2n1bn2/3pp3/2PP4/4BN2/PP3PPP/RN1QKB1R w KQkq - 0 1',
 		playerColor: 'b',
 		level: 3,
-		targetTime: 15,
 		answerKey: { checks: [], captures: ['d4', 'c4', 'e6', 'f6', 'c6', 'd5'], threats: [] },
 	},
 	{
@@ -111,7 +104,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bq1rk1/pppp1ppp/2n2n2/2b1p3/2B1P3/3P1N2/PPP2PPP/RNBQK2R w KQ - 0 5',
 		playerColor: 'b',
 		level: 3,
-		targetTime: 15,
 		answerKey: { checks: ['c4'], captures: ['c4', 'f6', 'c6', 'c5'], threats: [] },
 	},
 	{
@@ -119,7 +111,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bqr1k1/ppp2ppp/2n1pn2/3p4/2PP4/4BN2/PP3PPP/RN1QKB1R w KQ - 0 1',
 		playerColor: 'b',
 		level: 4,
-		targetTime: 15,
 		answerKey: { checks: [], captures: ['d4', 'c4', 'f6', 'e6', 'c6', 'd5'], threats: [] },
 	},
 	{
@@ -127,7 +118,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bqk2r/pppp1ppp/2n5/2b1p3/2B1n3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 1',
 		playerColor: 'b',
 		level: 4,
-		targetTime: 15,
 		answerKey: { checks: ['c4', 'e4'], captures: ['c4', 'e4', 'c6', 'c5'], threats: [] },
 	},
 	{
@@ -135,7 +125,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bq1rk1/pppn1ppp/4pn2/3p4/2PP4/4BN2/PP3PPP/RN1QKB1R w KQ - 0 1',
 		playerColor: 'b',
 		level: 4,
-		targetTime: 15,
 		answerKey: { checks: [], captures: ['d4', 'c4', 'f6', 'e6', 'd5'], threats: [] },
 	},
 	{
@@ -143,7 +132,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bq1rk1/ppp2ppp/2n1pn2/3p4/2PP4/2N1BN2/PP3PPP/R2QKB1R w KQ - 0 1',
 		playerColor: 'b',
 		level: 5,
-		targetTime: 15,
 		answerKey: { checks: [], captures: ['d4', 'c4', 'f6', 'e6', 'c6', 'd5'], threats: ['f8', 'c8'] },
 	},
 	{
@@ -151,7 +139,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bqr1k1/ppp2ppp/2n1pn2/3p4/2PP4/4BN2/PP3PPP/RN1QKB1R w KQ - 0 1',
 		playerColor: 'b',
 		level: 5,
-		targetTime: 15,
 		answerKey: { checks: [], captures: ['d4', 'c4', 'f6', 'e6', 'c6', 'd5'], threats: ['e8', 'c8'] },
 	},
 	{
@@ -159,7 +146,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bq1rk1/ppp2ppp/2n5/3pp3/2B1n3/5N2/PPPP1PPP/RNBQ1RK1 w - - 0 1',
 		playerColor: 'b',
 		level: 6,
-		targetTime: 15,
 		answerKey: { checks: ['c4', 'e4'], captures: ['c4', 'e4', 'c6', 'd5'], threats: ['d8', 'c8'] },
 	},
 	{
@@ -167,7 +153,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r2qkb1r/ppp2ppp/2n1bn2/3pp3/2PP4/2N1BN2/PP3PPP/R2QKB1R w KQkq - 0 1',
 		playerColor: 'b',
 		level: 6,
-		targetTime: 15,
 		answerKey: { checks: [], captures: ['d4', 'c4', 'e6', 'f6', 'c6', 'd5'], threats: ['f8', 'c8', 'd8'] },
 	},
 	{
@@ -175,7 +160,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bq1rk1/pppp1ppp/2n2n2/2b1p3/2B1P3/3P1Q2/PPP2PPP/RNB1K1NR w KQ - 0 5',
 		playerColor: 'b',
 		level: 6,
-		targetTime: 15,
 		answerKey: { checks: ['c4', 'c5'], captures: ['c4', 'f6', 'c6', 'c5'], threats: ['f3', 'c5'] },
 	},
 	{
@@ -183,7 +167,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bq1rk1/ppp2ppp/2n1pn2/3p4/2PP4/4BN2/PP2QPPP/RN2KB1R w KQ - 0 1',
 		playerColor: 'b',
 		level: 7,
-		targetTime: 12,
 		answerKey: { checks: [], captures: ['d4', 'c4', 'f6', 'e6', 'c6', 'd5'], threats: ['e2', 'f8'] },
 	},
 	{
@@ -191,7 +174,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r2q1rk1/pppbbppp/2n1pn2/3p4/2PP4/4BN2/PP3PPP/RN1QKB1R w KQ - 0 1',
 		playerColor: 'b',
 		level: 7,
-		targetTime: 12,
 		answerKey: { checks: [], captures: ['d4', 'c4', 'f6', 'e6', 'c6', 'd5'], threats: ['d7', 'e7', 'f8', 'd8'] },
 	},
 	{
@@ -199,7 +181,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bq1rk1/pppn1ppp/4pn2/3p4/2PP4/2N1BN2/PP3PPP/R2QKB1R w KQ - 0 1',
 		playerColor: 'b',
 		level: 8,
-		targetTime: 12,
 		answerKey: { checks: [], captures: ['d4', 'c4', 'f6', 'e6', 'd5'], threats: ['f8', 'd8'], loose: ['c3'] },
 	},
 	{
@@ -207,7 +188,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bqr1k1/ppp2ppp/2n1pn2/3p4/2PP4/2N1BN2/PP3PPP/R2QKB1R w KQ - 0 1',
 		playerColor: 'b',
 		level: 8,
-		targetTime: 12,
 		answerKey: { checks: [], captures: ['d4', 'c4', 'f6', 'e6', 'c6', 'd5'], threats: ['e8', 'c8'], loose: ['c3', 'e3'] },
 	},
 	{
@@ -215,7 +195,6 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r1bq1rk1/ppp2ppp/2n1pn2/3p4/1bPP4/2N1BN2/PP3PPP/R2QKB1R w KQ - 0 1',
 		playerColor: 'b',
 		level: 8,
-		targetTime: 12,
 		answerKey: { checks: [], captures: ['d4', 'c4', 'f6', 'e6', 'c6', 'd5'], threats: ['b4', 'f8', 'd8'], loose: ['c3'] },
 	},
 ];
