@@ -113,24 +113,26 @@ export function createGame(initialFen: string = DEFAULT_FEN) {
 		}
 	}
 
+	function trySelectPiece(square: Square): boolean {
+		const piece = chess.get(square);
+		if (piece && piece.color === chess.turn()) {
+			selectedSquare = square;
+			highlightedSquares = chess.moves({ square, verbose: true }).map((m) => m.to);
+			return true;
+		}
+		return false;
+	}
+
 	function selectSquare(square: Square): void {
 		if (selectedSquare === null) {
-			const piece = chess.get(square);
-			if (piece && piece.color === chess.turn()) {
-				selectedSquare = square;
-				highlightedSquares = chess.moves({ square, verbose: true }).map((m) => m.to);
-			}
+			trySelectPiece(square);
 		} else if (selectedSquare === square) {
 			selectedSquare = null;
 			highlightedSquares = [];
 		} else if (highlightedSquares.includes(square)) {
 			makeMove(selectedSquare, square);
 		} else {
-			const piece = chess.get(square);
-			if (piece && piece.color === chess.turn()) {
-				selectedSquare = square;
-				highlightedSquares = chess.moves({ square, verbose: true }).map((m) => m.to);
-			} else {
+			if (!trySelectPiece(square)) {
 				selectedSquare = null;
 				highlightedSquares = [];
 			}

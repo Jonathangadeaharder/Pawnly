@@ -1,4 +1,5 @@
 import type { Square } from 'chess.js';
+import { getMoveComment } from './chess-utils';
 
 export type StockfishDifficulty =
 	| 'beginner'
@@ -139,19 +140,7 @@ function uciToSquare(uci: string): Square {
 	return uci.slice(0, 2) as Square;
 }
 
-function getMoveComment(classification: MoveAnalysis['classification'], loss: number): string {
-	const comments: Record<MoveAnalysis['classification'], string> = {
-		brilliant: 'Brilliant move! A stunning tactical blow.',
-		great: 'Excellent move! This significantly improves your position.',
-		best: 'Best move. Maintains or improves your advantage.',
-		good: 'Good move. Keeps the position balanced.',
-		inaccuracy: `Inaccuracy. You lost ${Math.round(loss / 10) / 10} pawns of advantage.`,
-		mistake: `Mistake! This loses ${Math.round(loss / 10) / 10} pawns.`,
-		blunder: `Blunder!! This is a serious error, losing ${Math.round(loss / 10) / 10} pawns.`,
-		'missed-win': 'You missed a winning move!',
-	};
-	return comments[classification];
-}
+
 
 export function createStockfish() {
 	let isReady = $state(false);
