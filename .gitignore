@@ -1,44 +1,32 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
+.svelte-kit/
+build/
 node_modules/
+coverage/
+.nyc_output/
 
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
+# Env
+.env
+.env.*
+.env.local
+.env.*.local
 
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+# OS
+.DS_Store
+Thumbs.db
 
-# Metro
-.metro-health-check*
+# IDE
+.vscode/
+.idea/
 
-# debug
+# Debug
 npm-debug.*
 yarn-debug.*
 yarn-error.*
 
-# macOS
-.DS_Store
+# Build
+*.tsbuildinfo
 *.pem
 
-# local env files
-.env*.local
-
-# typescript
-*.tsbuildinfo
-
-# generated native folders
-/ios
-/android
-
-# repomix output
+# Misc
 repomix-output.txt
+*.local
