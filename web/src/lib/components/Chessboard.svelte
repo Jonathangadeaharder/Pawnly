@@ -1,8 +1,9 @@
 <script lang="ts">
 import { Brand } from '$lib/brand';
 import { fenToPieces, getSquareFromCoords, getCoordsFromSquare } from '$lib/board.svelte';
+import Arrow from '$lib/components/Arrow.svelte';
 import Piece from '$lib/components/Piece.svelte';
-import type { Square, Arrow, Highlight } from '$lib/game.svelte';
+import type { Square, Arrow as ArrowType, Highlight } from '$lib/game.svelte';
 
 let {
 	game,
@@ -17,7 +18,7 @@ let {
 	size?: number;
 	flipped?: boolean;
 	showCoords?: boolean;
-	arrows?: Arrow[];
+	arrows?: ArrowType[];
 	highlights?: Highlight[];
 	onMove?: (from: Square, to: Square) => void;
 } = $props();
@@ -312,7 +313,6 @@ function squareToPixel(square: Square): { x: number; y: number } {
 		onmousemove={handleMouseMove}
 		onmouseup={handleMouseUp}
 		onmouseleave={handleMouseUp}
-		onkeydown={() => {}}
 		ontouchstart={handleTouchStart}
 		ontouchmove={handleTouchMove}
 		ontouchend={handleTouchEnd}
@@ -424,33 +424,15 @@ function squareToPixel(square: Square): { x: number; y: number } {
 		{#each arrows as a, i (i)}
 			{@const fromCoords = squareToPixel(a.from)}
 			{@const toCoords = squareToPixel(a.to)}
-			{@const x1 = fromCoords.x + sq / 2}
-			{@const y1 = fromCoords.y + sq / 2}
-			{@const x2 = toCoords.x + sq / 2}
-			{@const y2 = toCoords.y + sq / 2}
-			{@const dx = x2 - x1}
-			{@const dy = y2 - y1}
-			{@const len = Math.sqrt(dx * dx + dy * dy)}
-			{@const nx = dx / len}
-			{@const ny = dy / len}
-			{@const ex = x2 - nx * sq * 0.3}
-			{@const ey = y2 - ny * sq * 0.3}
-			{@const ah = sq * 0.25}
-			<g opacity={a.opacity ?? 0.85}>
-				<line
-					{x1}
-					{y1}
-					x2={ex}
-					y2={ey}
-					stroke={a.color || Brand.colors.moss}
-					stroke-width={sq * 0.14}
-					stroke-linecap="round"
-				/>
-				<polygon
-					points="{x2},{y2} {ex - ny * ah / 1.6},{ey + nx * ah / 1.6} {ex + ny * ah / 1.6},{ey - nx * ah / 1.6}"
-					fill={a.color || Brand.colors.moss}
-				/>
-			</g>
+			<Arrow
+				x1={fromCoords.x + sq / 2}
+				y1={fromCoords.y + sq / 2}
+				x2={toCoords.x + sq / 2}
+				y2={toCoords.y + sq / 2}
+				{sq}
+				color={a.color}
+				opacity={a.opacity}
+			/>
 		{/each}
 	</svg>
 	<!-- Piece layer (above SVG) -->

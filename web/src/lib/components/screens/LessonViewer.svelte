@@ -4,7 +4,8 @@ import Button from '$lib/components/Button.svelte';
 import Header from '$lib/components/Header.svelte';
 import Mascot from '$lib/components/Mascot.svelte';
 import MiniBoard from '$lib/components/MiniBoard.svelte';
-import { fenToPieces, lessons } from '$lib/data/lessons';
+import { lessons } from '$lib/data/lessons';
+import { fenToPieces } from '$lib/board.svelte';
 
 let {
 	onClose,

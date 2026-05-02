@@ -156,12 +156,12 @@ export function createAnalysis(moves: string[], startFen?: string): AnalysisStat
 			const afterFen = chess.fen();
 
 			const posAnalysis = await stockfish.analyze(afterFen);
-			const rawEval =
-				posAnalysis.mate !== undefined
-					? posAnalysis.mate > 0
-						? 10000
-						: -10000
-					: posAnalysis.evaluation;
+			let rawEval: number;
+			if (posAnalysis.mate !== undefined) {
+				rawEval = posAnalysis.mate > 0 ? 10000 : -10000;
+			} else {
+				rawEval = posAnalysis.evaluation;
+			}
 			const normalizedEval = isWhite ? rawEval : -rawEval;
 			const loss = previousEval - normalizedEval;
 			const classification = classify(loss);

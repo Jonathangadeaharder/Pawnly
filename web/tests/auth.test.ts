@@ -45,11 +45,11 @@ describe('auth store', () => {
 			error: null,
 		} as any);
 
-		const result = await auth.signInWithEmail('test@test.com', 'password123');
+		const result = await auth.signInWithEmail('test@test.com', 'test-password-not-real');
 
 		expect(supabase.auth.signInWithPassword).toHaveBeenCalledWith({
 			email: 'test@test.com',
-			password: 'password123',
+			password: 'test-password-not-real',
 		});
 		expect(result.error).toBeNull();
 	});
@@ -73,11 +73,11 @@ describe('auth store', () => {
 			error: null,
 		} as any);
 
-		const result = await auth.signUpWithEmail('new@test.com', 'pass123', 'PawnyFan');
+		const result = await auth.signUpWithEmail('new@test.com', 'test-password-not-real', 'PawnyFan');
 
 		expect(supabase.auth.signUp).toHaveBeenCalledWith({
 			email: 'new@test.com',
-			password: 'pass123',
+			password: 'test-password-not-real',
 			options: {
 				data: { display_name: 'PawnyFan' },
 			},

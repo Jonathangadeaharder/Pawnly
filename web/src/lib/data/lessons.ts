@@ -13,39 +13,6 @@ export interface Lesson {
 	steps: LessonStep[];
 }
 
-export function fenToPieces(fen: string): Record<string, string> {
-	const pieces: Record<string, string> = {};
-	const pieceMap: Record<string, string> = {
-		K: 'wk',
-		Q: 'wq',
-		R: 'wr',
-		B: 'wb',
-		N: 'wn',
-		P: 'wp',
-		k: 'bk',
-		q: 'bq',
-		r: 'br',
-		b: 'bb',
-		n: 'bn',
-		p: 'bp',
-	};
-	const rows = fen.split(' ')[0].split('/');
-	for (let ri = 0; ri < rows.length; ri++) {
-		let fi = 0;
-		for (const ch of rows[ri]) {
-			if (ch >= '1' && ch <= '8') {
-				fi += parseInt(ch, 10);
-			} else {
-				const file = String.fromCharCode(97 + fi);
-				const rank = 8 - ri;
-				pieces[`${file}${rank}`] = pieceMap[ch];
-				fi++;
-			}
-		}
-	}
-	return pieces;
-}
-
 export const lessons: Lesson[] = [
 	{
 		id: 'l1',

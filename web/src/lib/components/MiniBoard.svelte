@@ -1,5 +1,6 @@
 <script lang="ts">
 import { Brand } from '$lib/brand';
+import Arrow from '$lib/components/Arrow.svelte';
 import Piece from '$lib/components/Piece.svelte';
 
 let {
@@ -48,8 +49,8 @@ const pieceEntries = $derived(
 			const p = pieces[sq.name];
 			return {
 				...sq,
-				color: p[0] === 'w' ? 'white' as const : 'black' as const,
-				type: p[1] as 'p' | 'n' | 'b' | 'r' | 'q' | 'k',
+				color: p === p.toUpperCase() ? 'white' as const : 'black' as const,
+				type: p.toLowerCase() as 'p' | 'n' | 'b' | 'r' | 'q' | 'k',
 			};
 		})
 );
@@ -120,33 +121,15 @@ const pieceEntries = $derived(
 			{@const fromRi = ranks.indexOf(parseInt(a.from[1]))}
 			{@const toFi = files.indexOf(a.to[0])}
 			{@const toRi = ranks.indexOf(parseInt(a.to[1]))}
-			{@const x1 = fromFi * sq + sq / 2}
-			{@const y1 = fromRi * sq + sq / 2}
-			{@const x2 = toFi * sq + sq / 2}
-			{@const y2 = toRi * sq + sq / 2}
-			{@const dx = x2 - x1}
-			{@const dy = y2 - y1}
-			{@const len = Math.sqrt(dx * dx + dy * dy)}
-			{@const nx = dx / len}
-			{@const ny = dy / len}
-			{@const ex = x2 - nx * sq * 0.3}
-			{@const ey = y2 - ny * sq * 0.3}
-			{@const ah = sq * 0.25}
-			<g opacity={a.opacity ?? 0.85}>
-				<line
-					{x1}
-					{y1}
-					x2={ex}
-					y2={ey}
-					stroke={a.color || Brand.colors.moss}
-					stroke-width={sq * 0.14}
-					stroke-linecap="round"
-				/>
-				<polygon
-					points="{x2},{y2} {ex - ny * ah / 1.6},{ey + nx * ah / 1.6} {ex + ny * ah / 1.6},{ey - nx * ah / 1.6}"
-					fill={a.color || Brand.colors.moss}
-				/>
-			</g>
+			<Arrow
+				x1={fromFi * sq + sq / 2}
+				y1={fromRi * sq + sq / 2}
+				x2={toFi * sq + sq / 2}
+				y2={toRi * sq + sq / 2}
+				{sq}
+				color={a.color}
+				opacity={a.opacity}
+			/>
 		{/each}
 	</svg>
 	{#each pieceEntries as p (p.name)}

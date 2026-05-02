@@ -15,7 +15,7 @@ let {
 	timeControl = '10+0',
 }: {
 	onExit?: () => void;
-	difficulty?: string;
+	difficulty?: StockfishDifficulty;
 	timeControl?: string;
 } = $props();
 
@@ -116,7 +116,7 @@ function handlePlayerMove(from: Square, to: Square) {
 		if (game.isGameOver) return;
 		isThinking = true;
 		try {
-			const bestMove = await engine.getBestMove(game.fen, difficulty as StockfishDifficulty);
+			const bestMove = await engine.getBestMove(game.fen, difficulty);
 			if (!game.isGameOver && bestMove) {
 				game.makeMove(bestMove.from, bestMove.to);
 			}
