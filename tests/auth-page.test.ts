@@ -1,12 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
-import { mockSupabaseAuth } from './helpers';
+import { mockAppNavigation, mockSupabaseAuth } from './helpers';
 
 mockSupabaseAuth();
-
-vi.mock('$app/navigation', () => ({
-	goto: vi.fn(),
-}));
+mockAppNavigation();
 
 import AuthPage from '../src/routes/auth/+page.svelte';
 

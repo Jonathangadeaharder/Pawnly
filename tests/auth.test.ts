@@ -5,36 +5,44 @@ mockSupabaseAuth();
 
 import { supabase } from '$lib/supabase';
 
+async function getAuth() {
+	return (await import('$lib/stores/auth.svelte')).auth;
+}
+
+function mockSuccess(method: keyof typeof supabase.auth, data: unknown) {
+	vi.mocked(supabase.auth[method]).mockResolvedValueOnce({ data, error: null } as any);
+}
+
+function mockError(method: keyof typeof supabase.auth, message: string) {
+	vi.mocked(supabase.auth[method]).mockResolvedValueOnce({
+		data: method === 'signInWithOtp' ? {} : { user: null, session: null },
+		error: { message },
+	} as any);
+}
+
 describe('auth store', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
 	it('exports an auth store object', async () => {
-		const { auth } = await import('$lib/stores/auth.svelte');
-		expect(auth).toBeDefined();
+		expect(await getAuth()).toBeDefined();
 	});
 
 	it('has initial state with no user and no session', async () => {
-		const { auth } = await import('$lib/stores/auth.svelte');
+		const auth = await getAuth();
 		expect(auth.user).toBeNull();
 		expect(auth.session).toBeNull();
 	});
 
 	it('has loading as false initially after init', async () => {
-		const { auth } = await import('$lib/stores/auth.svelte');
+		const auth = await getAuth();
 		expect(auth.loading).toBe(false);
 	});
 
 	it('signInWithEmail calls supabase.auth.signInWithPassword', async () => {
-		const { auth } = await import('$lib/stores/auth.svelte');
-		vi.mocked(supabase.auth.signInWithPassword).mockResolvedValueOnce({
-			data: { user: { id: '1' }, session: { access_token: 'tok' } },
-			error: null,
-		} as any);
-
-		const result = await auth.signInWithEmail('test@test.com', 'test-password-not-real');
-
+		mockSuccess('signInWithPassword', { user: { id: '1' }, session: { access_token: 'tok' } });
+		const result = await (await getAuth()).signInWithEmail('test@test.com', 'test-password-not-real');
 		expect(supabase.auth.signInWithPassword).toHaveBeenCalledWith({
 			email: 'test@test.com',
 			password: 'test-password-not-real',
@@ -43,95 +51,51 @@ describe('auth store', () => {
 	});
 
 	it('signInWithEmail returns error on failure', async () => {
-		const { auth } = await import('$lib/stores/auth.svelte');
-		vi.mocked(supabase.auth.signInWithPassword).mockResolvedValueOnce({
-			data: { user: null, session: null },
-			error: { message: 'Invalid login credentials' },
-		} as any);
-
-		const result = await auth.signInWithEmail('bad@test.com', 'wrong');
-
+		mockError('signInWithPassword', 'Invalid login credentials');
+		const result = await (await getAuth()).signInWithEmail('bad@test.com', 'wrong');
 		expect(result.error).toBe('Invalid login credentials');
 	});
 
 	it('signUpWithEmail calls supabase.auth.signUp with display name', async () => {
-		const { auth } = await import('$lib/stores/auth.svelte');
-		vi.mocked(supabase.auth.signUp).mockResolvedValueOnce({
-			data: { user: { id: '1' }, session: null },
-			error: null,
-		} as any);
-
-		const result = await auth.signUpWithEmail('new@test.com', 'test-password-not-real', 'PawnyFan');
-
+		mockSuccess('signUp', { user: { id: '1' }, session: null });
+		const result = await (await getAuth()).signUpWithEmail('new@test.com', 'test-password-not-real', 'PawnyFan');
 		expect(supabase.auth.signUp).toHaveBeenCalledWith({
 			email: 'new@test.com',
 			password: 'test-password-not-real',
-			options: {
-				data: { display_name: 'PawnyFan' },
-			},
+			options: { data: { display_name: 'PawnyFan' } },
 		});
 		expect(result.error).toBeNull();
 	});
 
 	it('signUpWithEmail returns error on failure', async () => {
-		const { auth } = await import('$lib/stores/auth.svelte');
-		vi.mocked(supabase.auth.signUp).mockResolvedValueOnce({
-			data: { user: null, session: null },
-			error: { message: 'User already registered' },
-		} as any);
-
-		const result = await auth.signUpWithEmail('dup@test.com', 'pass', 'Name');
-
+		mockError('signUp', 'User already registered');
+		const result = await (await getAuth()).signUpWithEmail('dup@test.com', 'pass', 'Name');
 		expect(result.error).toBe('User already registered');
 	});
 
 	it('signInWithMagicLink calls supabase.auth.signInWithOtp', async () => {
-		const { auth } = await import('$lib/stores/auth.svelte');
-		vi.mocked(supabase.auth.signInWithOtp).mockResolvedValueOnce({
-			data: {},
-			error: null,
-		} as any);
-
-		const result = await auth.signInWithMagicLink('magic@test.com');
-
-		expect(supabase.auth.signInWithOtp).toHaveBeenCalledWith({
-			email: 'magic@test.com',
-		});
+		mockSuccess('signInWithOtp', {});
+		const result = await (await getAuth()).signInWithMagicLink('magic@test.com');
+		expect(supabase.auth.signInWithOtp).toHaveBeenCalledWith({ email: 'magic@test.com' });
 		expect(result.error).toBeNull();
 	});
 
 	it('signInWithMagicLink returns error on failure', async () => {
-		const { auth } = await import('$lib/stores/auth.svelte');
-		vi.mocked(supabase.auth.signInWithOtp).mockResolvedValueOnce({
-			data: {},
-			error: { message: 'Rate limit exceeded' },
-		} as any);
-
-		const result = await auth.signInWithMagicLink('spam@test.com');
-
+		mockError('signInWithOtp', 'Rate limit exceeded');
+		const result = await (await getAuth()).signInWithMagicLink('spam@test.com');
 		expect(result.error).toBe('Rate limit exceeded');
 	});
 
 	it('signOut calls supabase.auth.signOut', async () => {
-		const { auth } = await import('$lib/stores/auth.svelte');
-		vi.mocked(supabase.auth.signOut).mockResolvedValueOnce({
-			error: null,
-		} as any);
-
-		const result = await auth.signOut();
-
+		mockSuccess('signOut', undefined);
+		const result = await (await getAuth()).signOut();
 		expect(supabase.auth.signOut).toHaveBeenCalled();
 		expect(result.error).toBeNull();
 	});
 
 	it('signOut returns error on failure', async () => {
-		const { auth } = await import('$lib/stores/auth.svelte');
-		vi.mocked(supabase.auth.signOut).mockResolvedValueOnce({
-			error: { message: 'Sign out failed' },
-		} as any);
-
-		const result = await auth.signOut();
-
+		mockError('signOut', 'Sign out failed');
+		const result = await (await getAuth()).signOut();
 		expect(result.error).toBe('Sign out failed');
 	});
 });

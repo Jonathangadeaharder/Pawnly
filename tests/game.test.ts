@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import { createGameInstance } from './helpers';
 
 const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
-async function createGame(fen?: string) {
-	const { createGame } = await import('../src/lib/game.svelte');
-	return createGame(fen);
-}
+const createGame = createGameInstance;
 
 describe('createGame', () => {
 	it('exports createGame function', async () => {

@@ -2,12 +2,9 @@ import { fireEvent, render } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
 import { Brand } from '../src/lib/brand';
 import Chessboard from '../src/lib/components/Chessboard.svelte';
-import { expectBoardSvg, expectBoardWrapper } from './helpers';
+import { createGameInstance, expectBoardSvg, expectBoardWrapper } from './helpers';
 
-async function createTestGame(fen?: string) {
-	const { createGame } = await import('../src/lib/game.svelte');
-	return createGame(fen);
-}
+const createTestGame = createGameInstance;
 
 async function renderBoard(props: Record<string, unknown> = {}) {
 	const game = props.game ?? (await createTestGame(props.fen as string));

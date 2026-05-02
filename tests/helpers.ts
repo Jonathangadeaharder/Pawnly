@@ -1,6 +1,18 @@
 import { createRawSnippet } from 'svelte';
 import { describe, expect, it, vi } from 'vitest';
 import { Brand } from '../src/lib/brand';
+import type { createGame } from '../src/lib/game.svelte';
+
+export async function createGameInstance(fen?: string): Promise<ReturnType<typeof createGame>> {
+	const mod = await import('../src/lib/game.svelte');
+	return mod.createGame(fen);
+}
+
+export function mockAppNavigation() {
+	vi.mock('$app/navigation', () => ({
+		goto: vi.fn(),
+	}));
+}
 
 export function createSnippet(text: string) {
 	return createRawSnippet(() => {
