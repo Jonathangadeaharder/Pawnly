@@ -6,8 +6,10 @@ import Pill from '$lib/components/Pill.svelte';
 
 let {
 	onOpenPuzzle,
+	onOpenScan,
 }: {
 	onOpenPuzzle: (puzzleId: string) => void;
+	onOpenScan: () => void;
 } = $props();
 
 const puzzles = [
@@ -55,6 +57,41 @@ const puzzles = [
 					style:margin-top="4px"
 				>
 					Can you find the winning move?
+				</div>
+			</button>
+		</div>
+
+		<!-- Scan hero -->
+		<div style:padding="0 16px 16px">
+			<button
+				class="w-full cursor-pointer border-none text-left"
+				style:background={Brand.colors.moss}
+				style:border-radius="22px"
+				style:padding="20px"
+				style:box-shadow="0 12px 28px rgba(63,107,67,0.25)"
+				onclick={onOpenScan}
+			>
+				<Pill bg="rgba(255,255,255,0.2)" color={Brand.colors.cream}>
+					Scan trainer
+				</Pill>
+				<div
+					style:font-family={Brand.fonts.display}
+					style:font-style="italic"
+					style:font-size="22px"
+					style:font-weight="600"
+					style:color={Brand.colors.cream}
+					style:margin-top="8px"
+				>
+					Find all threats
+				</div>
+				<div
+					style:font-family={Brand.fonts.body}
+					style:font-size="13px"
+					style:color={Brand.colors.cream}
+					style:opacity="0.8"
+					style:margin-top="4px"
+				>
+					Mark checks, captures & threats before time runs out
 				</div>
 			</button>
 		</div>

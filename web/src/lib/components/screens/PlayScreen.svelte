@@ -1,8 +1,8 @@
 <script lang="ts">
 import { Brand } from '$lib/brand';
+import Button from '$lib/components/Button.svelte';
 import Card from '$lib/components/Card.svelte';
 import Header from '$lib/components/Header.svelte';
-import Button from '$lib/components/Button.svelte';
 import PlayIcon from '$lib/components/icons/PlayIcon.svelte';
 
 let { onStart }: { onStart: () => void } = $props();

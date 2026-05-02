@@ -1,9 +1,9 @@
 <script lang="ts">
+import { fenToPieces, getCoordsFromSquare, getSquareFromCoords } from '$lib/board.svelte';
 import { Brand } from '$lib/brand';
-import { fenToPieces, getSquareFromCoords, getCoordsFromSquare } from '$lib/board.svelte';
 import Arrow from '$lib/components/Arrow.svelte';
 import Piece from '$lib/components/Piece.svelte';
-import type { Square, Arrow as ArrowType, Highlight } from '$lib/game.svelte';
+import type { Arrow as ArrowType, Highlight, Square } from '$lib/game.svelte';
 
 let {
 	game,
@@ -24,8 +24,10 @@ let {
 } = $props();
 
 const sq = $derived(size / 8);
-const files = $derived(flipped ? ['h','g','f','e','d','c','b','a'] : ['a','b','c','d','e','f','g','h']);
-const ranks = $derived(flipped ? [1,2,3,4,5,6,7,8] : [8,7,6,5,4,3,2,1]);
+const files = $derived(
+	flipped ? ['h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'] : ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+);
+const ranks = $derived(flipped ? [1, 2, 3, 4, 5, 6, 7, 8] : [8, 7, 6, 5, 4, 3, 2, 1]);
 const lightC = Brand.colors.boardLight;
 const darkC = Brand.colors.boardDark;
 
@@ -39,8 +41,8 @@ const boardSquares = $derived(
 			fi,
 			ri,
 			isLight: (ri + fi) % 2 === 0,
-		}))
-	)
+		})),
+	),
 );
 
 const highlightMap = $derived(new Map(highlights.map((h) => [h.square, h])));
@@ -65,7 +67,7 @@ const legalMoveTargets = $derived.by(() => {
 		game.getLegalMoves(selectedSquare).map((m) => {
 			const to = m.includes('-') ? m.split('-')[1] : m.slice(-2);
 			return to;
-		})
+		}),
 	);
 });
 
@@ -278,7 +280,7 @@ function cancelPromotion() {
 }
 
 function getPieceInfo(piece: string) {
-	const color = piece === piece.toUpperCase() ? 'white' as const : 'black' as const;
+	const color = piece === piece.toUpperCase() ? ('white' as const) : ('black' as const);
 	const type = piece.toLowerCase() as 'p' | 'n' | 'b' | 'r' | 'q' | 'k';
 	return { color, type };
 }
@@ -306,7 +308,7 @@ function squareToPixel(square: Square): { x: number; y: number } {
 		height={size}
 		style="position:absolute;inset:0"
 		data-board
-		role="grid"
+		role="application"
 		tabindex="-1"
 		onclick={handleBoardClick}
 		onmousedown={handleMouseDown}

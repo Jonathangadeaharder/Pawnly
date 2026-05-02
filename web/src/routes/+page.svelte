@@ -2,8 +2,7 @@
 import { Brand } from '$lib/brand';
 import HomeScreen from '$lib/components/screens/HomeScreen.svelte';
 
-function onNavigate(screen: string) {
-}
+function onNavigate(screen: string) {}
 </script>
 
 <svelte:head>

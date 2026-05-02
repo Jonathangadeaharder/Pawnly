@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
 import { Chess } from 'chess.js';
-import { puzzles, dailyPuzzle } from '../src/lib/data/puzzles';
+import { describe, expect, it } from 'vitest';
+import { dailyPuzzle, puzzles } from '../src/lib/data/puzzles';
 
 describe('puzzles data', () => {
 	it('exports 8 puzzles', () => {

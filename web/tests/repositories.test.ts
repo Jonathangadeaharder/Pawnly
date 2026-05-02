@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/lib/supabase', () => ({
 	supabase: {
@@ -15,6 +15,7 @@ vi.mock('../src/lib/supabase', () => ({
 			order: vi.fn().mockReturnThis(),
 			limit: vi.fn().mockReturnThis(),
 			single: vi.fn().mockResolvedValue({ data: null, error: null }),
+			// biome-ignore lint/suspicious/noThenProperty: Supabase query builder is thenable
 			then: vi.fn().mockResolvedValue({ data: [], error: null }),
 		}),
 		channel: vi.fn().mockReturnValue({
@@ -191,7 +192,9 @@ describe('AchievementRepository', () => {
 	});
 
 	it('creates an achievement repository', async () => {
-		const { createAchievementRepository } = await import('../src/lib/repositories/achievement.svelte');
+		const { createAchievementRepository } = await import(
+			'../src/lib/repositories/achievement.svelte'
+		);
 		const repo = createAchievementRepository();
 		expect(repo).toBeDefined();
 		expect(repo.unlocked).toEqual([]);
@@ -199,25 +202,33 @@ describe('AchievementRepository', () => {
 	});
 
 	it('has loadAchievements method', async () => {
-		const { createAchievementRepository } = await import('../src/lib/repositories/achievement.svelte');
+		const { createAchievementRepository } = await import(
+			'../src/lib/repositories/achievement.svelte'
+		);
 		const repo = createAchievementRepository();
 		expect(typeof repo.loadAchievements).toBe('function');
 	});
 
 	it('has unlock method', async () => {
-		const { createAchievementRepository } = await import('../src/lib/repositories/achievement.svelte');
+		const { createAchievementRepository } = await import(
+			'../src/lib/repositories/achievement.svelte'
+		);
 		const repo = createAchievementRepository();
 		expect(typeof repo.unlock).toBe('function');
 	});
 
 	it('isUnlocked returns false when not unlocked', async () => {
-		const { createAchievementRepository } = await import('../src/lib/repositories/achievement.svelte');
+		const { createAchievementRepository } = await import(
+			'../src/lib/repositories/achievement.svelte'
+		);
 		const repo = createAchievementRepository();
 		expect(repo.isUnlocked('streak7')).toBe(false);
 	});
 
 	it('isUnlocked returns true after unlock', async () => {
-		const { createAchievementRepository } = await import('../src/lib/repositories/achievement.svelte');
+		const { createAchievementRepository } = await import(
+			'../src/lib/repositories/achievement.svelte'
+		);
 		const repo = createAchievementRepository();
 		repo.unlockLocal('streak7');
 		expect(repo.isUnlocked('streak7')).toBe(true);

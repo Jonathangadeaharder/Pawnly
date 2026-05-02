@@ -6,10 +6,17 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "highlight:start": "docker compose -f docker-compose.highlight.yml up -d",
+    "highlight:stop": "docker compose -f docker-compose.highlight.yml down",
+    "highlight:logs": "docker compose -f docker-compose.highlight.yml logs -f"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/core": "^2.7.1",
+    "@opentelemetry/resources": "^2.7.1",
+    "@opentelemetry/sdk-trace-base": "^2.7.1",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-navigation/bottom-tabs": "^7.8.6",
     "@react-navigation/native": "^7.1.21",

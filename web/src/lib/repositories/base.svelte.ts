@@ -34,7 +34,10 @@ export function createRepository<T extends { id: string }>(config: RepositoryCon
 	}
 
 	async function update(id: string, data: Partial<T>): Promise<void> {
-		const { error: err } = await supabase.from(config.table).update(data).eq('id', id);
+		const { error: err } = await supabase
+			.from(config.table)
+			.update(data as any)
+			.eq('id', id);
 		if (err) throw err;
 		items = items.map((item) => (item.id === id ? { ...item, ...data } : item));
 	}

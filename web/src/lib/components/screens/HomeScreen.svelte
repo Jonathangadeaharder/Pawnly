@@ -1,13 +1,13 @@
 <script lang="ts">
 import { Brand } from '$lib/brand';
-import { italian } from '$lib/positions';
 import Card from '$lib/components/Card.svelte';
-import Pill from '$lib/components/Pill.svelte';
-import PaperBg from '$lib/components/PaperBg.svelte';
-import MiniBoard from '$lib/components/MiniBoard.svelte';
-import Mascot from '$lib/components/Mascot.svelte';
 import FlameIcon from '$lib/components/icons/FlameIcon.svelte';
 import StarIcon from '$lib/components/icons/StarIcon.svelte';
+import Mascot from '$lib/components/Mascot.svelte';
+import MiniBoard from '$lib/components/MiniBoard.svelte';
+import PaperBg from '$lib/components/PaperBg.svelte';
+import Pill from '$lib/components/Pill.svelte';
+import { italian } from '$lib/positions';
 
 let {
 	onNavigate,
@@ -30,15 +30,45 @@ const timeOfDay = $derived.by(() => {
 	return 'evening';
 });
 
-const dayName = $derived(
-	new Date().toLocaleDateString('en-US', { weekday: 'long' }),
-);
+const dayName = $derived(new Date().toLocaleDateString('en-US', { weekday: 'long' }));
 
 const quickActions = [
-	{ id: 'play', title: 'Play a game', sub: 'Vs. coach · 10 min', emoji: '♟', bg: Brand.colors.moss, fg: Brand.colors.cream, border: false },
-	{ id: 'train', title: 'Daily puzzle', sub: 'Solve in under 60s', emoji: '🎯', bg: Brand.colors.sunny, fg: Brand.colors.ink, border: false },
-	{ id: 'learn', title: 'Continue lesson', sub: 'Knight forks · 3/5', emoji: '📖', bg: Brand.colors.cream, fg: Brand.colors.ink, border: true },
-	{ id: 'train', title: "Bishop's Prison", sub: 'Mini-game · ★★★☆☆', emoji: '🎪', bg: Brand.colors.cream, fg: Brand.colors.ink, border: true },
+	{
+		id: 'play',
+		title: 'Play a game',
+		sub: 'Vs. coach · 10 min',
+		emoji: '♟',
+		bg: Brand.colors.moss,
+		fg: Brand.colors.cream,
+		border: false,
+	},
+	{
+		id: 'train',
+		title: 'Daily puzzle',
+		sub: 'Solve in under 60s',
+		emoji: '🎯',
+		bg: Brand.colors.sunny,
+		fg: Brand.colors.ink,
+		border: false,
+	},
+	{
+		id: 'learn',
+		title: 'Continue lesson',
+		sub: 'Knight forks · 3/5',
+		emoji: '📖',
+		bg: Brand.colors.cream,
+		fg: Brand.colors.ink,
+		border: true,
+	},
+	{
+		id: 'train',
+		title: "Bishop's Prison",
+		sub: 'Mini-game · ★★★☆☆',
+		emoji: '🎪',
+		bg: Brand.colors.cream,
+		fg: Brand.colors.ink,
+		border: true,
+	},
 ];
 
 const streakDays = Array.from({ length: 7 }, () => 1);

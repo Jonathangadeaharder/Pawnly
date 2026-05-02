@@ -1,8 +1,8 @@
 <script lang="ts">
 import { Brand } from '$lib/brand';
 import Card from '$lib/components/Card.svelte';
-import PaperBg from '$lib/components/PaperBg.svelte';
 import Mascot from '$lib/components/Mascot.svelte';
+import PaperBg from '$lib/components/PaperBg.svelte';
 
 let {
 	name = 'Maya',

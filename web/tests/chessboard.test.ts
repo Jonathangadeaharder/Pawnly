@@ -1,4 +1,4 @@
-import { render, fireEvent } from '@testing-library/svelte';
+import { fireEvent, render } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
 import { Brand } from '../src/lib/brand';
 import Chessboard from '../src/lib/components/Chessboard.svelte';
@@ -189,9 +189,7 @@ describe('Chessboard highlights', () => {
 			},
 		});
 		const rects = container.querySelectorAll('svg rect');
-		const redRects = Array.from(rects).filter(
-			(r) => r.getAttribute('fill') === '#ff0000'
-		);
+		const redRects = Array.from(rects).filter((r) => r.getAttribute('fill') === '#ff0000');
 		expect(redRects.length).toBe(1);
 		expect(redRects[0]).toHaveAttribute('opacity', '0.5');
 	});
@@ -202,9 +200,7 @@ describe('Chessboard highlights', () => {
 			props: { game, highlights: [{ square: 'd4' }] },
 		});
 		const rects = container.querySelectorAll('svg rect');
-		const mossRects = Array.from(rects).filter(
-			(r) => r.getAttribute('fill') === Brand.colors.moss
-		);
+		const mossRects = Array.from(rects).filter((r) => r.getAttribute('fill') === Brand.colors.moss);
 		expect(mossRects.length).toBe(1);
 	});
 
@@ -214,9 +210,7 @@ describe('Chessboard highlights', () => {
 			props: { game, highlights: [{ square: 'd4' }] },
 		});
 		const rects = container.querySelectorAll('svg rect');
-		const mossRect = Array.from(rects).find(
-			(r) => r.getAttribute('fill') === Brand.colors.moss
-		);
+		const mossRect = Array.from(rects).find((r) => r.getAttribute('fill') === Brand.colors.moss);
 		expect(mossRect).toHaveAttribute('opacity', '0.4');
 	});
 });
@@ -229,7 +223,7 @@ describe('Chessboard last move', () => {
 		const { container } = render(Chessboard, { props: { game } });
 		const rects = container.querySelectorAll('svg rect');
 		const sunnyRects = Array.from(rects).filter(
-			(r) => r.getAttribute('fill') === Brand.colors.sunny
+			(r) => r.getAttribute('fill') === Brand.colors.sunny,
 		);
 		expect(sunnyRects.length).toBe(2);
 	});
@@ -239,7 +233,7 @@ describe('Chessboard last move', () => {
 		const { container } = render(Chessboard, { props: { game } });
 		const rects = container.querySelectorAll('svg rect');
 		const sunnyRects = Array.from(rects).filter(
-			(r) => r.getAttribute('fill') === Brand.colors.sunny
+			(r) => r.getAttribute('fill') === Brand.colors.sunny,
 		);
 		expect(sunnyRects.length).toBe(0);
 	});
@@ -251,7 +245,7 @@ describe('Chessboard check indicator', () => {
 		const { container } = render(Chessboard, { props: { game } });
 		const rects = container.querySelectorAll('svg rect');
 		const coralRects = Array.from(rects).filter(
-			(r) => r.getAttribute('fill') === Brand.colors.coral
+			(r) => r.getAttribute('fill') === Brand.colors.coral,
 		);
 		expect(coralRects.length).toBe(1);
 	});
@@ -261,7 +255,7 @@ describe('Chessboard check indicator', () => {
 		const { container } = render(Chessboard, { props: { game } });
 		const rects = container.querySelectorAll('svg rect');
 		const coralRects = Array.from(rects).filter(
-			(r) => r.getAttribute('fill') === Brand.colors.coral
+			(r) => r.getAttribute('fill') === Brand.colors.coral,
 		);
 		expect(coralRects.length).toBe(0);
 	});

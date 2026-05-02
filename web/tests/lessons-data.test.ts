@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { fenToPieces, lessons } from '../src/lib/data/lessons';
+import { fenToPieces } from '../src/lib/board.svelte';
+import { lessons } from '../src/lib/data/lessons';
 
 describe('lessons data', () => {
 	it('exports 5 lessons', () => {
@@ -95,14 +96,14 @@ describe('lessons data', () => {
 describe('fenToPieces', () => {
 	it('converts starting position', () => {
 		const pieces = fenToPieces('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
-		expect(pieces.e1).toBe('wk');
-		expect(pieces.d1).toBe('wq');
-		expect(pieces.a1).toBe('wr');
-		expect(pieces.b1).toBe('wn');
-		expect(pieces.c1).toBe('wb');
-		expect(pieces.e8).toBe('bk');
-		expect(pieces.d8).toBe('bq');
-		expect(pieces.a8).toBe('br');
+		expect(pieces.e1).toBe('K');
+		expect(pieces.d1).toBe('Q');
+		expect(pieces.a1).toBe('R');
+		expect(pieces.b1).toBe('N');
+		expect(pieces.c1).toBe('B');
+		expect(pieces.e8).toBe('k');
+		expect(pieces.d8).toBe('q');
+		expect(pieces.a8).toBe('r');
 	});
 
 	it('converts empty board', () => {
@@ -112,26 +113,26 @@ describe('fenToPieces', () => {
 
 	it('converts mixed position', () => {
 		const pieces = fenToPieces('4k3/8/8/8/4P3/8/8/4K3');
-		expect(pieces.e8).toBe('bk');
-		expect(pieces.e4).toBe('wp');
-		expect(pieces.e1).toBe('wk');
+		expect(pieces.e8).toBe('k');
+		expect(pieces.e4).toBe('P');
+		expect(pieces.e1).toBe('K');
 		expect(Object.keys(pieces)).toHaveLength(3);
 	});
 
 	it('handles all piece types', () => {
 		const pieces = fenToPieces('rnbqkbnr/8/8/8/8/8/8/RNBQKBNR');
-		expect(pieces.a8).toBe('br');
-		expect(pieces.b8).toBe('bn');
-		expect(pieces.c8).toBe('bb');
-		expect(pieces.d8).toBe('bq');
-		expect(pieces.e8).toBe('bk');
-		expect(pieces.f8).toBe('bb');
-		expect(pieces.g8).toBe('bn');
-		expect(pieces.h8).toBe('br');
-		expect(pieces.a1).toBe('wr');
-		expect(pieces.b1).toBe('wn');
-		expect(pieces.c1).toBe('wb');
-		expect(pieces.d1).toBe('wq');
-		expect(pieces.e1).toBe('wk');
+		expect(pieces.a8).toBe('r');
+		expect(pieces.b8).toBe('n');
+		expect(pieces.c8).toBe('b');
+		expect(pieces.d8).toBe('q');
+		expect(pieces.e8).toBe('k');
+		expect(pieces.f8).toBe('b');
+		expect(pieces.g8).toBe('n');
+		expect(pieces.h8).toBe('r');
+		expect(pieces.a1).toBe('R');
+		expect(pieces.b1).toBe('N');
+		expect(pieces.c1).toBe('B');
+		expect(pieces.d1).toBe('Q');
+		expect(pieces.e1).toBe('K');
 	});
 });

@@ -42,10 +42,7 @@ export function createUserRepository() {
 
 	async function updateProfile(updates: Partial<UserProfile>): Promise<void> {
 		if (!profile) throw new Error('No profile loaded');
-		const { error: err } = await supabase
-			.from('profiles')
-			.update(updates)
-			.eq('id', profile.id);
+		const { error: err } = await supabase.from('profiles').update(updates).eq('id', profile.id);
 		if (err) throw err;
 		profile = { ...profile, ...updates };
 	}

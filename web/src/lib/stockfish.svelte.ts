@@ -81,7 +81,8 @@ export function parseBestMove(line: string): ParsedBestMove {
 	const parts = line.split(' ');
 	const bestMove = parts[1];
 	const ponderIdx = parts.indexOf('ponder');
-	const ponder = ponderIdx !== -1 && ponderIdx + 1 < parts.length ? parts[ponderIdx + 1] : undefined;
+	const ponder =
+		ponderIdx !== -1 && ponderIdx + 1 < parts.length ? parts[ponderIdx + 1] : undefined;
 	return { bestMove, ponder };
 }
 
@@ -104,7 +105,7 @@ export function parseInfoLine(line: string): ParsedInfo | null {
 }
 
 export function classifyMove(
-	loss: number
+	loss: number,
 ): 'brilliant' | 'great' | 'best' | 'good' | 'inaccuracy' | 'mistake' | 'blunder' {
 	if (loss < -50) return 'brilliant';
 	if (loss < -20) return 'great';
@@ -165,8 +166,8 @@ export function createStockfish() {
 	let analysisResolve: ((value: PositionAnalysis) => void) | null = null;
 	let bestMoveResolve: ((value: StockfishMove) => void) | null = null;
 	let currentDepth = 0;
-	let currentScore: number | undefined = undefined;
-	let currentMate: number | undefined = undefined;
+	let currentScore: number | undefined;
+	let currentMate: number | undefined;
 	let currentPv: string[] = [];
 
 	function initWorker() {
@@ -270,7 +271,7 @@ export function createStockfish() {
 
 	function getBestMove(
 		fen: string,
-		difficulty: StockfishDifficulty = 'advanced'
+		difficulty: StockfishDifficulty = 'advanced',
 	): Promise<StockfishMove> {
 		return waitForReady().then(() => {
 			const settings = getDifficultySettings(difficulty);
@@ -293,7 +294,7 @@ export function createStockfish() {
 	function analyzeGame(
 		moves: string[],
 		startFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-		targetDepth = 18
+		targetDepth = 18,
 	): Promise<GameAnalysis> {
 		return waitForReady().then(async () => {
 			const { Chess } = await import('chess.js');
@@ -312,9 +313,12 @@ export function createStockfish() {
 				const afterFen = chess.fen();
 
 				const posAnalysis = await analyze(afterFen, targetDepth);
-				const rawEval = posAnalysis.mate !== undefined
-					? (posAnalysis.mate > 0 ? 10000 : -10000)
-					: posAnalysis.evaluation;
+				const rawEval =
+					posAnalysis.mate !== undefined
+						? posAnalysis.mate > 0
+							? 10000
+							: -10000
+						: posAnalysis.evaluation;
 				const normalizedEval = isWhite ? rawEval : -rawEval;
 				const loss = previousEval - normalizedEval;
 				const classification = classifyMove(loss);

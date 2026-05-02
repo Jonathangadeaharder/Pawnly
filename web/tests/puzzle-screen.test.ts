@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/svelte';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/svelte';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import PuzzleScreen from '../src/lib/components/screens/PuzzleScreen.svelte';
 
 vi.mock('../src/lib/components/Chessboard.svelte', () => {

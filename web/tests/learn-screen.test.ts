@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/svelte';
+import { fireEvent, render, screen } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
 import { Brand } from '../src/lib/brand';
 import LearnScreen from '../src/lib/components/screens/LearnScreen.svelte';

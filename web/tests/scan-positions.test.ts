@@ -1,13 +1,16 @@
 import { Chess } from 'chess.js';
 import { describe, expect, it } from 'vitest';
 import {
+	calculateStars,
+	getActiveModes,
+	getCorrectSquares,
+	getTargetTime,
 	SCAN_COLORS,
 	SCAN_MODE_ICONS,
 	SCAN_MODE_LABELS,
-	scanPositions,
-	getActiveModes,
-	getTargetTime,
+	type ScanAnswerKey,
 	type ScanMode,
+	scanPositions,
 } from '../src/lib/data/scan-positions';
 
 const ALL_MODES: ScanMode[] = ['check', 'capture', 'threat', 'loose', 'doubleAttack'];
@@ -167,13 +170,7 @@ describe('getActiveModes', () => {
 	});
 
 	it('should add doubleAttack at level 12', () => {
-		expect(getActiveModes(12)).toEqual([
-			'check',
-			'capture',
-			'threat',
-			'loose',
-			'doubleAttack',
-		]);
+		expect(getActiveModes(12)).toEqual(['check', 'capture', 'threat', 'loose', 'doubleAttack']);
 	});
 });
 
@@ -230,5 +227,109 @@ describe('SCAN_MODE_ICONS', () => {
 			expect(SCAN_MODE_ICONS[mode]).toBeTypeOf('string');
 			expect(SCAN_MODE_ICONS[mode].length).toBeGreaterThan(0);
 		}
+	});
+});
+
+describe('getCorrectSquares', () => {
+	const answerKey: ScanAnswerKey = {
+		checks: ['c4'],
+		captures: ['c4', 'f3'],
+		threats: ['d5'],
+		loose: ['e5'],
+		doubleAttack: ['c4'],
+	};
+
+	it('should return checks for check mode', () => {
+		expect(getCorrectSquares('check', answerKey)).toEqual(['c4']);
+	});
+
+	it('should return captures for capture mode', () => {
+		expect(getCorrectSquares('capture', answerKey)).toEqual(['c4', 'f3']);
+	});
+
+	it('should return threats for threat mode', () => {
+		expect(getCorrectSquares('threat', answerKey)).toEqual(['d5']);
+	});
+
+	it('should return loose squares for loose mode', () => {
+		expect(getCorrectSquares('loose', answerKey)).toEqual(['e5']);
+	});
+
+	it('should return empty array for loose when undefined', () => {
+		const ak: ScanAnswerKey = { checks: [], captures: [], threats: [] };
+		expect(getCorrectSquares('loose', ak)).toEqual([]);
+	});
+
+	it('should return doubleAttack squares for doubleAttack mode', () => {
+		expect(getCorrectSquares('doubleAttack', answerKey)).toEqual(['c4']);
+	});
+
+	it('should return empty array for doubleAttack when undefined', () => {
+		const ak: ScanAnswerKey = { checks: [], captures: [], threats: [] };
+		expect(getCorrectSquares('doubleAttack', ak)).toEqual([]);
+	});
+});
+
+describe('calculateStars', () => {
+	const answerKey: ScanAnswerKey = {
+		checks: ['c4'],
+		captures: ['e5'],
+		threats: [],
+	};
+
+	it('should return 3 for all correct with time left', () => {
+		const marked: Record<ScanMode, Set<string>> = {
+			check: new Set(['c4']),
+			capture: new Set(['e5']),
+			threat: new Set(),
+			loose: new Set(),
+			doubleAttack: new Set(),
+		};
+		expect(calculateStars(['check', 'capture'], marked, 10, answerKey)).toBe(3);
+	});
+
+	it('should return 2 for all correct with no time left', () => {
+		const marked: Record<ScanMode, Set<string>> = {
+			check: new Set(['c4']),
+			capture: new Set(['e5']),
+			threat: new Set(),
+			loose: new Set(),
+			doubleAttack: new Set(),
+		};
+		expect(calculateStars(['check', 'capture'], marked, 0, answerKey)).toBe(2);
+	});
+
+	it('should return 1 for all correct but with wrong marks', () => {
+		const marked: Record<ScanMode, Set<string>> = {
+			check: new Set(['c4', 'd4']),
+			capture: new Set(['e5']),
+			threat: new Set(),
+			loose: new Set(),
+			doubleAttack: new Set(),
+		};
+		expect(calculateStars(['check', 'capture'], marked, 10, answerKey)).toBe(1);
+	});
+
+	it('should return 0 for less than 50% correct', () => {
+		const marked: Record<ScanMode, Set<string>> = {
+			check: new Set(['d4']),
+			capture: new Set(),
+			threat: new Set(),
+			loose: new Set(),
+			doubleAttack: new Set(),
+		};
+		expect(calculateStars(['check', 'capture'], marked, 10, answerKey)).toBe(0);
+	});
+
+	it('should return 3 when total is 0 (empty answer keys)', () => {
+		const emptyKey: ScanAnswerKey = { checks: [], captures: [], threats: [] };
+		const marked: Record<ScanMode, Set<string>> = {
+			check: new Set(),
+			capture: new Set(),
+			threat: new Set(),
+			loose: new Set(),
+			doubleAttack: new Set(),
+		};
+		expect(calculateStars(['check', 'capture'], marked, 10, emptyKey)).toBe(3);
 	});
 });

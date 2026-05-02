@@ -1,6 +1,6 @@
 <script lang="ts">
-import { Brand } from '$lib/brand';
 import type { Snippet } from 'svelte';
+import { Brand } from '$lib/brand';
 
 let {
 	color,
