@@ -153,7 +153,7 @@ export const scanPositions: ScanPosition[] = [
 		fen: 'r2qkb1r/ppp2ppp/2n1bn2/3pp3/2PP4/2N1BN2/PP3PPP/R2QKB1R w KQkq - 0 1',
 		playerColor: 'b',
 		level: 6,
-		answerKey: { checks: [], captures: ['d4', 'c4', 'e6', 'f6', 'c6', 'd5'], threats: ['f8', 'c8', 'd8'] },
+		answerKey: { checks: [], captures: ['d4', 'c4', 'e6', 'f6', 'c6', 'd5'], threats: ['f8', 'd8'] },
 	},
 	{
 		id: 'sp-15',
