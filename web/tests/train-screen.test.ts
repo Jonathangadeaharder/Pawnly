@@ -22,7 +22,9 @@ describe('TrainScreen', () => {
 		render(TrainScreen, { props: defaultProps });
 		expect(screen.getByText('Scan trainer')).toBeInTheDocument();
 		expect(screen.getByText('Find all threats')).toBeInTheDocument();
-		expect(screen.getByText('Mark checks, captures & threats before time runs out')).toBeInTheDocument();
+		expect(
+			screen.getByText('Mark checks, captures & threats before time runs out'),
+		).toBeInTheDocument();
 	});
 
 	it('calls onOpenScan when scan hero clicked', async () => {

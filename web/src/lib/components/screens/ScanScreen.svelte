@@ -1,17 +1,19 @@
 <script lang="ts">
+import { fenToPieces, getSquareFromCoords } from '$lib/board.svelte';
 import { Brand } from '$lib/brand';
 import Button from '$lib/components/Button.svelte';
 import MiniBoard from '$lib/components/MiniBoard.svelte';
-import { fenToPieces, getSquareFromCoords } from '$lib/board.svelte';
 import {
-	SCAN_COLORS,
-	SCAN_MODE_LABELS,
-	SCAN_MODE_ICONS,
-	scanPositions,
+	calculateStars,
 	getActiveModes,
+	getCorrectSquares,
 	getTargetTime,
+	SCAN_COLORS,
+	SCAN_MODE_ICONS,
+	SCAN_MODE_LABELS,
 	type ScanMode,
 	type ScanPosition,
+	scanPositions,
 } from '$lib/data/scan-positions';
 
 let {
@@ -70,7 +72,7 @@ const highlights = $derived.by(() => {
 	if (submitted) {
 		const answerKey = position.answerKey;
 		for (const mode of activeModes) {
-			const correct = getCorrectSquares(mode);
+			const correct = getCorrectSquaresForPosition(mode);
 			for (const sq of correct) {
 				if (!markedSquares[mode].has(sq)) {
 					h.push({ square: sq, color: '#4CAF50', opacity: 0.5 });
@@ -83,7 +85,11 @@ const highlights = $derived.by(() => {
 
 const timerPercent = $derived(timeLeft > 0 ? (timeLeft / targetTime) * 100 : 0);
 const timerColor = $derived(
-	timerPercent > 50 ? Brand.colors.moss : timerPercent > 25 ? Brand.colors.sunny : Brand.colors.coral,
+	timerPercent > 50
+		? Brand.colors.moss
+		: timerPercent > 25
+			? Brand.colors.sunny
+			: Brand.colors.coral,
 );
 
 const formattedTime = $derived(() => {
@@ -98,15 +104,8 @@ const promptText = $derived.by(() => {
 	return `Find all ${SCAN_MODE_LABELS[mode].toLowerCase()}s`;
 });
 
-function getCorrectSquares(mode: ScanMode): string[] {
-	const ak = position.answerKey;
-	switch (mode) {
-		case 'check': return ak.checks;
-		case 'capture': return ak.captures;
-		case 'threat': return ak.threats;
-		case 'loose': return ak.loose ?? [];
-		case 'doubleAttack': return ak.doubleAttack ?? [];
-	}
+function getCorrectSquaresForPosition(mode: ScanMode): string[] {
+	return getCorrectSquares(mode, position.answerKey);
 }
 
 function startTimer() {
@@ -151,37 +150,11 @@ function handleBoardClick(event: MouseEvent) {
 	if (sq) handleSquareClick(sq);
 }
 
-function calculateStars(): number {
-	let correct = 0;
-	let total = 0;
-	let wrong = 0;
-
-	for (const mode of activeModes) {
-		const expected = new Set(getCorrectSquares(mode));
-		const marked = markedSquares[mode];
-		total += expected.size;
-		for (const sq of marked) {
-			if (expected.has(sq)) {
-				correct++;
-			} else {
-				wrong++;
-			}
-		}
-	}
-
-	if (total === 0) return 3;
-	const percent = correct / total;
-	if (percent < 0.5) return 0;
-	if (wrong > 0) return 1;
-	if (timeLeft > 0) return 3;
-	return 2;
-}
-
 function handleSubmit() {
 	if (submitted) return;
 	submitted = true;
 	stopTimer();
-	stars = calculateStars();
+	stars = calculateStars(activeModes, markedSquares, timeLeft, position.answerKey);
 	totalStars += stars;
 	if (stars === 3) streak++;
 	else streak = 0;

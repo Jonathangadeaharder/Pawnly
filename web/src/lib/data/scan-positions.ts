@@ -56,6 +56,52 @@ export function getTargetTime(level: number): number {
 	return 20;
 }
 
+export function getCorrectSquares(mode: ScanMode, answerKey: ScanAnswerKey): string[] {
+	switch (mode) {
+		case 'check':
+			return answerKey.checks;
+		case 'capture':
+			return answerKey.captures;
+		case 'threat':
+			return answerKey.threats;
+		case 'loose':
+			return answerKey.loose ?? [];
+		case 'doubleAttack':
+			return answerKey.doubleAttack ?? [];
+	}
+}
+
+export function calculateStars(
+	activeModes: ScanMode[],
+	markedSquares: Record<ScanMode, Set<string>>,
+	timeLeft: number,
+	answerKey: ScanAnswerKey,
+): number {
+	let correct = 0;
+	let total = 0;
+	let wrong = 0;
+
+	for (const mode of activeModes) {
+		const expected = new Set(getCorrectSquares(mode, answerKey));
+		const marked = markedSquares[mode];
+		total += expected.size;
+		for (const sq of marked) {
+			if (expected.has(sq)) {
+				correct++;
+			} else {
+				wrong++;
+			}
+		}
+	}
+
+	if (total === 0) return 3;
+	const percent = correct / total;
+	if (percent < 0.5) return 0;
+	if (wrong > 0) return 1;
+	if (timeLeft > 0) return 3;
+	return 2;
+}
+
 export const scanPositions: ScanPosition[] = [
 	{
 		id: 'sp-01',
