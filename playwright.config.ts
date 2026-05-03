@@ -8,17 +8,17 @@ export default defineConfig({
 	workers: process.env.CI ? 1 : undefined,
 	reporter: 'html',
 	use: {
-		baseURL: 'http://localhost:5175'
+		baseURL: 'http://localhost:5175',
 	},
 	projects: [
 		{
 			name: 'chromium',
-			use: { ...devices['Desktop Chrome'] }
-		}
+			use: { ...devices['Desktop Chrome'] },
+		},
 	],
 	webServer: {
 		command: 'pnpm run dev --port 5175',
 		port: 5175,
-		reuseExistingServer: true
-	}
+		reuseExistingServer: !process.env.CI,
+	},
 });

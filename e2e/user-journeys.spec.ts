@@ -1,11 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 // Helper: register a fresh user
 // Shared test credentials (already registered)
 const EXISTING_EMAIL = 'chess@example.com';
 const EXISTING_PASSWORD = 'TestPassword123!';
 
-async function registerUser(page: import('@playwright/test').Page, name: string, email: string, password: string) {
+async function registerUser(
+	page: import('@playwright/test').Page,
+	name: string,
+	email: string,
+	password: string,
+) {
 	await page.goto('/auth');
 	await page.waitForLoadState('networkidle');
 	await page.getByRole('button', { name: 'Create account' }).click();
@@ -27,7 +32,7 @@ async function loginUser(page: import('@playwright/test').Page, email: string, p
 	await page.getByRole('textbox', { name: 'Email' }).fill(email);
 	await page.getByRole('textbox', { name: 'Password' }).fill(password);
 	await page.getByRole('button', { name: 'Log in' }).click();
-	await page.waitForURL('/', { timeout: 20000 }).catch(() => {});
+	await page.waitForURL('/', { timeout: 20000 });
 }
 
 async function loginAsExistingUser(page: import('@playwright/test').Page) {
@@ -65,25 +70,21 @@ test.describe('Chess — Home Page', () => {
 		const ritualBtn = page.getByRole('button', { name: /ritual/i });
 		await expect(ritualBtn).toBeVisible();
 		await ritualBtn.click();
-		await page.waitForTimeout(1500);
-		// Should navigate away from home
-		expect(page.url()).not.toMatch(/\/$/);
+		await expect(page).not.toHaveURL(/\//);
 	});
 
 	test('FIXED: "Daily puzzle" button navigates', async ({ page }) => {
 		const puzzleBtn = page.getByRole('button', { name: /daily puzzle/i });
 		await expect(puzzleBtn).toBeVisible();
 		await puzzleBtn.click();
-		await page.waitForTimeout(1500);
-		expect(page.url()).not.toMatch(/\/$/);
+		await expect(page).not.toHaveURL(/\//);
 	});
 
 	test('FIXED: "Continue lesson" button navigates', async ({ page }) => {
 		const lessonBtn = page.getByRole('button', { name: /continue lesson/i });
 		await expect(lessonBtn).toBeVisible();
 		await lessonBtn.click();
-		await page.waitForTimeout(1500);
-		expect(page.url()).not.toMatch(/\/$/);
+		await expect(page).not.toHaveURL(/\//);
 	});
 
 	test('FIXED: "Bishop\'s Prison Mini-game" button navigates', async ({ page }) => {
@@ -91,8 +92,7 @@ test.describe('Chess — Home Page', () => {
 		const miniBtn = page.getByRole('button', { name: /bishop/i }).last();
 		await expect(miniBtn).toBeVisible();
 		await miniBtn.click();
-		await page.waitForTimeout(1500);
-		expect(page.url()).not.toMatch(/\/$/);
+		await expect(page).not.toHaveURL(/\//);
 	});
 });
 
@@ -144,13 +144,10 @@ test.describe('Chess — Play Page', () => {
 	test('FIXED: start game navigates to /play/game successfully', async ({ page }) => {
 		await page.goto('/play');
 		const startBtn = page.getByRole('button', { name: /start/i });
-		if (await startBtn.isVisible()) {
-			await startBtn.click();
-			await page.waitForTimeout(2000);
-			// Should NOT be a 404
-			await expect(page.locator('body')).not.toContainText('404');
-			await expect(page).toHaveURL(/\/play\/game/);
-		}
+		await expect(startBtn).toBeVisible();
+		await startBtn.click();
+		await expect(page).toHaveURL(/\/play\/game/, { timeout: 5000 });
+		await expect(page.locator('body')).not.toContainText('404');
 	});
 });
 
@@ -173,7 +170,7 @@ test.describe('Chess — Train Page', () => {
 		const scanBtn = page.getByRole('button', { name: /scan/i });
 		if (await scanBtn.isVisible()) {
 			await scanBtn.click();
-			await page.waitForTimeout(2000);
+			await page.waitForLoadState('networkidle');
 			// Should NOT have infinite re-render error
 			const hasEffectError = errors.some((e) => e.includes('effect_update_depth_exceeded'));
 			expect(hasEffectError).toBeFalsy();
@@ -194,18 +191,23 @@ test.describe('Chess — Learn Page', () => {
 	test('learn page lesson cards are clickable', async ({ page }) => {
 		await page.goto('/learn');
 		await page.waitForLoadState('networkidle');
-		const lessonCards = page.getByRole('button').or(page.locator('a')).filter({ hasText: /lesson|beginner|intermediate|advanced/i });
+		const lessonCards = page
+			.getByRole('button')
+			.or(page.locator('a'))
+			.filter({ hasText: /lesson|beginner|intermediate|advanced/i });
 		const count = await lessonCards.count();
 		if (count > 0) {
 			await lessonCards.first().click();
-			await page.waitForTimeout(1000);
+			await page.waitForLoadState('networkidle');
 			await expect(page.locator('body')).not.toContainText('404');
 		}
 	});
 
 	test('learn page shows lesson categories', async ({ page }) => {
 		await page.goto('/learn');
-		await expect(page.getByText(/beginner|intermediate|advanced|opening|endgame|tactic|strategy/i).first()).toBeVisible();
+		await expect(
+			page.getByText(/beginner|intermediate|advanced|opening|endgame|tactic|strategy/i).first(),
+		).toBeVisible();
 	});
 });
 
@@ -243,7 +245,7 @@ test.describe('Chess — API Errors', () => {
 		});
 
 		await loginAsExistingUser(page);
-		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
 
 		// Should NOT have 404 errors from missing tables
 		const has404 = apiErrors.some((e) => e.includes('404'));
@@ -258,7 +260,7 @@ test.describe('Chess — Login Flow', () => {
 		await page.getByRole('textbox', { name: 'Email' }).fill('chess@example.com');
 		await page.getByRole('textbox', { name: 'Password' }).fill('TestPassword123!');
 		await page.getByRole('button', { name: 'Log in' }).click();
-		await page.waitForURL('/', { timeout: 15000 }).catch(() => {});
+		await page.waitForURL('/', { timeout: 15000 });
 		await expect(page).toHaveURL('/');
 	});
 });
@@ -274,12 +276,16 @@ test.describe('Chess — Play Game', () => {
 		const startBtn = page.getByRole('button', { name: /start/i });
 		if (await startBtn.isVisible()) {
 			await startBtn.click();
-			await page.waitForTimeout(2000);
+			await expect(page).toHaveURL(/\/play\/game/, { timeout: 5000 });
 		}
 		// Check for chessboard or game indicators
-		const chessboard = page.locator('[class*="board"], [class*="chess"], [class*="chessboard"], canvas').first();
+		const chessboard = page
+			.locator('[class*="board"], [class*="chess"], [class*="chessboard"], canvas')
+			.first();
 		const gameText = page.getByText(/white|black|move|game/i).first();
-		const boardOrGame = await chessboard.isVisible().catch(() => false) || await gameText.isVisible().catch(() => false);
+		const boardOrGame =
+			(await chessboard.isVisible().catch(() => false)) ||
+			(await gameText.isVisible().catch(() => false));
 		expect(boardOrGame).toBeTruthy();
 		await expect(page.locator('body')).not.toContainText('404');
 		if (page.url().includes('/play')) {
@@ -293,11 +299,13 @@ test.describe('Chess — Play Game', () => {
 		const startBtn = page.getByRole('button', { name: /start/i });
 		if (await startBtn.isVisible()) {
 			await startBtn.click();
-			await page.waitForTimeout(2000);
+			await expect(page).toHaveURL(/\/play\/game/, { timeout: 5000 });
 		}
 		const backBtn = page.getByRole('button', { name: /back|return|home|exit/i });
 		const gameInfo = page.getByText(/white|black|turn|move|round/i).first();
-		const navBack = await backBtn.isVisible().catch(() => false) || await gameInfo.isVisible().catch(() => false);
+		const navBack =
+			(await backBtn.isVisible().catch(() => false)) ||
+			(await gameInfo.isVisible().catch(() => false));
 		expect(navBack).toBeTruthy();
 	});
 });
@@ -313,7 +321,7 @@ test.describe('Chess — Console Errors', () => {
 		for (const url of pages) {
 			await page.goto(url);
 			await page.waitForLoadState('networkidle');
-			await page.waitForTimeout(500);
+			await page.waitForLoadState('networkidle');
 		}
 
 		expect(errors.length).toBe(0);
@@ -327,7 +335,7 @@ test.describe('Chess — Auth Edge Cases', () => {
 		await page.getByRole('textbox', { name: 'Email' }).fill('chess@example.com');
 		await page.getByRole('textbox', { name: 'Password' }).fill('WrongPassword999!');
 		await page.getByRole('button', { name: 'Log in' }).click();
-		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
 		// Should show error text, not redirect to home
 		const errorText = page.getByText(/invalid|error|wrong|incorrect|failed|not found/i);
 		await expect(errorText.first()).toBeVisible();
@@ -343,7 +351,7 @@ test.describe('Chess — Auth Edge Cases', () => {
 		await page.getByRole('textbox', { name: 'Email' }).fill('chess@example.com');
 		await page.getByRole('textbox', { name: 'Password' }).fill('TestPassword123!');
 		await page.getByRole('button', { name: 'Sign up' }).click();
-		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
 		// Should show error text, not redirect to home
 		const errorText = page.getByText(/invalid|error|already|exists|duplicate|taken|conflict/i);
 		await expect(errorText.first()).toBeVisible();
@@ -358,25 +366,32 @@ test.describe('Chess — Profile Data Dynamic', () => {
 
 	test('you page shows dynamic stats not hardcoded', async ({ page }) => {
 		await page.goto('/you');
-		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
 		await expect(page.locator('body')).not.toContainText('1140');
 	});
 
 	test('home page shows dynamic rating not hardcoded', async ({ page }) => {
 		await page.goto('/');
-		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
 		await expect(page.locator('body')).not.toContainText('+18 this week');
 	});
 
 	test('auth page title changes with mode', async ({ page }) => {
 		await page.goto('/auth');
-		await page.waitForTimeout(2000);
-		await expect(page.locator('body')).toContainText('Log in');
-		const signupToggle = page.getByRole('button', { name: /sign up|create account|register/i }).or(page.locator('a').filter({ hasText: /sign up/i }));
-		if (await signupToggle.first().isVisible().catch(() => false)) {
+		await page.waitForLoadState('networkidle');
+		await expect(page).toHaveTitle(/Log in/i);
+		const signupToggle = page
+			.getByRole('button', { name: /sign up|create account|register/i })
+			.or(page.locator('a').filter({ hasText: /sign up/i }));
+		if (
+			await signupToggle
+				.first()
+				.isVisible()
+				.catch(() => false)
+		) {
 			await signupToggle.first().click();
-			await page.waitForTimeout(1000);
-			await expect(page.locator('body')).toContainText('Sign up');
+			await page.waitForLoadState('networkidle');
+			await expect(page).toHaveTitle(/Sign up/i);
 		}
 	});
 });
@@ -388,15 +403,17 @@ test.describe('Chess — Learn Page Interaction', () => {
 
 	test('learn page shows training modules', async ({ page }) => {
 		await page.goto('/learn');
-		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
 		const moduleText = page.locator('body');
-		const hasModule = await moduleText.innerText().then((t) => /scan|puzzle|lesson|module/i.test(t));
+		const hasModule = await moduleText
+			.innerText()
+			.then((t) => /scan|puzzle|lesson|module/i.test(t));
 		expect(hasModule).toBeTruthy();
 	});
 
 	test('scan trainer start button exists', async ({ page }) => {
 		await page.goto('/learn');
-		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
 		const startBtn = page.getByRole('button', { name: /start|begin|scan|train/i });
 		await expect(startBtn.first()).toBeVisible({ timeout: 5000 });
 	});
@@ -409,19 +426,23 @@ test.describe('Chess — Game Interaction', () => {
 
 	test('game page loads board', async ({ page }) => {
 		await page.goto('/play/game');
-		await page.waitForTimeout(3000);
-		const board = page.locator('[class*="board"], [class*="chess"], [class*="chessboard"], canvas, svg').first();
+		await page.waitForLoadState('networkidle');
+		const board = page
+			.locator('[class*="board"], [class*="chess"], [class*="chessboard"], canvas, svg')
+			.first();
 		const hasBoard = await board.isVisible().catch(() => false);
 		expect(hasBoard).toBeTruthy();
 	});
 
 	test('game page has interactive controls', async ({ page }) => {
 		await page.goto('/play/game');
-		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
 		const anyBtn = page.getByRole('button').first();
-		await expect(anyBtn).toBeVisible({ timeout: 5000 }).catch(() => {
-			const boardArea = page.locator('svg, canvas, [data-board]').first();
-			expect(boardArea).toBeTruthy();
-		});
+		await expect(anyBtn)
+			.toBeVisible({ timeout: 5000 })
+			.catch(async () => {
+				const boardArea = page.locator('svg, canvas, [data-board]').first();
+				await expect(boardArea).toBeVisible({ timeout: 5000 });
+			});
 	});
 });

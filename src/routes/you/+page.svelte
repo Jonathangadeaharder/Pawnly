@@ -25,9 +25,9 @@ async function loadProfile() {
 	}
 }
 
-if (auth.user) {
-	loadProfile();
-}
+$effect(() => {
+	if (auth.user) void loadProfile();
+});
 
 function onSettings() {
 	console.log('navigate to settings');

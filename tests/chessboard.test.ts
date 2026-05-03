@@ -6,10 +6,12 @@ import { createGameInstance, expectBoardSvg, expectBoardWrapper } from './helper
 
 const createTestGame = createGameInstance;
 
+type TestGame = Awaited<ReturnType<typeof createTestGame>>;
+
 async function renderBoard(props: Record<string, unknown> = {}) {
-	const game = props.game ?? (await createTestGame(props.fen as string));
+	const game: TestGame = (props.game as TestGame | undefined) ?? (await createTestGame(props.fen as string));
 	const result = render(Chessboard, { props: { game, ...props } });
-	return { game: game as any, ...result };
+	return { game, ...result };
 }
 
 const sq = 50;

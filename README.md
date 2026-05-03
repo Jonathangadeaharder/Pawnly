@@ -20,9 +20,11 @@ Mobile-first chess learning app built with SvelteKit. Play vs Stockfish, solve p
 ```bash
 pnpm install
 
-# Set environment variables (from Supabase project)
-export PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-export PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+# Set environment variables — copy .env.example to .env and fill in values:
+cp .env.example .env
+# Then edit .env with your Supabase credentials:
+# PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+# PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
 # Start local Supabase (optional, requires Docker)
 pnpm supabase:start

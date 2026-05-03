@@ -14,13 +14,11 @@ let {
 	name = 'Maya',
 	rating = 0,
 	streak = 0,
-	xp = 0,
 }: {
 	onNavigate: (screen: string) => void;
 	name?: string;
 	rating?: number;
 	streak?: number;
-	xp?: number;
 } = $props();
 
 const todayMins = 3;

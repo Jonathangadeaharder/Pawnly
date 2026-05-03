@@ -10,7 +10,6 @@ const repo = createUserRepository();
 let name = $state('Player');
 let rating = $state(0);
 let streak = $state(0);
-let xp = $state(0);
 
 const routeMap: Record<string, string> = {
 	play: '/play',
@@ -28,9 +27,9 @@ async function loadProfile() {
 	}
 }
 
-if (auth.user) {
-	loadProfile();
-}
+$effect(() => {
+	if (auth.user) void loadProfile();
+});
 
 function onNavigate(screen: string) {
 	const route = routeMap[screen] ?? `/${screen}`;
@@ -42,4 +41,4 @@ function onNavigate(screen: string) {
 	<title>{Brand.name} — {Brand.tagline}</title>
 </svelte:head>
 
-<HomeScreen {onNavigate} {name} {rating} {streak} {xp} />
+<HomeScreen {onNavigate} {name} {rating} {streak} />
