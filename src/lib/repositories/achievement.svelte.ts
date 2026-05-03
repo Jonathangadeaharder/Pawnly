@@ -35,7 +35,29 @@ export function createAchievementRepository() {
 	}
 
 	return {
-		...base,
+		get items() {
+			return base.items;
+		},
+		set items(value: AchievementRecord[]) {
+			base.items = value;
+		},
+		get loading() {
+			return base.loading;
+		},
+		set loading(value: boolean) {
+			base.loading = value;
+		},
+		get error() {
+			return base.error;
+		},
+		set error(value: string | null) {
+			base.error = value;
+		},
+		load: base.load,
+		getById: base.getById,
+		insert: base.insert,
+		update: base.update,
+		remove: base.remove,
 		loadAchievements: base.load,
 		unlock,
 		unlockLocal,

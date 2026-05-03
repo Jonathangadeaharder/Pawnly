@@ -63,6 +63,7 @@ pnpm dev
 | `/` | Dashboard with greeting, streak, quick actions, rating |
 | `/auth` | Login/signup |
 | `/play` | Game setup (time control, difficulty) |
+| `/play/game` | Active chess game |
 | `/learn` | Lesson list with progress |
 | `/train` | Puzzle grid, daily challenge, scan trainer |
 | `/you` | Profile, stats, achievements |

@@ -28,7 +28,7 @@ for (const app of APPS) {
 			const missingAlt = await page.evaluate(() => {
 				const imgs = Array.from(document.querySelectorAll('img'));
 				return imgs
-					.filter((img) => !img.alt && !img.getAttribute('aria-label'))
+					.filter((img) => img.getAttribute('alt') === null && !img.getAttribute('aria-label'))
 					.map((img) => img.src);
 			});
 
@@ -42,9 +42,10 @@ for (const app of APPS) {
 				const inputs = Array.from(document.querySelectorAll('input:not([type="hidden"])'));
 				return inputs.filter((input) => {
 					const id = input.id;
-					const hasLabel = id && document.querySelector(`label[for="${id}"]`);
+					const hasExplicitLabel = id && document.querySelector(`label[for="${id}"]`);
+					const hasImplicitLabel = input.closest('label') !== null;
 					const hasAria = input.getAttribute('aria-label') || input.getAttribute('aria-labelledby');
-					return !hasLabel && !hasAria;
+					return !hasExplicitLabel && !hasImplicitLabel && !hasAria;
 				}).length;
 			});
 

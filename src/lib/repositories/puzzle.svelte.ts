@@ -13,7 +13,7 @@ export function createPuzzleRepository() {
 	const base = createProgressRepository<PuzzleProgress>('puzzle_progress');
 
 	async function recordAttempt(puzzleId: string, userId: string, solved: boolean): Promise<void> {
-		const existing = base.progress.find((p) => p.puzzle_id === puzzleId);
+		const existing = base.progress.find((p) => p.puzzle_id === puzzleId && p.user_id === userId);
 		const updates = existing
 			? {
 					attempts: existing.attempts + 1,
@@ -37,7 +37,21 @@ export function createPuzzleRepository() {
 	}
 
 	return {
-		...base,
+		get progress() {
+			return base.progress;
+		},
+		set progress(value: PuzzleProgress[]) {
+			base.progress = value;
+		},
+		get loading() {
+			return base.loading;
+		},
+		get error() {
+			return base.error;
+		},
+		loadProgress: base.loadProgress,
+		addLocalProgress: base.addLocalProgress,
+		upsert: base.upsert,
 		recordAttempt,
 		getSolvedCount,
 	};

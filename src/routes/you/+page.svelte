@@ -26,7 +26,14 @@ async function loadProfile() {
 }
 
 $effect(() => {
-	if (auth.user) void loadProfile();
+	if (auth.user) {
+		void loadProfile();
+	} else {
+		name = 'Player';
+		rating = 0;
+		gamesPlayed = 0;
+		puzzlesSolved = 0;
+	}
 });
 
 function onSettings() {
