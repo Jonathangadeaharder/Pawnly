@@ -9,6 +9,6 @@ let {
 }: { size?: number; color?: string; children: Snippet } = $props();
 </script>
 
-<svg width={size} height={size} viewBox="0 0 24 24">
+<svg width={size} height={size} viewBox="0 0 24 24" stroke={color} color={color}>
 	{@render children()}
 </svg>
