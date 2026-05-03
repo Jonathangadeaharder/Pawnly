@@ -1,10 +1,10 @@
 <script lang="ts">
-import { Brand } from '$lib/brand';
+import Icon from './Icon.svelte';
 
-let { size = 20, color = Brand.colors.ink }: { size?: number; color?: string } = $props();
+let { size = 20, color }: { size?: number; color?: string } = $props();
 </script>
 
-<svg width={size} height={size} viewBox="0 0 24 24">
+<Icon {size} {color}>
 	<path
 		d="M7 5 L19 12 L7 19 Z"
 		stroke={color}
@@ -13,4 +13,4 @@ let { size = 20, color = Brand.colors.ink }: { size?: number; color?: string } =
 		stroke-linecap="round"
 		stroke-linejoin="round"
 	/>
-</svg>
+</Icon>
