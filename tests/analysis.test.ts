@@ -1,7 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { describeCalculateAccuracyTests, describeClassifyMoveTests, describeExportsTests } from './helpers';
-
-const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+import { describeCalculateAccuracyTests, describeClassifyMoveTests, describeExportsTests, STARTING_FEN } from './helpers';
 
 vi.mock('../src/lib/stockfish.svelte', async () => {
 	const actual = await vi.importActual<typeof import('../src/lib/chess-utils')>(

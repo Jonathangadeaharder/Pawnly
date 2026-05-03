@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createGameInstance } from './helpers';
-
-const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+import { createGameInstance, STARTING_FEN } from './helpers';
 
 const createGame = createGameInstance;
 

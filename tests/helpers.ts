@@ -3,6 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { Brand } from '../src/lib/brand';
 import type { createGame } from '../src/lib/game.svelte';
 
+export const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
 export async function createGameInstance(fen?: string): Promise<ReturnType<typeof createGame>> {
 	const mod = await import('../src/lib/game.svelte');
 	return mod.createGame(fen);

@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-
-const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+import { STARTING_FEN } from './helpers';
 
 describe('fenToPieces', () => {
 	it('exports fenToPieces function', async () => {

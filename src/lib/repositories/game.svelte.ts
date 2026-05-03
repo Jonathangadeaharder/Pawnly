@@ -1,4 +1,5 @@
 import { supabase } from '../supabase';
+import { createRepository } from './base.svelte';
 
 export interface GameRecord {
 	id: string;
@@ -19,62 +20,53 @@ export interface GameStats {
 }
 
 export function createGameRepository() {
-	let games = $state<GameRecord[]>([]);
-	let loading = $state(false);
-	let error = $state<string | null>(null);
+	const base = createRepository<GameRecord>({ table: 'games' });
 
 	async function loadGames(): Promise<void> {
-		loading = true;
-		error = null;
+		base.loading = true;
+		base.error = null;
 		try {
 			const { data, error: err } = await supabase
 				.from('games')
 				.select('*')
 				.order('played_at', { ascending: false });
 			if (err) throw err;
-			games = data ?? [];
+			base.items = data ?? [];
 		} catch (e) {
-			error = e instanceof Error ? e.message : 'Failed to load games';
+			base.error = e instanceof Error ? e.message : 'Failed to load games';
 		} finally {
-			loading = false;
+			base.loading = false;
 		}
 	}
 
 	async function saveGame(game: GameRecord): Promise<void> {
-		const { error: err } = await supabase.from('games').insert(game);
-		if (err) throw err;
-		games = [game, ...games];
+		await base.insert(game);
 	}
 
 	function addLocalGame(game: GameRecord): void {
-		games = [game, ...games];
+		base.items = [game, ...base.items];
 	}
 
 	function getStats(): GameStats {
 		let wins = 0;
 		let losses = 0;
 		let draws = 0;
-		for (const g of games) {
+		for (const g of base.items) {
 			if (g.result === 'win') wins++;
 			else if (g.result === 'loss') losses++;
 			else draws++;
 		}
-		return { wins, losses, draws, total: games.length };
+		return { wins, losses, draws, total: base.items.length };
 	}
 
 	return {
-		get games() {
-			return games;
-		},
-		get loading() {
-			return loading;
-		},
-		get error() {
-			return error;
-		},
+		...base,
 		loadGames,
 		saveGame,
 		addLocalGame,
 		getStats,
+		get games() {
+			return base.items;
+		},
 	};
 }
