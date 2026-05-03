@@ -51,9 +51,12 @@ export function createMoveAnalysis(
 	previousEval: number,
 	isWhite: boolean,
 ): MoveAnalysisResult {
-	const rawEval = posAnalysis.mate !== undefined
-		? posAnalysis.mate > 0 ? 10000 : -10000
-		: posAnalysis.evaluation;
+	const rawEval =
+		posAnalysis.mate !== undefined
+			? posAnalysis.mate > 0
+				? 10000
+				: -10000
+			: posAnalysis.evaluation;
 	const normalizedEval = isWhite ? rawEval : -rawEval;
 	const loss = previousEval - normalizedEval;
 	const classification = classifyMove(loss);

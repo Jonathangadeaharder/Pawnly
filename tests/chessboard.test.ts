@@ -9,7 +9,7 @@ const createTestGame = createGameInstance;
 async function renderBoard(props: Record<string, unknown> = {}) {
 	const game = props.game ?? (await createTestGame(props.fen as string));
 	const result = render(Chessboard, { props: { game, ...props } });
-	return { game, ...result };
+	return { game: game as any, ...result };
 }
 
 const sq = 50;

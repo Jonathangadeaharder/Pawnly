@@ -1,10 +1,6 @@
 import type { Square } from 'chess.js';
-import {
-	calculateAccuracy,
-	classifyMove,
-	createMoveAnalysis,
-	getMoveComment,
-} from './chess-utils';
+import { calculateAccuracy, classifyMove, createMoveAnalysis, getMoveComment } from './chess-utils';
+
 export { calculateAccuracy, classifyMove, createMoveAnalysis } from './chess-utils';
 
 export type StockfishDifficulty =
@@ -126,8 +122,6 @@ export function getDifficultySettings(difficulty: StockfishDifficulty): Difficul
 function uciToSquare(uci: string): Square {
 	return uci.slice(0, 2) as Square;
 }
-
-
 
 export function createStockfish() {
 	let isReady = $state(false);

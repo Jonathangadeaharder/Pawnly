@@ -3,10 +3,9 @@
  * FEN parsing, coordinate conversions, and board annotations (arrows/highlights)
  */
 
-import type { Square } from './game.svelte';
+import type { Square, Arrow, Highlight } from './game.svelte';
 
-export type { Square };
-export type { Arrow, Highlight } from './game.svelte';
+export type { Arrow, Highlight, Square };
 
 /**
  * Predefined arrow colors

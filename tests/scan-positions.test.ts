@@ -69,7 +69,7 @@ describe('scanPositions array', () => {
 	it('should have valid square format in all answer key arrays', () => {
 		for (const pos of scanPositions) {
 			const ak = pos.answerKey;
-			for (const sq of [...ak.checks, ...ak.captures, ...ak.threats]) {
+			for (const sq of [...(ak.checks ?? []), ...(ak.captures ?? []), ...(ak.threats ?? [])]) {
 				expect(sq).toMatch(SQUARE_RE);
 			}
 			if (ak.loose) {
@@ -87,14 +87,14 @@ describe('scanPositions array', () => {
 
 	it('should have captures with opponent pieces that can capture', () => {
 		for (const pos of scanPositions) {
-			expectOpponentPiecesOnSquares(pos.answerKey.captures, pos.playerColor, pos.fen);
+			expectOpponentPiecesOnSquares(pos.answerKey.captures ?? [], pos.playerColor, pos.fen);
 		}
 	});
 
 	it('should have threats with opponent pieces', () => {
 		for (const pos of scanPositions) {
 			if (!pos.answerKey.threats || pos.answerKey.threats.length === 0) continue;
-			expectOpponentPiecesOnSquares(pos.answerKey.threats, pos.playerColor, pos.fen);
+			expectOpponentPiecesOnSquares(pos.answerKey.threats ?? [], pos.playerColor, pos.fen);
 		}
 	});
 
@@ -110,9 +110,9 @@ describe('scanPositions array', () => {
 		for (const pos of scanPositions) {
 			const chess = new Chess(pos.fen);
 			const allSquares = [
-				...pos.answerKey.checks,
-				...pos.answerKey.captures,
-				...pos.answerKey.threats,
+				...(pos.answerKey.checks ?? []),
+				...(pos.answerKey.captures ?? []),
+				...(pos.answerKey.threats ?? []),
 				...(pos.answerKey.loose ?? []),
 				...(pos.answerKey.doubleAttack ?? []),
 			];
@@ -126,7 +126,7 @@ describe('scanPositions array', () => {
 	it('should have checks and captures squares with opponent pieces', () => {
 		for (const pos of scanPositions) {
 			expectOpponentPiecesOnSquares(
-				[...pos.answerKey.checks, ...pos.answerKey.captures],
+				[...(pos.answerKey.checks ?? []), ...(pos.answerKey.captures ?? [])],
 				pos.playerColor,
 				pos.fen,
 			);
