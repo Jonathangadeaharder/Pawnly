@@ -13,7 +13,7 @@ export function createLessonRepository() {
 
 	async function markCompleted(lessonId: string, userId: string): Promise<void> {
 		const existing = base.progress.find((p) => p.lesson_id === lessonId);
-		if (existing && existing.completed) return;
+		if (existing?.completed) return;
 
 		const updates = { completed: true, completed_at: new Date().toISOString() };
 		const newRecord: LessonProgress = {

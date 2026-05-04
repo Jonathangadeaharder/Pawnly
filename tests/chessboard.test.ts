@@ -9,7 +9,8 @@ const createTestGame = createGameInstance;
 type TestGame = Awaited<ReturnType<typeof createTestGame>>;
 
 async function renderBoard(props: Record<string, unknown> = {}) {
-	const game: TestGame = (props.game as TestGame | undefined) ?? (await createTestGame(props.fen as string));
+	const game: TestGame =
+		(props.game as TestGame | undefined) ?? (await createTestGame(props.fen as string));
 	const result = render(Chessboard, { props: { game, ...props } });
 	return { game, ...result };
 }
@@ -32,9 +33,12 @@ describe('Chessboard', () => {
 		['has border-radius 12px', (c: HTMLElement) => expectBoardWrapper(c).toHaveBorderRadius()],
 		['has overflow hidden', (c: HTMLElement) => expectBoardWrapper(c).toHaveOverflowHidden()],
 		['has box-shadow', (c: HTMLElement) => expectBoardWrapper(c).toHaveBoxShadow()],
-		['has aria-label Chessboard', (c: HTMLElement) => {
-			expect(c.firstElementChild).toHaveAttribute('aria-label', 'Chessboard');
-		}],
+		[
+			'has aria-label Chessboard',
+			(c: HTMLElement) => {
+				expect(c.firstElementChild).toHaveAttribute('aria-label', 'Chessboard');
+			},
+		],
 	])('%s', async (_name, assert) => {
 		const { container } = await renderBoard();
 		assert(container);
@@ -43,9 +47,12 @@ describe('Chessboard', () => {
 	it.each([
 		['renders 64 board squares in SVG', (c: HTMLElement) => expectBoardSvg(c).toHaveSquares(64)],
 		['renders default board colors', (c: HTMLElement) => expectBoardSvg(c).toHaveDefaultColors()],
-		['renders SVG with data-board attribute', (c: HTMLElement) => {
-			expect(c.querySelector('svg[data-board]')).toBeInTheDocument();
-		}],
+		[
+			'renders SVG with data-board attribute',
+			(c: HTMLElement) => {
+				expect(c.querySelector('svg[data-board]')).toBeInTheDocument();
+			},
+		],
 	])('%s', async (_name, assert) => {
 		const { container } = await renderBoard();
 		assert(container);
@@ -88,7 +95,9 @@ describe('Chessboard arrows', () => {
 	});
 
 	it('renders arrow with custom color', async () => {
-		const { container } = await renderBoard({ arrows: [{ from: 'e2', to: 'e4', color: '#ff0000' }] });
+		const { container } = await renderBoard({
+			arrows: [{ from: 'e2', to: 'e4', color: '#ff0000' }],
+		});
 		expect(container.querySelector('svg line')).toHaveAttribute('stroke', '#ff0000');
 	});
 
@@ -102,7 +111,10 @@ describe('Chessboard arrows', () => {
 
 	it('renders multiple arrows', async () => {
 		const { container } = await renderBoard({
-			arrows: [{ from: 'e2', to: 'e4' }, { from: 'd2', to: 'd4' }],
+			arrows: [
+				{ from: 'e2', to: 'e4' },
+				{ from: 'd2', to: 'd4' },
+			],
 		});
 		expectBoardSvg(container).toHaveArrowCount(2);
 	});
@@ -192,15 +204,15 @@ describe('Chessboard flip', () => {
 	});
 });
 
-describe('Chessboard promotion dialog', () => {
-	async function renderPromotion() {
-		const { game, container } = await renderBoard({ fen: '8/4P3/8/8/8/8/8/4K2k w - - 0 1' });
-		game.selectSquare('e7');
-		const svg = container.querySelector('svg[data-board]')!;
-		await fireEvent.click(svg, boardClickXY(4, 0));
-		return { game, container };
-	}
+async function renderPromotion() {
+	const { game, container } = await renderBoard({ fen: '8/4P3/8/8/8/8/8/4K2k w - - 0 1' });
+	game.selectSquare('e7');
+	const svg = container.querySelector('svg[data-board]')!;
+	await fireEvent.click(svg, boardClickXY(4, 0));
+	return { game, container };
+}
 
+describe('Chessboard promotion dialog', () => {
 	it('shows promotion dialog when pawn reaches last rank', async () => {
 		const { container } = await renderPromotion();
 		const dialog = container.querySelector('[role="dialog"]');

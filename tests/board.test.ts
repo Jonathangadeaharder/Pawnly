@@ -150,24 +150,15 @@ describe('getPieceSymbol', () => {
 		expect(typeof mod.getPieceSymbol).toBe('function');
 	});
 
-	it('returns correct symbols for white pieces', async () => {
+	it('returns correct symbols for all pieces', async () => {
 		const { getPieceSymbol } = await import('../src/lib/board.svelte');
-		expect(getPieceSymbol('K')).toBe('\u2654');
-		expect(getPieceSymbol('Q')).toBe('\u2655');
-		expect(getPieceSymbol('R')).toBe('\u2656');
-		expect(getPieceSymbol('B')).toBe('\u2657');
-		expect(getPieceSymbol('N')).toBe('\u2658');
-		expect(getPieceSymbol('P')).toBe('\u2659');
-	});
-
-	it('returns correct symbols for black pieces', async () => {
-		const { getPieceSymbol } = await import('../src/lib/board.svelte');
-		expect(getPieceSymbol('k')).toBe('\u265A');
-		expect(getPieceSymbol('q')).toBe('\u265B');
-		expect(getPieceSymbol('r')).toBe('\u265C');
-		expect(getPieceSymbol('b')).toBe('\u265D');
-		expect(getPieceSymbol('n')).toBe('\u265E');
-		expect(getPieceSymbol('p')).toBe('\u265F');
+		const expected: Record<string, string> = {
+			K: '\u2654', Q: '\u2655', R: '\u2656', B: '\u2657', N: '\u2658', P: '\u2659',
+			k: '\u265A', q: '\u265B', r: '\u265C', b: '\u265D', n: '\u265E', p: '\u265F',
+		};
+		for (const [piece, symbol] of Object.entries(expected)) {
+			expect(getPieceSymbol(piece)).toBe(symbol);
+		}
 	});
 
 	it('returns empty string for unknown piece', async () => {

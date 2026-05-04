@@ -2,24 +2,28 @@ import { fireEvent, render, screen } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
 import YouScreen from '../src/lib/components/screens/YouScreen.svelte';
 
+function renderYouScreen(props: Record<string, unknown> = {}) {
+	return render(YouScreen, { props });
+}
+
 describe('YouScreen', () => {
 	it('renders profile header with default name', () => {
-		render(YouScreen);
+		renderYouScreen();
 		expect(screen.getByText('Maya')).toBeInTheDocument();
 	});
 
 	it('renders profile header with custom name', () => {
-		render(YouScreen, { props: { name: 'Alex' } });
+		renderYouScreen({ name: 'Alex' });
 		expect(screen.getByText('Alex')).toBeInTheDocument();
 	});
 
 	it('renders join date', () => {
-		render(YouScreen);
+		renderYouScreen();
 		expect(screen.getByText('Joined 3 weeks ago')).toBeInTheDocument();
 	});
 
 	it('renders all three stat cards', () => {
-		render(YouScreen);
+		renderYouScreen({ rating: 1140, gamesPlayed: 23, puzzlesSolved: 12 });
 		expect(screen.getByText('1140')).toBeInTheDocument();
 		expect(screen.getByText('Rating')).toBeInTheDocument();
 		expect(screen.getByText('23')).toBeInTheDocument();
@@ -29,12 +33,12 @@ describe('YouScreen', () => {
 	});
 
 	it('renders achievements heading', () => {
-		render(YouScreen);
+		renderYouScreen();
 		expect(screen.getByText('Achievements')).toBeInTheDocument();
 	});
 
 	it('renders all six achievement badges', () => {
-		render(YouScreen);
+		renderYouScreen();
 		expect(screen.getByText('7-day streak')).toBeInTheDocument();
 		expect(screen.getByText('First game')).toBeInTheDocument();
 		expect(screen.getByText('Puzzle master')).toBeInTheDocument();
@@ -44,7 +48,7 @@ describe('YouScreen', () => {
 	});
 
 	it('renders achievement emojis', () => {
-		render(YouScreen);
+		renderYouScreen();
 		expect(screen.getByText('🔥')).toBeInTheDocument();
 		expect(screen.getByText('♟')).toBeInTheDocument();
 		expect(screen.getByText('🎯')).toBeInTheDocument();
@@ -54,31 +58,31 @@ describe('YouScreen', () => {
 	});
 
 	it('renders settings button', () => {
-		render(YouScreen);
+		renderYouScreen();
 		expect(screen.getByText('Settings')).toBeInTheDocument();
 	});
 
 	it('calls onSettings when settings button clicked', async () => {
 		const onSettings = vi.fn();
-		render(YouScreen, { props: { onSettings } });
+		renderYouScreen({ onSettings });
 		await fireEvent.click(screen.getByText('Settings'));
 		expect(onSettings).toHaveBeenCalled();
 	});
 
 	it('renders Mascot with happy mood', () => {
-		const { container } = render(YouScreen);
+		const { container } = renderYouScreen();
 		const mascotSvg = container.querySelector('ellipse[opacity="0.12"]');
 		expect(mascotSvg).toBeTruthy();
 	});
 
 	it('applies brand font to name', () => {
-		render(YouScreen);
+		renderYouScreen();
 		const name = screen.getByText('Maya');
 		expect(name.style.fontFamily).toContain('Fraunces');
 	});
 
 	it('applies brand font to stat values', () => {
-		render(YouScreen);
+		renderYouScreen({ rating: 1140 });
 		const rating = screen.getByText('1140');
 		expect(rating.style.fontFamily).toContain('Geist Mono');
 	});

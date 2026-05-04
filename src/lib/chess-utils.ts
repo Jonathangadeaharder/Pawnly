@@ -45,18 +45,20 @@ export interface PositionAnalysis {
 	depth: number;
 }
 
+export function resolveEval(posAnalysis: PositionAnalysis): number {
+	if (posAnalysis.mate === undefined) {
+		return posAnalysis.evaluation;
+	}
+	return posAnalysis.mate > 0 ? 10000 : -10000;
+}
+
 export function createMoveAnalysis(
 	move: string,
 	posAnalysis: PositionAnalysis,
 	previousEval: number,
 	isWhite: boolean,
 ): MoveAnalysisResult {
-	const rawEval =
-		posAnalysis.mate !== undefined
-			? posAnalysis.mate > 0
-				? 10000
-				: -10000
-			: posAnalysis.evaluation;
+	const rawEval = resolveEval(posAnalysis);
 	const normalizedEval = isWhite ? rawEval : -rawEval;
 	const loss = previousEval - normalizedEval;
 	const classification = classifyMove(loss);

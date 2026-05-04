@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { describeRepoBasicTests } from './helpers';
 
 vi.mock('../src/lib/supabase', () => ({

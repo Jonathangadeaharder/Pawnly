@@ -1,5 +1,5 @@
 import type { Square } from 'chess.js';
-import { calculateAccuracy, classifyMove, createMoveAnalysis, getMoveComment } from './chess-utils';
+import { calculateAccuracy, createMoveAnalysis } from './chess-utils';
 
 export { calculateAccuracy, classifyMove, createMoveAnalysis } from './chess-utils';
 
@@ -92,10 +92,14 @@ export function parseBestMove(line: string): ParsedBestMove {
 export function parseInfoLine(line: string): ParsedInfo | null {
 	if (!line.startsWith('info ')) return null;
 
-	const depthMatch = line.match(/\bdepth\s+(\d+)/);
-	const cpMatch = line.match(/\bscore\s+cp\s+(-?\d+)/);
-	const mateMatch = line.match(/\bscore\s+mate\s+(-?\d+)/);
-	const pvMatch = line.match(/\bpv\s+(.+)/);
+	const depthRe = /\bdepth\s+(\d+)/;
+	const cpRe = /\bscore\s+cp\s+(-?\d+)/;
+	const mateRe = /\bscore\s+mate\s+(-?\d+)/;
+	const pvRe = /\bpv\s+(.+)/;
+	const depthMatch = depthRe.exec(line);
+	const cpMatch = cpRe.exec(line);
+	const mateMatch = mateRe.exec(line);
+	const pvMatch = pvRe.exec(line);
 
 	if (!depthMatch) return null;
 
@@ -140,6 +144,58 @@ export function createStockfish() {
 	let currentMate: number | undefined;
 	let currentPv: string[] = [];
 
+	function handleReady() {
+		isReady = true;
+		if (readyResolve) {
+			readyResolve();
+			readyResolve = null;
+		}
+	}
+
+	function handleBestmove(data: string) {
+		isThinking = false;
+		if (!data) return;
+		const parsed = parseBestMove(data);
+		const result: StockfishMove = {
+			from: uciToSquare(parsed.bestMove),
+			to: uciToSquare(parsed.bestMove.slice(2)),
+			san: parsed.bestMove,
+			evaluation: currentScore ?? 0,
+			mate: currentMate,
+			depth: currentDepth,
+			pv: [...currentPv],
+		};
+		bestMove = result;
+		evaluation = currentScore ?? 0;
+		depth = currentDepth;
+		pv = [...currentPv];
+
+		if (bestMoveResolve) {
+			bestMoveResolve(result);
+			bestMoveResolve = null;
+		}
+		if (analysisResolve) {
+			analysisResolve({
+				evaluation: currentScore ?? 0,
+				mate: currentMate,
+				bestMove: parsed.bestMove,
+				pv: [...currentPv],
+				depth: currentDepth,
+			});
+			analysisResolve = null;
+		}
+	}
+
+	function handleInfo(data: string) {
+		const parsed = parseInfoLine(data);
+		if (parsed) {
+			currentDepth = parsed.depth;
+			if (parsed.score !== undefined) currentScore = parsed.score;
+			if (parsed.mate !== undefined) currentMate = parsed.mate;
+			if (parsed.pv.length > 0) currentPv = parsed.pv;
+		}
+	}
+
 	function initWorker() {
 		worker = new Worker('/stockfish/worker.js');
 
@@ -148,59 +204,16 @@ export function createStockfish() {
 
 			switch (msg.type) {
 				case 'ready':
-					isReady = true;
-					if (readyResolve) {
-						readyResolve();
-						readyResolve = null;
-					}
+					handleReady();
 					break;
 
-				case 'bestmove': {
-					isThinking = false;
-					if (!msg.data) break;
-					const parsed = parseBestMove(msg.data);
-					const result: StockfishMove = {
-						from: uciToSquare(parsed.bestMove),
-						to: uciToSquare(parsed.bestMove.slice(2)),
-						san: parsed.bestMove,
-						evaluation: currentScore ?? 0,
-						mate: currentMate,
-						depth: currentDepth,
-						pv: [...currentPv],
-					};
-					bestMove = result;
-					evaluation = currentScore ?? 0;
-					depth = currentDepth;
-					pv = [...currentPv];
-
-					if (bestMoveResolve) {
-						bestMoveResolve(result);
-						bestMoveResolve = null;
-					}
-					if (analysisResolve) {
-						analysisResolve({
-							evaluation: currentScore ?? 0,
-							mate: currentMate,
-							bestMove: parsed.bestMove,
-							pv: [...currentPv],
-							depth: currentDepth,
-						});
-						analysisResolve = null;
-					}
+				case 'bestmove':
+					handleBestmove(msg.data ?? '');
 					break;
-				}
 
-				case 'info': {
-					if (!msg.data) break;
-					const parsed = parseInfoLine(msg.data);
-					if (parsed) {
-						currentDepth = parsed.depth;
-						if (parsed.score !== undefined) currentScore = parsed.score;
-						if (parsed.mate !== undefined) currentMate = parsed.mate;
-						if (parsed.pv.length > 0) currentPv = parsed.pv;
-					}
+				case 'info':
+					handleInfo(msg.data ?? '');
 					break;
-				}
 
 				case 'error':
 					console.error('[Stockfish Worker]', msg.data);

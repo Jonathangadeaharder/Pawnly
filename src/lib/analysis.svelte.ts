@@ -4,12 +4,10 @@
  */
 
 import { Chess } from 'chess.js';
-import { calculateAccuracy, classifyMove, createMoveAnalysis, getMoveComment } from './chess-utils';
-import { createStockfish, type MoveAnalysis } from './stockfish.svelte';
+import { calculateAccuracy, createMoveAnalysis } from './chess-utils';
+import { createStockfish, type GameAnalysis, type MoveAnalysis } from './stockfish.svelte';
 
 export type { MoveAnalysis, PositionAnalysis } from './stockfish.svelte';
-
-import type { GameAnalysis } from './stockfish.svelte';
 
 export interface AnalysisState extends GameAnalysis {
 	isAnalyzing: boolean;

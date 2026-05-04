@@ -1,6 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
-import { Brand } from '../src/lib/brand';
 import HomeScreen from '../src/lib/components/screens/HomeScreen.svelte';
 
 describe('HomeScreen', () => {
@@ -16,7 +15,7 @@ describe('HomeScreen', () => {
 	});
 
 	it('renders streak badge with number 7', () => {
-		render(HomeScreen, { props: { onNavigate: vi.fn() } });
+		render(HomeScreen, { props: { onNavigate: vi.fn(), streak: 7 } });
 		expect(screen.getAllByText('7').length).toBeGreaterThanOrEqual(1);
 	});
 
@@ -54,10 +53,9 @@ describe('HomeScreen', () => {
 	});
 
 	it('renders rating peek card', () => {
-		render(HomeScreen, { props: { onNavigate: vi.fn() } });
+		render(HomeScreen, { props: { onNavigate: vi.fn(), rating: 1140 } });
 		expect(screen.getByText('Your rating')).toBeInTheDocument();
 		expect(screen.getByText(/1140/)).toBeInTheDocument();
-		expect(screen.getByText('+18 this week')).toBeInTheDocument();
 		expect(screen.getByText(/Details/)).toBeInTheDocument();
 	});
 

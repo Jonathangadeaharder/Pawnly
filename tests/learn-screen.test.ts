@@ -1,6 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
-import { Brand } from '../src/lib/brand';
 import LearnScreen from '../src/lib/components/screens/LearnScreen.svelte';
 
 describe('LearnScreen', () => {
@@ -105,7 +104,7 @@ describe('LearnScreen', () => {
 	});
 
 	it('applies reduced opacity to locked lessons', () => {
-		const { container } = render(LearnScreen, { props: { onOpenLesson: vi.fn() } });
+		render(LearnScreen, { props: { onOpenLesson: vi.fn() } });
 		const lockedButton = screen.getByText('Checkmate patterns').closest('button');
 		expect(lockedButton).toBeTruthy();
 		expect(lockedButton!.style.opacity).toBe('0.5');

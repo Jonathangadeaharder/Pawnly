@@ -4,22 +4,26 @@ import TrainScreen from '../src/lib/components/screens/TrainScreen.svelte';
 
 const defaultProps = { onOpenPuzzle: vi.fn(), onOpenScan: vi.fn() };
 
+function renderTrainScreen(props: Record<string, unknown> = {}) {
+	return render(TrainScreen, { props: { ...defaultProps, ...props } });
+}
+
 describe('TrainScreen', () => {
 	it('renders header with title and subtitle', () => {
-		render(TrainScreen, { props: defaultProps });
+		renderTrainScreen();
 		expect(screen.getByText('Train')).toBeInTheDocument();
 		expect(screen.getByText('Sharpen your tactics')).toBeInTheDocument();
 	});
 
 	it('renders daily puzzle hero with pill', () => {
-		render(TrainScreen, { props: defaultProps });
+		renderTrainScreen();
 		expect(screen.getByText('Daily challenge')).toBeInTheDocument();
 		expect(screen.getByText('Mate in 2')).toBeInTheDocument();
 		expect(screen.getByText('Can you find the winning move?')).toBeInTheDocument();
 	});
 
 	it('renders scan hero with pill', () => {
-		render(TrainScreen, { props: defaultProps });
+		renderTrainScreen();
 		expect(screen.getByText('Scan trainer')).toBeInTheDocument();
 		expect(screen.getByText('Find all threats')).toBeInTheDocument();
 		expect(
@@ -29,7 +33,7 @@ describe('TrainScreen', () => {
 
 	it('calls onOpenScan when scan hero clicked', async () => {
 		const onOpenScan = vi.fn();
-		render(TrainScreen, { props: { ...defaultProps, onOpenScan } });
+		renderTrainScreen({ onOpenScan });
 		const scanCard = screen.getByText('Find all threats').closest('button');
 		expect(scanCard).toBeTruthy();
 		await fireEvent.click(scanCard!);
@@ -38,7 +42,7 @@ describe('TrainScreen', () => {
 
 	it('calls onOpenPuzzle("daily") when daily hero clicked', async () => {
 		const onOpenPuzzle = vi.fn();
-		render(TrainScreen, { props: { ...defaultProps, onOpenPuzzle } });
+		renderTrainScreen({ onOpenPuzzle });
 		const dailyCard = screen.getByText('Mate in 2').closest('button');
 		expect(dailyCard).toBeTruthy();
 		await fireEvent.click(dailyCard!);
@@ -46,12 +50,12 @@ describe('TrainScreen', () => {
 	});
 
 	it('renders Puzzles heading', () => {
-		render(TrainScreen, { props: defaultProps });
+		renderTrainScreen();
 		expect(screen.getByText('Puzzles')).toBeInTheDocument();
 	});
 
 	it('renders all six puzzle titles', () => {
-		render(TrainScreen, { props: defaultProps });
+		renderTrainScreen();
 		expect(screen.getByText('Fork!')).toBeInTheDocument();
 		expect(screen.getByText('Pin & win')).toBeInTheDocument();
 		expect(screen.getByText('Back rank mate')).toBeInTheDocument();
@@ -61,7 +65,7 @@ describe('TrainScreen', () => {
 	});
 
 	it('renders puzzle emojis', () => {
-		render(TrainScreen, { props: defaultProps });
+		renderTrainScreen();
 		expect(screen.getByText('🍴')).toBeInTheDocument();
 		expect(screen.getByText('📌')).toBeInTheDocument();
 		expect(screen.getByText('🏰')).toBeInTheDocument();
@@ -71,20 +75,20 @@ describe('TrainScreen', () => {
 	});
 
 	it('renders solved indicator for completed puzzles', () => {
-		render(TrainScreen, { props: defaultProps });
+		renderTrainScreen();
 		const solved = screen.getAllByText('✓ Solved');
 		expect(solved.length).toBe(2);
 	});
 
 	it('renders 8 buttons (1 daily hero + 1 scan hero + 6 puzzle cards)', () => {
-		render(TrainScreen, { props: defaultProps });
+		renderTrainScreen();
 		const puzzleButtons = screen.getAllByRole('button');
 		expect(puzzleButtons.length).toBe(8);
 	});
 
 	it('calls onOpenPuzzle with puzzle id when puzzle clicked', async () => {
 		const onOpenPuzzle = vi.fn();
-		render(TrainScreen, { props: { ...defaultProps, onOpenPuzzle } });
+		renderTrainScreen({ onOpenPuzzle });
 		const forkPuzzle = screen.getByText('Fork!').closest('button');
 		expect(forkPuzzle).toBeTruthy();
 		await fireEvent.click(forkPuzzle!);
@@ -93,7 +97,7 @@ describe('TrainScreen', () => {
 
 	it('calls onOpenPuzzle with correct id for different puzzles', async () => {
 		const onOpenPuzzle = vi.fn();
-		render(TrainScreen, { props: { ...defaultProps, onOpenPuzzle } });
+		renderTrainScreen({ onOpenPuzzle });
 		const knightFork = screen.getByText('Knight fork').closest('button');
 		await fireEvent.click(knightFork!);
 		expect(onOpenPuzzle).toHaveBeenCalledWith('p6');

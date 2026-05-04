@@ -57,14 +57,24 @@ for (const group of iconGroups) {
 
 				it('uses Brand.colors.ink as default color', () => {
 					const { container } = render(component);
-					const path = container.querySelector('svg :first-child');
-					expect(path).toHaveAttribute(group.style, Brand.colors.ink);
+					const svg = container.querySelector('svg')!;
+					if (group.style === 'stroke') {
+						expect(svg).toHaveAttribute('stroke', Brand.colors.ink);
+					} else {
+						const path = container.querySelector('svg :first-child')!;
+						expect(path).toHaveAttribute('fill', Brand.colors.ink);
+					}
 				});
 
 				it('applies custom color', () => {
 					const { container } = render(component, { props: { color: '#ff0000' } });
-					const path = container.querySelector('svg :first-child');
-					expect(path).toHaveAttribute(group.style, '#ff0000');
+					const svg = container.querySelector('svg')!;
+					if (group.style === 'stroke') {
+						expect(svg).toHaveAttribute('stroke', '#ff0000');
+					} else {
+						const path = container.querySelector('svg :first-child')!;
+						expect(path).toHaveAttribute('fill', '#ff0000');
+					}
 				});
 
 				if (group.style === 'stroke') {
