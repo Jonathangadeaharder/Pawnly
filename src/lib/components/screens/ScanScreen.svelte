@@ -37,7 +37,7 @@ let markedSquares = $state<Record<ScanMode, Set<string>>>({
 	doubleAttack: new Set(),
 });
 let timeLeft = $state(0);
-let timerInterval = $state<ReturnType<typeof setInterval> | null>(null);
+let timerInterval: ReturnType<typeof setInterval> | null = null;
 let submitted = $state(false);
 let stars = $state(0);
 let streak = $state(0);

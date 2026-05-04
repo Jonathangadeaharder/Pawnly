@@ -1,15 +1,18 @@
 import { describe, expect, it } from 'vitest';
+import { STARTING_FEN } from './helpers';
 
-const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+async function importBoard() {
+	return import('../src/lib/board.svelte');
+}
 
 describe('fenToPieces', () => {
 	it('exports fenToPieces function', async () => {
-		const mod = await import('../src/lib/board.svelte');
+		const mod = await importBoard();
 		expect(typeof mod.fenToPieces).toBe('function');
 	});
 
 	it('parses starting position correctly', async () => {
-		const { fenToPieces } = await import('../src/lib/board.svelte');
+		const { fenToPieces } = await importBoard();
 		const pieces = fenToPieces(STARTING_FEN);
 
 		expect(pieces.a1).toBe('R');
@@ -32,7 +35,7 @@ describe('fenToPieces', () => {
 	});
 
 	it('parses pawns correctly', async () => {
-		const { fenToPieces } = await import('../src/lib/board.svelte');
+		const { fenToPieces } = await importBoard();
 		const pieces = fenToPieces(STARTING_FEN);
 
 		for (const file of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']) {
@@ -42,13 +45,13 @@ describe('fenToPieces', () => {
 	});
 
 	it('returns 32 pieces at start', async () => {
-		const { fenToPieces } = await import('../src/lib/board.svelte');
+		const { fenToPieces } = await importBoard();
 		const pieces = fenToPieces(STARTING_FEN);
 		expect(Object.keys(pieces).length).toBe(32);
 	});
 
 	it('handles empty squares correctly', async () => {
-		const { fenToPieces } = await import('../src/lib/board.svelte');
+		const { fenToPieces } = await importBoard();
 		const pieces = fenToPieces(STARTING_FEN);
 
 		expect(pieces.e3).toBeUndefined();
@@ -58,7 +61,7 @@ describe('fenToPieces', () => {
 	});
 
 	it('parses custom position', async () => {
-		const { fenToPieces } = await import('../src/lib/board.svelte');
+		const { fenToPieces } = await importBoard();
 		const fen = 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1';
 		const pieces = fenToPieces(fen);
 
@@ -67,7 +70,7 @@ describe('fenToPieces', () => {
 	});
 
 	it('parses empty ranks correctly', async () => {
-		const { fenToPieces } = await import('../src/lib/board.svelte');
+		const { fenToPieces } = await importBoard();
 		const fen = '8/8/8/8/8/8/8/4K2k w - - 0 1';
 		const pieces = fenToPieces(fen);
 
@@ -79,33 +82,33 @@ describe('fenToPieces', () => {
 
 describe('getSquareFromCoords', () => {
 	it('exports getSquareFromCoords function', async () => {
-		const mod = await import('../src/lib/board.svelte');
+		const mod = await importBoard();
 		expect(typeof mod.getSquareFromCoords).toBe('function');
 	});
 
 	it('converts top-left to a8 (not flipped)', async () => {
-		const { getSquareFromCoords } = await import('../src/lib/board.svelte');
+		const { getSquareFromCoords } = await importBoard();
 		expect(getSquareFromCoords(0, 0, 50, false)).toBe('a8');
 	});
 
 	it('converts bottom-right to h1 (not flipped)', async () => {
-		const { getSquareFromCoords } = await import('../src/lib/board.svelte');
+		const { getSquareFromCoords } = await importBoard();
 		expect(getSquareFromCoords(399, 399, 50, false)).toBe('h1');
 	});
 
 	it('converts center of board to d5 (not flipped)', async () => {
-		const { getSquareFromCoords } = await import('../src/lib/board.svelte');
+		const { getSquareFromCoords } = await importBoard();
 		expect(getSquareFromCoords(175, 175, 50, false)).toBe('d5');
 	});
 
 	it('flips coordinates correctly', async () => {
-		const { getSquareFromCoords } = await import('../src/lib/board.svelte');
+		const { getSquareFromCoords } = await importBoard();
 		expect(getSquareFromCoords(0, 0, 50, true)).toBe('h1');
 		expect(getSquareFromCoords(399, 399, 50, true)).toBe('a8');
 	});
 
 	it('handles different square sizes', async () => {
-		const { getSquareFromCoords } = await import('../src/lib/board.svelte');
+		const { getSquareFromCoords } = await importBoard();
 		expect(getSquareFromCoords(0, 0, 100, false)).toBe('a8');
 		expect(getSquareFromCoords(700, 700, 100, false)).toBe('h1');
 	});
@@ -113,33 +116,33 @@ describe('getSquareFromCoords', () => {
 
 describe('getCoordsFromSquare', () => {
 	it('exports getCoordsFromSquare function', async () => {
-		const mod = await import('../src/lib/board.svelte');
+		const mod = await importBoard();
 		expect(typeof mod.getCoordsFromSquare).toBe('function');
 	});
 
 	it('converts a8 to top-left (not flipped)', async () => {
-		const { getCoordsFromSquare } = await import('../src/lib/board.svelte');
+		const { getCoordsFromSquare } = await importBoard();
 		expect(getCoordsFromSquare('a8', 50, false)).toEqual({ x: 0, y: 0 });
 	});
 
 	it('converts h1 to bottom-right (not flipped)', async () => {
-		const { getCoordsFromSquare } = await import('../src/lib/board.svelte');
+		const { getCoordsFromSquare } = await importBoard();
 		expect(getCoordsFromSquare('h1', 50, false)).toEqual({ x: 350, y: 350 });
 	});
 
 	it('converts e4 correctly (not flipped)', async () => {
-		const { getCoordsFromSquare } = await import('../src/lib/board.svelte');
+		const { getCoordsFromSquare } = await importBoard();
 		expect(getCoordsFromSquare('e4', 50, false)).toEqual({ x: 200, y: 200 });
 	});
 
 	it('flips coordinates correctly', async () => {
-		const { getCoordsFromSquare } = await import('../src/lib/board.svelte');
+		const { getCoordsFromSquare } = await importBoard();
 		expect(getCoordsFromSquare('a8', 50, true)).toEqual({ x: 350, y: 0 });
 		expect(getCoordsFromSquare('h1', 50, true)).toEqual({ x: 0, y: 350 });
 	});
 
 	it('handles different square sizes', async () => {
-		const { getCoordsFromSquare } = await import('../src/lib/board.svelte');
+		const { getCoordsFromSquare } = await importBoard();
 		expect(getCoordsFromSquare('a8', 100, false)).toEqual({ x: 0, y: 0 });
 		expect(getCoordsFromSquare('h1', 100, false)).toEqual({ x: 700, y: 700 });
 	});
@@ -147,32 +150,33 @@ describe('getCoordsFromSquare', () => {
 
 describe('getPieceSymbol', () => {
 	it('exports getPieceSymbol function', async () => {
-		const mod = await import('../src/lib/board.svelte');
+		const mod = await importBoard();
 		expect(typeof mod.getPieceSymbol).toBe('function');
 	});
 
-	it('returns correct symbols for white pieces', async () => {
-		const { getPieceSymbol } = await import('../src/lib/board.svelte');
-		expect(getPieceSymbol('K')).toBe('\u2654');
-		expect(getPieceSymbol('Q')).toBe('\u2655');
-		expect(getPieceSymbol('R')).toBe('\u2656');
-		expect(getPieceSymbol('B')).toBe('\u2657');
-		expect(getPieceSymbol('N')).toBe('\u2658');
-		expect(getPieceSymbol('P')).toBe('\u2659');
-	});
-
-	it('returns correct symbols for black pieces', async () => {
-		const { getPieceSymbol } = await import('../src/lib/board.svelte');
-		expect(getPieceSymbol('k')).toBe('\u265A');
-		expect(getPieceSymbol('q')).toBe('\u265B');
-		expect(getPieceSymbol('r')).toBe('\u265C');
-		expect(getPieceSymbol('b')).toBe('\u265D');
-		expect(getPieceSymbol('n')).toBe('\u265E');
-		expect(getPieceSymbol('p')).toBe('\u265F');
+	it('returns correct symbols for all pieces', async () => {
+		const { getPieceSymbol } = await importBoard();
+		const expected: Record<string, string> = {
+			K: '\u2654',
+			Q: '\u2655',
+			R: '\u2656',
+			B: '\u2657',
+			N: '\u2658',
+			P: '\u2659',
+			k: '\u265A',
+			q: '\u265B',
+			r: '\u265C',
+			b: '\u265D',
+			n: '\u265E',
+			p: '\u265F',
+		};
+		for (const [piece, symbol] of Object.entries(expected)) {
+			expect(getPieceSymbol(piece)).toBe(symbol);
+		}
 	});
 
 	it('returns empty string for unknown piece', async () => {
-		const { getPieceSymbol } = await import('../src/lib/board.svelte');
+		const { getPieceSymbol } = await importBoard();
 		expect(getPieceSymbol('x')).toBe('');
 		expect(getPieceSymbol('')).toBe('');
 	});
@@ -180,7 +184,7 @@ describe('getPieceSymbol', () => {
 
 describe('ArrowColors and HighlightColors', () => {
 	it('exports ArrowColors', async () => {
-		const mod = await import('../src/lib/board.svelte');
+		const mod = await importBoard();
 		expect(mod.ArrowColors).toBeDefined();
 		expect(mod.ArrowColors.GREEN).toBe('#15803d');
 		expect(mod.ArrowColors.BLUE).toBe('#1e40af');
@@ -190,7 +194,7 @@ describe('ArrowColors and HighlightColors', () => {
 	});
 
 	it('exports HighlightColors', async () => {
-		const mod = await import('../src/lib/board.svelte');
+		const mod = await importBoard();
 		expect(mod.HighlightColors).toBeDefined();
 		expect(mod.HighlightColors.GREEN).toBe('#15803d');
 		expect(mod.HighlightColors.BLUE).toBe('#1e40af');
@@ -202,7 +206,7 @@ describe('ArrowColors and HighlightColors', () => {
 
 describe('createArrow', () => {
 	it('creates arrow with default color and opacity', async () => {
-		const { createArrow, ArrowColors } = await import('../src/lib/board.svelte');
+		const { createArrow, ArrowColors } = await importBoard();
 		const arrow = createArrow('e2', 'e4');
 		expect(arrow).toEqual({
 			from: 'e2',
@@ -213,7 +217,7 @@ describe('createArrow', () => {
 	});
 
 	it('creates arrow with custom color and opacity', async () => {
-		const { createArrow } = await import('../src/lib/board.svelte');
+		const { createArrow } = await importBoard();
 		const arrow = createArrow('e2', 'e4', '#ff0000', 0.5);
 		expect(arrow).toEqual({
 			from: 'e2',
@@ -226,7 +230,7 @@ describe('createArrow', () => {
 
 describe('createHighlight', () => {
 	it('creates highlight with default color and opacity', async () => {
-		const { createHighlight, HighlightColors } = await import('../src/lib/board.svelte');
+		const { createHighlight, HighlightColors } = await importBoard();
 		const highlight = createHighlight('e4');
 		expect(highlight).toEqual({
 			square: 'e4',
@@ -236,7 +240,7 @@ describe('createHighlight', () => {
 	});
 
 	it('creates highlight with custom color and opacity', async () => {
-		const { createHighlight } = await import('../src/lib/board.svelte');
+		const { createHighlight } = await importBoard();
 		const highlight = createHighlight('e4', '#ff0000', 0.6);
 		expect(highlight).toEqual({
 			square: 'e4',
@@ -248,7 +252,7 @@ describe('createHighlight', () => {
 
 describe('createBestMoveArrow', () => {
 	it('creates green arrow with 0.8 opacity', async () => {
-		const { createBestMoveArrow, ArrowColors } = await import('../src/lib/board.svelte');
+		const { createBestMoveArrow, ArrowColors } = await importBoard();
 		const arrow = createBestMoveArrow('e2', 'e4');
 		expect(arrow).toEqual({
 			from: 'e2',
@@ -261,7 +265,7 @@ describe('createBestMoveArrow', () => {
 
 describe('createAlternativeArrow', () => {
 	it('creates blue arrow with 0.7 opacity', async () => {
-		const { createAlternativeArrow, ArrowColors } = await import('../src/lib/board.svelte');
+		const { createAlternativeArrow, ArrowColors } = await importBoard();
 		const arrow = createAlternativeArrow('d2', 'd4');
 		expect(arrow).toEqual({
 			from: 'd2',
@@ -274,7 +278,7 @@ describe('createAlternativeArrow', () => {
 
 describe('createBlunderArrow', () => {
 	it('creates red arrow with 0.8 opacity', async () => {
-		const { createBlunderArrow, ArrowColors } = await import('../src/lib/board.svelte');
+		const { createBlunderArrow, ArrowColors } = await importBoard();
 		const arrow = createBlunderArrow('f2', 'f3');
 		expect(arrow).toEqual({
 			from: 'f2',
@@ -287,7 +291,7 @@ describe('createBlunderArrow', () => {
 
 describe('createThreatArrow', () => {
 	it('creates orange arrow with 0.7 opacity', async () => {
-		const { createThreatArrow, ArrowColors } = await import('../src/lib/board.svelte');
+		const { createThreatArrow, ArrowColors } = await importBoard();
 		const arrow = createThreatArrow('f7', 'f2');
 		expect(arrow).toEqual({
 			from: 'f7',
@@ -300,7 +304,7 @@ describe('createThreatArrow', () => {
 
 describe('createTargetHighlight', () => {
 	it('creates green highlight with 0.4 opacity', async () => {
-		const { createTargetHighlight, HighlightColors } = await import('../src/lib/board.svelte');
+		const { createTargetHighlight, HighlightColors } = await importBoard();
 		const highlight = createTargetHighlight('e4');
 		expect(highlight).toEqual({
 			square: 'e4',
@@ -312,7 +316,7 @@ describe('createTargetHighlight', () => {
 
 describe('createDangerHighlight', () => {
 	it('creates red highlight with 0.4 opacity', async () => {
-		const { createDangerHighlight, HighlightColors } = await import('../src/lib/board.svelte');
+		const { createDangerHighlight, HighlightColors } = await importBoard();
 		const highlight = createDangerHighlight('f7');
 		expect(highlight).toEqual({
 			square: 'f7',
@@ -324,7 +328,7 @@ describe('createDangerHighlight', () => {
 
 describe('createArrows', () => {
 	it('creates multiple arrows', async () => {
-		const { createArrows, ArrowColors } = await import('../src/lib/board.svelte');
+		const { createArrows, ArrowColors } = await importBoard();
 		const arrows = createArrows([
 			{ from: 'e2', to: 'e4' },
 			{ from: 'd2', to: 'd4', color: ArrowColors.BLUE },
@@ -336,14 +340,14 @@ describe('createArrows', () => {
 	});
 
 	it('returns empty array for empty input', async () => {
-		const { createArrows } = await import('../src/lib/board.svelte');
+		const { createArrows } = await importBoard();
 		expect(createArrows([])).toEqual([]);
 	});
 });
 
 describe('createHighlights', () => {
 	it('creates multiple highlights with default color', async () => {
-		const { createHighlights, HighlightColors } = await import('../src/lib/board.svelte');
+		const { createHighlights, HighlightColors } = await importBoard();
 		const highlights = createHighlights(['e4', 'd4', 'c4']);
 		expect(highlights.length).toBe(3);
 		expect(highlights[0]).toEqual({
@@ -354,21 +358,21 @@ describe('createHighlights', () => {
 	});
 
 	it('creates highlights with custom color', async () => {
-		const { createHighlights, HighlightColors } = await import('../src/lib/board.svelte');
+		const { createHighlights, HighlightColors } = await importBoard();
 		const highlights = createHighlights(['e4', 'd4'], HighlightColors.RED);
 		expect(highlights[0].color).toBe(HighlightColors.RED);
 		expect(highlights[1].color).toBe(HighlightColors.RED);
 	});
 
 	it('returns empty array for empty input', async () => {
-		const { createHighlights } = await import('../src/lib/board.svelte');
+		const { createHighlights } = await importBoard();
 		expect(createHighlights([])).toEqual([]);
 	});
 });
 
 describe('highlightLegalMoves', () => {
 	it('creates green highlights for legal moves', async () => {
-		const { highlightLegalMoves, HighlightColors } = await import('../src/lib/board.svelte');
+		const { highlightLegalMoves, HighlightColors } = await importBoard();
 		const highlights = highlightLegalMoves(['e3', 'e4']);
 		expect(highlights.length).toBe(2);
 		expect(highlights[0].color).toBe(HighlightColors.GREEN);
@@ -378,7 +382,7 @@ describe('highlightLegalMoves', () => {
 
 describe('showBestMove', () => {
 	it('returns array with one green arrow', async () => {
-		const { showBestMove, ArrowColors } = await import('../src/lib/board.svelte');
+		const { showBestMove, ArrowColors } = await importBoard();
 		const arrows = showBestMove('e2', 'e4');
 		expect(arrows.length).toBe(1);
 		expect(arrows[0].color).toBe(ArrowColors.GREEN);
@@ -387,7 +391,7 @@ describe('showBestMove', () => {
 
 describe('showThreat', () => {
 	it('returns threat arrow and danger highlight', async () => {
-		const { showThreat, ArrowColors, HighlightColors } = await import('../src/lib/board.svelte');
+		const { showThreat, ArrowColors, HighlightColors } = await importBoard();
 		const result = showThreat('f7', 'f2');
 		expect(result.arrows.length).toBe(1);
 		expect(result.arrows[0].color).toBe(ArrowColors.ORANGE);
@@ -399,7 +403,7 @@ describe('showThreat', () => {
 
 describe('compareMoves', () => {
 	it('returns best move and blunder arrows', async () => {
-		const { compareMoves, ArrowColors } = await import('../src/lib/board.svelte');
+		const { compareMoves, ArrowColors } = await importBoard();
 		const arrows = compareMoves({ from: 'e2', to: 'e4' }, { from: 'f2', to: 'f3' });
 		expect(arrows.length).toBe(2);
 		expect(arrows[0].color).toBe(ArrowColors.GREEN);

@@ -1,4 +1,3 @@
-import { supabase } from '../supabase';
 import { createProgressRepository } from './base.svelte';
 
 export interface PuzzleProgress {
@@ -14,32 +13,23 @@ export function createPuzzleRepository() {
 	const base = createProgressRepository<PuzzleProgress>('puzzle_progress');
 
 	async function recordAttempt(puzzleId: string, userId: string, solved: boolean): Promise<void> {
-		const existing = base.progress.find((p) => p.puzzle_id === puzzleId);
-		if (existing) {
-			const updates = {
-				attempts: existing.attempts + 1,
-				solved: solved || existing.solved,
-				solved_at: solved && !existing.solved ? new Date().toISOString() : existing.solved_at,
-			};
-			const { error: err } = await supabase
-				.from('puzzle_progress')
-				.update(updates)
-				.eq('id', existing.id);
-			if (err) throw err;
-			base.progress = base.progress.map((p) => (p.id === existing.id ? { ...p, ...updates } : p));
-		} else {
-			const record: PuzzleProgress = {
-				id: crypto.randomUUID(),
-				user_id: userId,
-				puzzle_id: puzzleId,
-				solved,
-				attempts: 1,
-				solved_at: solved ? new Date().toISOString() : null,
-			};
-			const { error: err } = await supabase.from('puzzle_progress').insert(record);
-			if (err) throw err;
-			base.addLocalProgress(record);
-		}
+		const existing = base.progress.find((p) => p.puzzle_id === puzzleId && p.user_id === userId);
+		const updates = existing
+			? {
+					attempts: existing.attempts + 1,
+					solved: solved || existing.solved,
+					solved_at: solved && !existing.solved ? new Date().toISOString() : existing.solved_at,
+				}
+			: {};
+		const newRecord: PuzzleProgress = {
+			id: crypto.randomUUID(),
+			user_id: userId,
+			puzzle_id: puzzleId,
+			solved,
+			attempts: 1,
+			solved_at: solved ? new Date().toISOString() : null,
+		};
+		await base.upsert(existing, updates, newRecord);
 	}
 
 	function getSolvedCount(): number {
@@ -50,6 +40,9 @@ export function createPuzzleRepository() {
 		get progress() {
 			return base.progress;
 		},
+		set progress(value: PuzzleProgress[]) {
+			base.progress = value;
+		},
 		get loading() {
 			return base.loading;
 		},
@@ -57,8 +50,9 @@ export function createPuzzleRepository() {
 			return base.error;
 		},
 		loadProgress: base.loadProgress,
-		recordAttempt,
 		addLocalProgress: base.addLocalProgress,
+		upsert: base.upsert,
+		recordAttempt,
 		getSolvedCount,
 	};
 }

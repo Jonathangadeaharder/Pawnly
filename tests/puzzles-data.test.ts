@@ -33,7 +33,7 @@ describe('puzzles data', () => {
 	it('each puzzle has a non-empty hint', () => {
 		for (const puzzle of puzzles) {
 			expect(puzzle.hint).toBeDefined();
-			expect(puzzle.hint && puzzle.hint.length).toBeGreaterThan(0);
+			expect(puzzle.hint?.length).toBeGreaterThan(0);
 		}
 	});
 

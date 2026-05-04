@@ -4,11 +4,10 @@
  */
 
 import { Chess } from 'chess.js';
-import { createStockfish, type MoveAnalysis } from './stockfish.svelte';
-import { calculateAccuracy, classifyMove, createMoveAnalysis, getMoveComment } from './chess-utils';
+import { calculateAccuracy, createMoveAnalysis } from './chess-utils';
+import { createStockfish, type GameAnalysis, type MoveAnalysis } from './stockfish.svelte';
 
 export type { MoveAnalysis, PositionAnalysis } from './stockfish.svelte';
-import type { GameAnalysis } from './stockfish.svelte';
 
 export interface AnalysisState extends GameAnalysis {
 	isAnalyzing: boolean;
@@ -22,7 +21,7 @@ export interface AnalysisState extends GameAnalysis {
 	analyze: () => Promise<void>;
 }
 
-export { classifyMove, calculateAccuracy } from './chess-utils';
+export { calculateAccuracy, classifyMove } from './chess-utils';
 
 export function createAnalysis(moves: string[], startFen?: string): AnalysisState {
 	const DEFAULT_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -220,5 +219,3 @@ function computeStats(moveAnalyses: MoveAnalysis[]) {
 
 	return stats;
 }
-
-

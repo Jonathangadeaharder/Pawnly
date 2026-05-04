@@ -58,7 +58,7 @@ async function handleMagicLink() {
 </script>
 
 <svelte:head>
-	<title>{Brand.name} — Log in</title>
+	<title>{Brand.name} — {mode === 'login' ? 'Log in' : 'Sign up'}</title>
 </svelte:head>
 
 <div class="auth-page" style:background-color={Brand.colors.cream}>

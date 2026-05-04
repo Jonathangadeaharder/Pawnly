@@ -6,50 +6,20 @@ export interface Achievement {
 	condition: string;
 }
 
-export const achievements: Achievement[] = [
-	{
-		id: 'streak7',
-		emoji: '🔥',
-		label: '7-day streak',
-		description: 'Play for 7 consecutive days',
-		condition: 'Log in 7 days in a row',
-	},
-	{
-		id: 'first_game',
-		emoji: '♟',
-		label: 'First game',
-		description: 'Complete your first game',
-		condition: 'Finish 1 game',
-	},
-	{
-		id: 'puzzle_master',
-		emoji: '🎯',
-		label: 'Puzzle master',
-		description: 'Solve 50 puzzles',
-		condition: 'Solve 50 puzzles',
-	},
-	{
-		id: 'student',
-		emoji: '📖',
-		label: 'Student',
-		description: 'Complete 5 lessons',
-		condition: 'Finish 5 lessons',
-	},
-	{
-		id: 'checkmate',
-		emoji: '👑',
-		label: 'Checkmate!',
-		description: 'Win by checkmate',
-		condition: 'Win 1 game by checkmate',
-	},
-	{
-		id: 'rising_star',
-		emoji: '⭐',
-		label: 'Rising star',
-		description: 'Reach 1200 rating',
-		condition: 'Reach rating of 1200',
-	},
+type AchievementTuple = [string, string, string, string, string];
+
+const achievementData: AchievementTuple[] = [
+	['streak7', '🔥', '7-day streak', 'Play for 7 consecutive days', 'Log in 7 days in a row'],
+	['first_game', '♟', 'First game', 'Complete your first game', 'Finish 1 game'],
+	['puzzle_master', '🎯', 'Puzzle master', 'Solve 50 puzzles', 'Solve 50 puzzles'],
+	['student', '📖', 'Student', 'Complete 5 lessons', 'Finish 5 lessons'],
+	['checkmate', '👑', 'Checkmate!', 'Win by checkmate', 'Win 1 game by checkmate'],
+	['rising_star', '⭐', 'Rising star', 'Reach 1200 rating', 'Reach rating of 1200'],
 ];
+
+export const achievements: Achievement[] = achievementData.map(
+	([id, emoji, label, description, condition]) => ({ id, emoji, label, description, condition }),
+);
 
 export interface PlayerStats {
 	games: number;
@@ -59,14 +29,15 @@ export interface PlayerStats {
 	streak: number;
 }
 
+const achievementConditions: Record<string, (stats: PlayerStats) => boolean> = {
+	streak7: (s) => s.streak >= 7,
+	first_game: (s) => s.games >= 1,
+	puzzle_master: (s) => s.puzzles >= 50,
+	student: (s) => s.lessons >= 5,
+	checkmate: (s) => s.games >= 1,
+	rising_star: (s) => s.rating >= 1200,
+};
+
 export function getUnlockedAchievements(stats: PlayerStats): Achievement[] {
-	return achievements.filter((a) => {
-		if (a.id === 'streak7') return stats.streak >= 7;
-		if (a.id === 'first_game') return stats.games >= 1;
-		if (a.id === 'puzzle_master') return stats.puzzles >= 50;
-		if (a.id === 'student') return stats.lessons >= 5;
-		if (a.id === 'checkmate') return stats.games >= 1;
-		if (a.id === 'rising_star') return stats.rating >= 1200;
-		return false;
-	});
+	return achievements.filter((a) => achievementConditions[a.id]?.(stats) ?? false);
 }

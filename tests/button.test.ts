@@ -55,7 +55,7 @@ describe('Button', () => {
 		const { container } = renderButton();
 		const button = getBtn(container);
 		await fireEvent.mouseDown(button);
-		await fireEvent[event](button);
+		await (fireEvent as any)[event](button);
 		expect(button).toHaveStyle({ transform: 'translateY(0)' });
 	});
 

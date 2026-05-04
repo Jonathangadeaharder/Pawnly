@@ -59,11 +59,11 @@ export function getTargetTime(level: number): number {
 export function getCorrectSquares(mode: ScanMode, answerKey: ScanAnswerKey): string[] {
 	switch (mode) {
 		case 'check':
-			return answerKey.checks;
+			return answerKey.checks ?? [];
 		case 'capture':
-			return answerKey.captures;
+			return answerKey.captures ?? [];
 		case 'threat':
-			return answerKey.threats;
+			return answerKey.threats ?? [];
 		case 'loose':
 			return answerKey.loose ?? [];
 		case 'doubleAttack':

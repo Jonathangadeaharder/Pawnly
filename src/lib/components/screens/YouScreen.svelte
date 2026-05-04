@@ -6,16 +6,22 @@ import PaperBg from '$lib/components/PaperBg.svelte';
 
 let {
 	name = 'Maya',
+	rating = 0,
+	gamesPlayed = 0,
+	puzzlesSolved = 0,
 	onSettings,
 }: {
 	name?: string;
+	rating?: number;
+	gamesPlayed?: number;
+	puzzlesSolved?: number;
 	onSettings?: () => void;
 } = $props();
 
 const stats = [
-	{ value: '1140', label: 'Rating' },
-	{ value: '23', label: 'Games' },
-	{ value: '12', label: 'Puzzles' },
+	{ value: String(rating || '—'), label: 'Rating' },
+	{ value: String(gamesPlayed), label: 'Games' },
+	{ value: String(puzzlesSolved), label: 'Puzzles' },
 ];
 
 const achievements = [

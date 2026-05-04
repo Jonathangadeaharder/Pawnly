@@ -2,83 +2,85 @@ import { fireEvent, render, screen } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
 import YouScreen from '../src/lib/components/screens/YouScreen.svelte';
 
+function renderYouScreen(props: Record<string, unknown> = {}) {
+	return render(YouScreen, { props });
+}
+
+function expectTextsPresent(texts: string[]) {
+	for (const text of texts) {
+		expect(screen.getByText(text)).toBeInTheDocument();
+	}
+}
+
 describe('YouScreen', () => {
 	it('renders profile header with default name', () => {
-		render(YouScreen);
+		renderYouScreen();
 		expect(screen.getByText('Maya')).toBeInTheDocument();
 	});
 
 	it('renders profile header with custom name', () => {
-		render(YouScreen, { props: { name: 'Alex' } });
+		renderYouScreen({ name: 'Alex' });
 		expect(screen.getByText('Alex')).toBeInTheDocument();
 	});
 
 	it('renders join date', () => {
-		render(YouScreen);
+		renderYouScreen();
 		expect(screen.getByText('Joined 3 weeks ago')).toBeInTheDocument();
 	});
 
 	it('renders all three stat cards', () => {
-		render(YouScreen);
-		expect(screen.getByText('1140')).toBeInTheDocument();
-		expect(screen.getByText('Rating')).toBeInTheDocument();
-		expect(screen.getByText('23')).toBeInTheDocument();
-		expect(screen.getByText('Games')).toBeInTheDocument();
-		expect(screen.getByText('12')).toBeInTheDocument();
-		expect(screen.getByText('Puzzles')).toBeInTheDocument();
+		renderYouScreen({ rating: 1140, gamesPlayed: 23, puzzlesSolved: 12 });
+		expectTextsPresent(['1140', 'Rating', '23', 'Games', '12', 'Puzzles']);
 	});
 
 	it('renders achievements heading', () => {
-		render(YouScreen);
+		renderYouScreen();
 		expect(screen.getByText('Achievements')).toBeInTheDocument();
 	});
 
 	it('renders all six achievement badges', () => {
-		render(YouScreen);
-		expect(screen.getByText('7-day streak')).toBeInTheDocument();
-		expect(screen.getByText('First game')).toBeInTheDocument();
-		expect(screen.getByText('Puzzle master')).toBeInTheDocument();
-		expect(screen.getByText('Student')).toBeInTheDocument();
-		expect(screen.getByText('Checkmate!')).toBeInTheDocument();
-		expect(screen.getByText('Rising star')).toBeInTheDocument();
+		renderYouScreen();
+		expectTextsPresent([
+			'7-day streak',
+			'First game',
+			'Puzzle master',
+			'Student',
+			'Checkmate!',
+			'Rising star',
+		]);
 	});
 
 	it('renders achievement emojis', () => {
-		render(YouScreen);
-		expect(screen.getByText('🔥')).toBeInTheDocument();
-		expect(screen.getByText('♟')).toBeInTheDocument();
-		expect(screen.getByText('🎯')).toBeInTheDocument();
-		expect(screen.getByText('📖')).toBeInTheDocument();
-		expect(screen.getByText('👑')).toBeInTheDocument();
-		expect(screen.getByText('⭐')).toBeInTheDocument();
+		renderYouScreen();
+		expectTextsPresent(['🔥', '♟', '🎯', '📖', '👑', '⭐']);
 	});
 
 	it('renders settings button', () => {
-		render(YouScreen);
+		renderYouScreen();
 		expect(screen.getByText('Settings')).toBeInTheDocument();
 	});
 
 	it('calls onSettings when settings button clicked', async () => {
 		const onSettings = vi.fn();
-		render(YouScreen, { props: { onSettings } });
+		renderYouScreen({ onSettings });
 		await fireEvent.click(screen.getByText('Settings'));
 		expect(onSettings).toHaveBeenCalled();
 	});
 
 	it('renders Mascot with happy mood', () => {
-		const { container } = render(YouScreen);
+		const { container } = renderYouScreen();
 		const mascotSvg = container.querySelector('ellipse[opacity="0.12"]');
 		expect(mascotSvg).toBeTruthy();
 	});
 
 	it('applies brand font to name', () => {
-		render(YouScreen);
+		renderYouScreen();
 		const name = screen.getByText('Maya');
 		expect(name.style.fontFamily).toContain('Fraunces');
 	});
 
 	it('applies brand font to stat values', () => {
-		render(YouScreen);
+		renderYouScreen({ rating: 1140 });
 		const rating = screen.getByText('1140');
 		expect(rating.style.fontFamily).toContain('Geist Mono');
 	});

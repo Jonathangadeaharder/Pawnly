@@ -1,4 +1,3 @@
-import { supabase } from '../supabase';
 import { createProgressRepository } from './base.svelte';
 
 export interface LessonProgress {
@@ -14,31 +13,17 @@ export function createLessonRepository() {
 
 	async function markCompleted(lessonId: string, userId: string): Promise<void> {
 		const existing = base.progress.find((p) => p.lesson_id === lessonId);
-		if (existing && existing.completed) return;
+		if (existing?.completed) return;
 
-		if (existing) {
-			const updates = {
-				completed: true,
-				completed_at: new Date().toISOString(),
-			};
-			const { error: err } = await supabase
-				.from('lesson_progress')
-				.update(updates)
-				.eq('id', existing.id);
-			if (err) throw err;
-			base.progress = base.progress.map((p) => (p.id === existing.id ? { ...p, ...updates } : p));
-		} else {
-			const record: LessonProgress = {
-				id: crypto.randomUUID(),
-				user_id: userId,
-				lesson_id: lessonId,
-				completed: true,
-				completed_at: new Date().toISOString(),
-			};
-			const { error: err } = await supabase.from('lesson_progress').insert(record);
-			if (err) throw err;
-			base.addLocalProgress(record);
-		}
+		const updates = { completed: true, completed_at: new Date().toISOString() };
+		const newRecord: LessonProgress = {
+			id: crypto.randomUUID(),
+			user_id: userId,
+			lesson_id: lessonId,
+			completed: true,
+			completed_at: new Date().toISOString(),
+		};
+		await base.upsert(existing, updates, newRecord);
 	}
 
 	function getCompletedCount(): number {

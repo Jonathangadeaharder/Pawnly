@@ -52,11 +52,20 @@ export function createRepository<T extends { id: string }>(config: RepositoryCon
 		get items() {
 			return items;
 		},
+		set items(value: T[]) {
+			items = value;
+		},
 		get loading() {
 			return loading;
 		},
+		set loading(value: boolean) {
+			loading = value;
+		},
 		get error() {
 			return error;
+		},
+		set error(value: string | null) {
+			error = value;
 		},
 		load,
 		getById,
@@ -89,6 +98,25 @@ export function createProgressRepository<T extends { id: string }>(table: string
 		progress = [...progress, record];
 	}
 
+	async function upsert(
+		existing: T | undefined,
+		updates: Partial<T>,
+		newRecord: T,
+	): Promise<void> {
+		if (existing) {
+			const { error: err } = await supabase
+				.from(table)
+				.update(updates as any)
+				.eq('id', existing.id);
+			if (err) throw err;
+			progress = progress.map((p) => (p.id === existing.id ? { ...p, ...updates } : p));
+		} else {
+			const { error: err } = await supabase.from(table).insert(newRecord);
+			if (err) throw err;
+			addLocalProgress(newRecord);
+		}
+	}
+
 	return {
 		get progress() {
 			return progress;
@@ -104,5 +132,6 @@ export function createProgressRepository<T extends { id: string }>(table: string
 		},
 		loadProgress,
 		addLocalProgress,
+		upsert,
 	};
 }

@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/svelte';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { mockAppNavigation, mockSupabaseAuth } from './helpers';
 
 mockSupabaseAuth();

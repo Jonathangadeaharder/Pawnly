@@ -1,7 +1,7 @@
 import type { Color, PieceSymbol, Square } from 'chess.js';
 import { Chess } from 'chess.js';
 
-export type { Square };
+export type { Square } from 'chess.js';
 
 export interface ChessMove {
 	from: Square;
@@ -44,22 +44,22 @@ export function createGame(initialFen: string = DEFAULT_FEN) {
 	let gameMode = $state<GameMode>('play');
 
 	const fen = $derived.by(() => {
-		_version;
+		void _version;
 		return chess.fen();
 	});
 
 	const turn = $derived.by(() => {
-		_version;
+		void _version;
 		return chess.turn();
 	});
 
 	const moveNumber = $derived.by(() => {
-		_version;
+		void _version;
 		return chess.moveNumber();
 	});
 
 	const moves = $derived.by<ChessMove[]>(() => {
-		_version;
+		void _version;
 		return chess.history({ verbose: true }).map((m) => ({
 			from: m.from,
 			to: m.to,
@@ -71,27 +71,27 @@ export function createGame(initialFen: string = DEFAULT_FEN) {
 	});
 
 	const isGameOver = $derived.by(() => {
-		_version;
+		void _version;
 		return chess.isGameOver();
 	});
 
 	const isCheck = $derived.by(() => {
-		_version;
+		void _version;
 		return chess.isCheck();
 	});
 
 	const isCheckmate = $derived.by(() => {
-		_version;
+		void _version;
 		return chess.isCheckmate();
 	});
 
 	const isStalemate = $derived.by(() => {
-		_version;
+		void _version;
 		return chess.isStalemate();
 	});
 
 	const result = $derived.by(() => {
-		_version;
+		void _version;
 		if (!chess.isGameOver()) return null;
 		if (chess.isCheckmate()) {
 			return chess.turn() === 'w' ? '0-1' : '1-0';
@@ -131,11 +131,9 @@ export function createGame(initialFen: string = DEFAULT_FEN) {
 			highlightedSquares = [];
 		} else if (highlightedSquares.includes(square)) {
 			makeMove(selectedSquare, square);
-		} else {
-			if (!trySelectPiece(square)) {
-				selectedSquare = null;
-				highlightedSquares = [];
-			}
+		} else if (!trySelectPiece(square)) {
+			selectedSquare = null;
+			highlightedSquares = [];
 		}
 	}
 

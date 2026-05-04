@@ -53,7 +53,7 @@ describe('route stubs', () => {
 
 	it('you page renders profile name', () => {
 		const { getByText } = render(You);
-		expect(getByText('Maya')).toBeInTheDocument();
+		expect(getByText('Player')).toBeInTheDocument();
 	});
 
 	it('you page has padding-bottom for TabBar clearance', () => {
@@ -64,9 +64,9 @@ describe('route stubs', () => {
 
 	it('you page renders stats', () => {
 		const { getByText } = render(You);
-		expect(getByText('1140')).toBeInTheDocument();
-		expect(getByText('23')).toBeInTheDocument();
-		expect(getByText('12')).toBeInTheDocument();
+		expect(getByText('—')).toBeInTheDocument();
+		expect(getByText('Games')).toBeInTheDocument();
+		expect(getByText('Puzzles')).toBeInTheDocument();
 	});
 
 	it('you page renders achievements', () => {

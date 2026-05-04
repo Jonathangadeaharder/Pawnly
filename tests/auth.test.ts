@@ -10,14 +10,14 @@ async function getAuth() {
 }
 
 function mockSuccess(method: keyof typeof supabase.auth, data: unknown) {
-	vi.mocked(supabase.auth[method]).mockResolvedValueOnce({ data, error: null } as any);
+	(supabase.auth[method] as any).mockResolvedValueOnce({ data, error: null });
 }
 
 function mockError(method: keyof typeof supabase.auth, message: string) {
-	vi.mocked(supabase.auth[method]).mockResolvedValueOnce({
+	(supabase.auth[method] as any).mockResolvedValueOnce({
 		data: method === 'signInWithOtp' ? {} : { user: null, session: null },
 		error: { message },
-	} as any);
+	});
 }
 
 describe('auth store', () => {

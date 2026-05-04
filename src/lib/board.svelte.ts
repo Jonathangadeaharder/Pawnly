@@ -3,10 +3,9 @@
  * FEN parsing, coordinate conversions, and board annotations (arrows/highlights)
  */
 
-import type { Square } from './game.svelte';
+import type { Arrow, Highlight, Square } from './game.svelte';
 
-export type { Square };
-export type { Arrow, Highlight } from './game.svelte';
+export type { Arrow, Highlight, Square } from './game.svelte';
 
 /**
  * Predefined arrow colors
@@ -42,7 +41,7 @@ export function fenToPieces(fen: string): Record<string, string> {
 		let fileIndex = 0;
 		for (const char of rank) {
 			if (Number.isNaN(Number.parseInt(char, 10))) {
-				const file = String.fromCharCode(97 + fileIndex);
+				const file = String.fromCodePoint(97 + fileIndex);
 				const rankNum = 8 - rankIndex;
 				positions[`${file}${rankNum}`] = char;
 				fileIndex++;
@@ -68,11 +67,11 @@ export function getSquareFromCoords(
 	const rank = Math.floor(y / squareSize);
 
 	if (isFlipped) {
-		const fileChar = String.fromCharCode(104 - file);
+		const fileChar = String.fromCodePoint(104 - file);
 		const rankNum = rank + 1;
 		return `${fileChar}${rankNum}` as Square;
 	} else {
-		const fileChar = String.fromCharCode(97 + file);
+		const fileChar = String.fromCodePoint(97 + file);
 		const rankNum = 8 - rank;
 		return `${fileChar}${rankNum}` as Square;
 	}
@@ -86,7 +85,7 @@ export function getCoordsFromSquare(
 	squareSize: number,
 	isFlipped: boolean,
 ): { x: number; y: number } {
-	const file = square.charCodeAt(0) - 97;
+	const file = (square.codePointAt(0) ?? 0) - 97;
 	const rank = Number.parseInt(square[1], 10) - 1;
 
 	if (isFlipped) {

@@ -12,16 +12,17 @@ import { italian } from '$lib/positions';
 let {
 	onNavigate,
 	name = 'Maya',
+	rating = 0,
+	streak = 0,
 }: {
 	onNavigate: (screen: string) => void;
 	name?: string;
+	rating?: number;
+	streak?: number;
 } = $props();
 
-const streak = 7;
 const todayMins = 3;
 const goalMins = 5;
-const xp = 1240;
-const rating = 1140;
 
 const timeOfDay = $derived.by(() => {
 	const h = new Date().getHours();
@@ -245,7 +246,7 @@ const streakDays = Array.from({ length: 7 }, () => 1);
 							class="text-[22px] font-bold text-ink"
 							style:font-family={Brand.fonts.mono}
 						>
-							{rating} <span class="text-[12px] font-semibold" style:color={Brand.colors.moss}>+18 this week</span>
+							{rating || '—'}
 						</div>
 					</div>
 					<button
