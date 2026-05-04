@@ -7,6 +7,12 @@ function renderPlayScreen(onStart: () => void = () => {}) {
 	return render(PlayScreen, { props: { onStart } });
 }
 
+function expectTexts(getByText: ReturnType<typeof renderPlayScreen>['getByText'], texts: string[]) {
+	for (const text of texts) {
+		expect(getByText(text)).toBeInTheDocument();
+	}
+}
+
 describe('PlayScreen', () => {
 	it('renders the Play title', () => {
 		const { getByText } = renderPlayScreen();
@@ -25,12 +31,7 @@ describe('PlayScreen', () => {
 
 	it('renders all time control options', () => {
 		const { getByText } = renderPlayScreen();
-		expect(getByText('5 min')).toBeInTheDocument();
-		expect(getByText('10 min')).toBeInTheDocument();
-		expect(getByText('15 min')).toBeInTheDocument();
-		expect(getByText('Quick')).toBeInTheDocument();
-		expect(getByText('Standard')).toBeInTheDocument();
-		expect(getByText('Relaxed')).toBeInTheDocument();
+		expectTexts(getByText, ['5 min', '10 min', '15 min', 'Quick', 'Standard', 'Relaxed']);
 	});
 
 	it('renders difficulty section label', () => {
@@ -40,12 +41,14 @@ describe('PlayScreen', () => {
 
 	it('renders all difficulty options', () => {
 		const { getByText } = renderPlayScreen();
-		expect(getByText('Easy')).toBeInTheDocument();
-		expect(getByText("I'm learning")).toBeInTheDocument();
-		expect(getByText('Adaptive')).toBeInTheDocument();
-		expect(getByText('Match my level')).toBeInTheDocument();
-		expect(getByText('Hard')).toBeInTheDocument();
-		expect(getByText('Challenge me')).toBeInTheDocument();
+		expectTexts(getByText, [
+			'Easy',
+			"I'm learning",
+			'Adaptive',
+			'Match my level',
+			'Hard',
+			'Challenge me',
+		]);
 	});
 
 	it('renders start game button', () => {

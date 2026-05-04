@@ -8,18 +8,33 @@ function renderTrainScreen(props: Record<string, unknown> = {}) {
 	return render(TrainScreen, { props: { ...defaultProps, ...props } });
 }
 
+function expectTextsPresent(texts: string[]) {
+	for (const text of texts) {
+		expect(screen.getByText(text)).toBeInTheDocument();
+	}
+}
+
+async function clickAndExpectCallback(
+	text: string,
+	callbackName: 'onOpenPuzzle' | 'onOpenScan',
+	expected: string | string[],
+) {
+	const callback = vi.fn();
+	renderTrainScreen({ [callbackName]: callback });
+	await fireEvent.click(screen.getByText(text).closest('button')!);
+	const args = Array.isArray(expected) ? expected : [expected];
+	expect(callback).toHaveBeenCalledWith(...args);
+}
+
 describe('TrainScreen', () => {
 	it('renders header with title and subtitle', () => {
 		renderTrainScreen();
-		expect(screen.getByText('Train')).toBeInTheDocument();
-		expect(screen.getByText('Sharpen your tactics')).toBeInTheDocument();
+		expectTextsPresent(['Train', 'Sharpen your tactics']);
 	});
 
 	it('renders daily puzzle hero with pill', () => {
 		renderTrainScreen();
-		expect(screen.getByText('Daily challenge')).toBeInTheDocument();
-		expect(screen.getByText('Mate in 2')).toBeInTheDocument();
-		expect(screen.getByText('Can you find the winning move?')).toBeInTheDocument();
+		expectTextsPresent(['Daily challenge', 'Mate in 2', 'Can you find the winning move?']);
 	});
 
 	it('renders scan hero with pill', () => {
@@ -56,22 +71,19 @@ describe('TrainScreen', () => {
 
 	it('renders all six puzzle titles', () => {
 		renderTrainScreen();
-		expect(screen.getByText('Fork!')).toBeInTheDocument();
-		expect(screen.getByText('Pin & win')).toBeInTheDocument();
-		expect(screen.getByText('Back rank mate')).toBeInTheDocument();
-		expect(screen.getByText('Discovered attack')).toBeInTheDocument();
-		expect(screen.getByText('Queen sacrifice')).toBeInTheDocument();
-		expect(screen.getByText('Knight fork')).toBeInTheDocument();
+		expectTextsPresent([
+			'Fork!',
+			'Pin & win',
+			'Back rank mate',
+			'Discovered attack',
+			'Queen sacrifice',
+			'Knight fork',
+		]);
 	});
 
 	it('renders puzzle emojis', () => {
 		renderTrainScreen();
-		expect(screen.getByText('🍴')).toBeInTheDocument();
-		expect(screen.getByText('📌')).toBeInTheDocument();
-		expect(screen.getByText('🏰')).toBeInTheDocument();
-		expect(screen.getByText('💥')).toBeInTheDocument();
-		expect(screen.getByText('👑')).toBeInTheDocument();
-		expect(screen.getByText('♞')).toBeInTheDocument();
+		expectTextsPresent(['🍴', '📌', '🏰', '💥', '👑', '♞']);
 	});
 
 	it('renders solved indicator for completed puzzles', () => {
@@ -87,12 +99,7 @@ describe('TrainScreen', () => {
 	});
 
 	it('calls onOpenPuzzle with puzzle id when puzzle clicked', async () => {
-		const onOpenPuzzle = vi.fn();
-		renderTrainScreen({ onOpenPuzzle });
-		const forkPuzzle = screen.getByText('Fork!').closest('button');
-		expect(forkPuzzle).toBeTruthy();
-		await fireEvent.click(forkPuzzle!);
-		expect(onOpenPuzzle).toHaveBeenCalledWith('p1');
+		await clickAndExpectCallback('Fork!', 'onOpenPuzzle', 'p1');
 	});
 
 	it('calls onOpenPuzzle with correct id for different puzzles', async () => {

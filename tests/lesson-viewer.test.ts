@@ -32,11 +32,17 @@ describe('LessonViewer', () => {
 		expect(screen.queryByText('Back')).not.toBeInTheDocument();
 	});
 
-	it('advances to step 2 when Next is clicked', async () => {
+	it.each([
+		['advances to step 2', 1, '2 / 4', /En passant/],
+		['advances to step 3', 2, '3 / 4', /Castling/],
+		['advances to step 4', 3, '4 / 4', /Promotion/],
+	])('%s', async (_name, clicks, counter, contentPattern) => {
 		renderLessonViewer();
-		await fireEvent.click(screen.getByText('Next'));
-		expect(screen.getByText('2 / 4')).toBeInTheDocument();
-		expect(screen.getByText(/En passant/)).toBeInTheDocument();
+		for (let i = 0; i < clicks; i++) {
+			await fireEvent.click(screen.getByText('Next'));
+		}
+		expect(screen.getByText(counter)).toBeInTheDocument();
+		expect(screen.getByText(contentPattern)).toBeInTheDocument();
 	});
 
 	it('shows Back button after advancing', async () => {
