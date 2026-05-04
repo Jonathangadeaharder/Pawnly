@@ -6,6 +6,7 @@ import {
 	navigateTo,
 	registerUser,
 	startGame,
+	TEST_CREDENTIALS,
 	test,
 } from './helpers';
 
@@ -20,7 +21,7 @@ test.describe('Chess — Auth', () => {
 
 	test('register and land on home page', async ({ page }) => {
 		const email = `test+${Date.now()}@example.com`;
-		await registerUser(page, 'TestUser', email, 'TestPassword123!');
+		await registerUser(page, 'TestUser', email, TEST_CREDENTIALS.testPassword);
 		await expect(page).toHaveURL('/');
 		await expect(page.getByText('Welcome back')).toBeVisible();
 	});
@@ -172,7 +173,7 @@ test.describe('Chess — API Errors', () => {
 
 test.describe('Chess — Login Flow', () => {
 	test('login with existing user redirects to home', async ({ page }) => {
-		await loginUser(page, 'chess@example.com', 'TestPassword123!');
+		await loginUser(page, TEST_CREDENTIALS.existingEmail, TEST_CREDENTIALS.existingPassword);
 		await expect(page).toHaveURL('/');
 	});
 });
@@ -217,7 +218,7 @@ test.describe('Chess — Console Errors', () => {
 
 test.describe('Chess — Auth Edge Cases', () => {
 	test('login with wrong password shows error', async ({ page }) => {
-		await fillAuthForm(page, 'chess@example.com', 'WrongPassword999!');
+		await fillAuthForm(page, TEST_CREDENTIALS.existingEmail, 'WrongPassword999!');
 		const errorText = page.getByText(/invalid|error|wrong|incorrect|failed|not found/i);
 		await expect(errorText.first()).toBeVisible();
 		await expect(page).not.toHaveURL('/');
@@ -228,8 +229,8 @@ test.describe('Chess — Auth Edge Cases', () => {
 		await page.getByRole('button', { name: 'Create account' }).click();
 		await page.waitForSelector('#displayName', { state: 'visible', timeout: 10000 });
 		await page.locator('#displayName').fill('DuplicateUser');
-		await page.getByRole('textbox', { name: 'Email' }).fill('chess@example.com');
-		await page.getByRole('textbox', { name: 'Password' }).fill('TestPassword123!');
+		await page.getByRole('textbox', { name: 'Email' }).fill(TEST_CREDENTIALS.existingEmail);
+		await page.getByRole('textbox', { name: 'Password' }).fill(TEST_CREDENTIALS.existingPassword);
 		await page.getByRole('button', { name: 'Sign up' }).click();
 		await page.waitForLoadState('networkidle');
 		const errorText = page.getByText(/invalid|error|already|exists|duplicate|taken|conflict/i);

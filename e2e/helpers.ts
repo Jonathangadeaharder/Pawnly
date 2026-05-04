@@ -1,7 +1,12 @@
 import { test as base, expect, type Page } from '@playwright/test';
 
-const EXISTING_EMAIL = 'chess@example.com';
-const EXISTING_PASSWORD = 'TestPassword123!';
+export const TEST_CREDENTIALS = {
+	existingEmail: process.env.E2E_USER_EMAIL ?? 'chess@example.com',
+	existingPassword: process.env.E2E_USER_PASSWORD ?? '',
+	testPassword: process.env.E2E_TEST_PASSWORD ?? '',
+};
+
+const { existingEmail: EXISTING_EMAIL, existingPassword: EXISTING_PASSWORD } = TEST_CREDENTIALS;
 
 export async function navigateTo(page: Page, url: string) {
 	await page.goto(url);

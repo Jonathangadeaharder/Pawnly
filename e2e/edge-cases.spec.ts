@@ -1,9 +1,9 @@
-import { expect, test } from './helpers';
+import { expect, TEST_CREDENTIALS, test } from './helpers';
 
 test('Chess auth — invalid email rejected', async ({ authedPage: page }) => {
 	await page.goto('/auth', { waitUntil: 'networkidle' });
 	await page.getByPlaceholder('you@example.com').fill('not-an-email');
-	await page.getByPlaceholder('••••••••').fill('TestPassword123!');
+	await page.getByPlaceholder('••••••••').fill(TEST_CREDENTIALS.testPassword);
 	await page.getByRole('button', { name: /log in/i }).click();
 	await page.waitForLoadState('networkidle');
 	expect(page.url()).toContain('/auth');
