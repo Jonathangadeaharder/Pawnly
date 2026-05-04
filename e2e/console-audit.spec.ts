@@ -1,12 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const APPS = [
-	{
-		name: 'Chess',
-		base: 'http://localhost:5175',
-		routes: ['/', '/play', '/play/game', '/puzzles', '/you', '/auth'],
-	},
-];
+import { APPS } from './helpers';
 
 for (const app of APPS) {
 	for (const route of app.routes) {
