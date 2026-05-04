@@ -6,36 +6,20 @@ export interface Achievement {
 	condition: string;
 }
 
-function createAchievement(
-	id: string,
-	emoji: string,
-	label: string,
-	description: string,
-	condition: string,
-): Achievement {
-	return { id, emoji, label, description, condition };
-}
+type AchievementTuple = [string, string, string, string, string];
 
-export const achievements: Achievement[] = [
-	createAchievement(
-		'streak7',
-		'🔥',
-		'7-day streak',
-		'Play for 7 consecutive days',
-		'Log in 7 days in a row',
-	),
-	createAchievement('first_game', '♟', 'First game', 'Complete your first game', 'Finish 1 game'),
-	createAchievement('puzzle_master', '🎯', 'Puzzle master', 'Solve 50 puzzles', 'Solve 50 puzzles'),
-	createAchievement('student', '📖', 'Student', 'Complete 5 lessons', 'Finish 5 lessons'),
-	createAchievement('checkmate', '👑', 'Checkmate!', 'Win by checkmate', 'Win 1 game by checkmate'),
-	createAchievement(
-		'rising_star',
-		'⭐',
-		'Rising star',
-		'Reach 1200 rating',
-		'Reach rating of 1200',
-	),
+const achievementData: AchievementTuple[] = [
+	['streak7', '🔥', '7-day streak', 'Play for 7 consecutive days', 'Log in 7 days in a row'],
+	['first_game', '♟', 'First game', 'Complete your first game', 'Finish 1 game'],
+	['puzzle_master', '🎯', 'Puzzle master', 'Solve 50 puzzles', 'Solve 50 puzzles'],
+	['student', '📖', 'Student', 'Complete 5 lessons', 'Finish 5 lessons'],
+	['checkmate', '👑', 'Checkmate!', 'Win by checkmate', 'Win 1 game by checkmate'],
+	['rising_star', '⭐', 'Rising star', 'Reach 1200 rating', 'Reach rating of 1200'],
 ];
+
+export const achievements: Achievement[] = achievementData.map(
+	([id, emoji, label, description, condition]) => ({ id, emoji, label, description, condition }),
+);
 
 export interface PlayerStats {
 	games: number;
