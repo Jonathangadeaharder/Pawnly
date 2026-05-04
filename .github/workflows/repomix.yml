@@ -30,7 +30,7 @@ jobs:
         run: repomix --output repomix-output.txt
 
       - name: Upload repomix output
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: repomix-codebase-output
           path: repomix-output.txt
