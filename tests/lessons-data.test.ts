@@ -81,13 +81,10 @@ describe('lessons data', () => {
 	});
 
 	it('arrow has from and to squares when present', () => {
-		for (const lesson of lessons) {
-			for (const step of lesson.steps) {
-				if (step.arrow) {
-					expect(step.arrow.from).toMatch(/^[a-h][1-8]$/);
-					expect(step.arrow.to).toMatch(/^[a-h][1-8]$/);
-				}
-			}
+		const arrows = lessons.flatMap((l) => l.steps.map((s) => s.arrow).filter(Boolean));
+		for (const arrow of arrows) {
+			expect(arrow.from).toMatch(/^[a-h][1-8]$/);
+			expect(arrow.to).toMatch(/^[a-h][1-8]$/);
 		}
 	});
 });

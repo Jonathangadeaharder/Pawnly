@@ -66,11 +66,10 @@ describe('puzzles data', () => {
 		}
 	});
 
-	it('solution move count matches difficulty expectation', () => {
-		for (const puzzle of puzzles) {
-			if (puzzle.title === 'Back rank mate') {
-				expect(puzzle.solution.length).toBeLessThanOrEqual(2);
-			}
+	it('back rank mate solution is short', () => {
+		const backRank = puzzles.filter((p) => p.title === 'Back rank mate');
+		for (const puzzle of backRank) {
+			expect(puzzle.solution.length).toBeLessThanOrEqual(2);
 		}
 	});
 
