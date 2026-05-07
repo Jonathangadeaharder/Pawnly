@@ -52,8 +52,8 @@ importers:
         specifier: ^29.1.1
         version: 29.1.1
       supabase:
-        specifier: ^2.98.0
-        version: 2.98.0
+        specifier: ^2.98.1
+        version: 2.98.1
       svelte:
         specifier: ^5.15.0
         version: 5.55.5
@@ -1277,8 +1277,8 @@ packages:
     resolution: {integrity: sha512-laJTa3Jb+VQpaC6DseHhF7dXVqHTfJPCRDaEbid/drOhgitgYku/letMUqOXFoWV0zIIUbjpdH2t+tYj4bQMRQ==}
     engines: {node: '>=8'}
 
-  supabase@2.98.0:
-    resolution: {integrity: sha512-1r56wzoi6SFj+i0XHqF9rSLrjaBSrs+t6xUWn3I+UVnO9nb5ITkmaLEeGgjf7naiBUDf9rtqyRoI+5hTrezZNg==}
+  supabase@2.98.1:
+    resolution: {integrity: sha512-hnPNVjqi8BClWd73YzSzdokap2o+JtCcx6oOOB2qV34CIwXip6IToeQMhdkblFJFGDwixRdqYEj590qB4D5+Vw==}
     engines: {npm: '>=8'}
     hasBin: true
 
@@ -2514,7 +2514,7 @@ snapshots:
     dependencies:
       min-indent: 1.0.1
 
-  supabase@2.98.0:
+  supabase@2.98.1:
     dependencies:
       bin-links: 6.0.0
       https-proxy-agent: 9.0.0
