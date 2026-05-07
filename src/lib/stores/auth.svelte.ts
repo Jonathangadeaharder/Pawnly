@@ -1,4 +1,6 @@
 import type { Session, User } from '@supabase/supabase-js';
+import posthog from 'posthog-js';
+import { browser } from '$app/environment';
 import { supabase } from '$lib/supabase';
 
 function createAuthStore() {
@@ -16,6 +18,13 @@ function createAuthStore() {
 		session = newSession;
 		user = newSession?.user ?? null;
 		loading = false;
+		if (browser) {
+			if (newSession?.user) {
+				posthog.identify(newSession.user.id);
+			} else {
+				posthog.reset();
+			}
+		}
 	});
 
 	return {

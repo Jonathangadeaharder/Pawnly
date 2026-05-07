@@ -1,4 +1,5 @@
 <script lang="ts">
+import posthog from 'posthog-js';
 import { goto } from '$app/navigation';
 import { Brand } from '$lib/brand';
 import Button from '$lib/components/Button.svelte';
@@ -25,6 +26,7 @@ async function handleSubmit(e: Event) {
 			if (result.error) {
 				error = result.error;
 			} else {
+				posthog.capture('user_logged_in', { method: 'email' });
 				goto('/');
 			}
 		} else {
@@ -32,6 +34,7 @@ async function handleSubmit(e: Event) {
 			if (result.error) {
 				error = result.error;
 			} else {
+				posthog.capture('user_signed_up', { method: 'email' });
 				goto('/');
 			}
 		}
@@ -49,6 +52,7 @@ async function handleMagicLink() {
 		if (result.error) {
 			error = result.error;
 		} else {
+			posthog.capture('magic_link_requested');
 			magicLinkSent = true;
 		}
 	} finally {
