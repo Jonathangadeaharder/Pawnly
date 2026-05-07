@@ -164,7 +164,8 @@ function handleMouseDown(e: MouseEvent) {
 
 	game.selectSquare(square);
 
-	const board = (e.target as HTMLElement).closest('[data-board]')!;
+	const board = (e.target as HTMLElement).closest('[data-board]');
+	if (!board) return;
 	const rect = board.getBoundingClientRect();
 	dragSquare = square;
 	dragX = e.clientX - rect.left;
@@ -221,7 +222,8 @@ function handleTouchStart(e: TouchEvent) {
 
 	game.selectSquare(square);
 
-	const board = (e.target as HTMLElement).closest('[data-board]')!;
+	const board = (e.target as HTMLElement).closest('[data-board]');
+	if (!board) return;
 	const rect = board.getBoundingClientRect();
 	dragSquare = square;
 	dragX = e.touches[0].clientX - rect.left;

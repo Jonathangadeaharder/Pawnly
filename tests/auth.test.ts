@@ -10,10 +10,12 @@ async function getAuth() {
 }
 
 function mockSuccess(method: keyof typeof supabase.auth, data: unknown) {
+	// biome-ignore lint/suspicious/noExplicitAny: mock typing in test
 	(supabase.auth[method] as any).mockResolvedValueOnce({ data, error: null });
 }
 
 function mockError(method: keyof typeof supabase.auth, message: string) {
+	// biome-ignore lint/suspicious/noExplicitAny: mock typing in test
 	(supabase.auth[method] as any).mockResolvedValueOnce({
 		data: method === 'signInWithOtp' ? {} : { user: null, session: null },
 		error: { message },
@@ -42,7 +44,10 @@ describe('auth store', () => {
 
 	it('signInWithEmail calls supabase.auth.signInWithPassword', async () => {
 		mockSuccess('signInWithPassword', { user: { id: '1' }, session: { access_token: 'tok' } });
-		const result = await (await getAuth()).signInWithEmail('test@test.com', 'test-password-not-real');
+		const result = await (await getAuth()).signInWithEmail(
+			'test@test.com',
+			'test-password-not-real',
+		);
 		expect(supabase.auth.signInWithPassword).toHaveBeenCalledWith({
 			email: 'test@test.com',
 			password: 'test-password-not-real',
@@ -58,7 +63,11 @@ describe('auth store', () => {
 
 	it('signUpWithEmail calls supabase.auth.signUp with display name', async () => {
 		mockSuccess('signUp', { user: { id: '1' }, session: null });
-		const result = await (await getAuth()).signUpWithEmail('new@test.com', 'test-password-not-real', 'PawnyFan');
+		const result = await (await getAuth()).signUpWithEmail(
+			'new@test.com',
+			'test-password-not-real',
+			'PawnyFan',
+		);
 		expect(supabase.auth.signUp).toHaveBeenCalledWith({
 			email: 'new@test.com',
 			password: 'test-password-not-real',

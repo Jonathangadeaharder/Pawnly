@@ -21,10 +21,26 @@ describe('Button', () => {
 	});
 
 	it.each([
-		['defaults to primary variant', {}, { backgroundColor: Brand.colors.ink, color: Brand.colors.cream }],
-		['applies moss variant styles', { kind: 'moss' }, { backgroundColor: Brand.colors.moss, color: Brand.colors.cream }],
-		['applies sunny variant styles', { kind: 'sunny' }, { backgroundColor: Brand.colors.sunny, color: Brand.colors.ink }],
-		['applies cream variant styles', { kind: 'cream' }, { backgroundColor: Brand.colors.creamSoft, color: Brand.colors.ink }],
+		[
+			'defaults to primary variant',
+			{},
+			{ backgroundColor: Brand.colors.ink, color: Brand.colors.cream },
+		],
+		[
+			'applies moss variant styles',
+			{ kind: 'moss' },
+			{ backgroundColor: Brand.colors.moss, color: Brand.colors.cream },
+		],
+		[
+			'applies sunny variant styles',
+			{ kind: 'sunny' },
+			{ backgroundColor: Brand.colors.sunny, color: Brand.colors.ink },
+		],
+		[
+			'applies cream variant styles',
+			{ kind: 'cream' },
+			{ backgroundColor: Brand.colors.creamSoft, color: Brand.colors.ink },
+		],
 		['has border-radius 14px', {}, { borderRadius: '14px' }],
 		['uses Brand.fonts.body', {}, { fontFamily: Brand.fonts.body }],
 		['sets full width when full is true', { full: true }, { width: '100%' }],
@@ -55,19 +71,27 @@ describe('Button', () => {
 		const { container } = renderButton();
 		const button = getBtn(container);
 		await fireEvent.mouseDown(button);
+		// biome-ignore lint/suspicious/noExplicitAny: dynamic fireEvent in test
 		await (fireEvent as any)[event](button);
 		expect(button).toHaveStyle({ transform: 'translateY(0)' });
 	});
 
 	it('renders icon snippet', () => {
-		const { getByText } = renderButton({ children: createSnippet('Save'), icon: createSnippet('→') });
+		const { getByText } = renderButton({
+			children: createSnippet('Save'),
+			icon: createSnippet('→'),
+		});
 		expect(getByText('Save')).toBeInTheDocument();
 		expect(getByText('→')).toBeInTheDocument();
 	});
 
 	it('calls onclick handler', async () => {
 		let clicked = false;
-		const { container } = renderButton({ onclick: () => { clicked = true; } });
+		const { container } = renderButton({
+			onclick: () => {
+				clicked = true;
+			},
+		});
 		await fireEvent.click(getBtn(container));
 		expect(clicked).toBe(true);
 	});

@@ -43,18 +43,21 @@ describe('MiniBoard', () => {
 	});
 
 	it('applies last move highlight', () => {
-		expectBoardSvg(renderMiniBoard({ lastMove: { from: 'e2', to: 'e4' } }).container)
-			.toHaveRectsWithFill(Brand.colors.sunny, 2);
+		expectBoardSvg(
+			renderMiniBoard({ lastMove: { from: 'e2', to: 'e4' } }).container,
+		).toHaveRectsWithFill(Brand.colors.sunny, 2);
 	});
 
 	it('applies square highlights', () => {
-		expectBoardSvg(renderMiniBoard({ highlights: [{ square: 'e4', color: '#ff0000', opacity: 0.5 }] }).container)
-			.toHaveRectsWithFill('#ff0000', 1);
+		expectBoardSvg(
+			renderMiniBoard({ highlights: [{ square: 'e4', color: '#ff0000', opacity: 0.5 }] }).container,
+		).toHaveRectsWithFill('#ff0000', 1);
 	});
 
 	it('uses default highlight color (moss)', () => {
-		expectBoardSvg(renderMiniBoard({ highlights: [{ square: 'd4' }] }).container)
-			.toHaveRectsWithFill(Brand.colors.moss, 1);
+		expectBoardSvg(
+			renderMiniBoard({ highlights: [{ square: 'd4' }] }).container,
+		).toHaveRectsWithFill(Brand.colors.moss, 1);
 	});
 
 	it('uses default highlight opacity 0.4', () => {
@@ -72,9 +75,27 @@ describe('MiniBoard', () => {
 	});
 
 	it.each([
-		['renders arrow with custom color', { arrows: [{ from: 'e2', to: 'e4', color: '#ff0000' }] }, 'line', 'stroke', '#ff0000'],
-		['renders arrow with custom opacity', { arrows: [{ from: 'e2', to: 'e4', opacity: 0.5 }] }, 'g[opacity]', 'opacity', '0.5'],
-		['defaults arrow opacity to 0.85', { arrows: [{ from: 'e2', to: 'e4' }] }, 'g[opacity]', 'opacity', '0.85'],
+		[
+			'renders arrow with custom color',
+			{ arrows: [{ from: 'e2', to: 'e4', color: '#ff0000' }] },
+			'line',
+			'stroke',
+			'#ff0000',
+		],
+		[
+			'renders arrow with custom opacity',
+			{ arrows: [{ from: 'e2', to: 'e4', opacity: 0.5 }] },
+			'g[opacity]',
+			'opacity',
+			'0.5',
+		],
+		[
+			'defaults arrow opacity to 0.85',
+			{ arrows: [{ from: 'e2', to: 'e4' }] },
+			'g[opacity]',
+			'opacity',
+			'0.85',
+		],
 	])('%s', (_name, props, selector, attr, value) => {
 		const { container } = renderMiniBoard(props);
 		expect(container.querySelector(`svg ${selector}`)).toHaveAttribute(attr, value);
@@ -104,9 +125,14 @@ describe('MiniBoard', () => {
 	});
 
 	it('renders multiple arrows', () => {
-		expectBoardSvg(renderMiniBoard({
-			arrows: [{ from: 'e2', to: 'e4' }, { from: 'd2', to: 'd4' }],
-		}).container).toHaveArrowCount(2);
+		expectBoardSvg(
+			renderMiniBoard({
+				arrows: [
+					{ from: 'e2', to: 'e4' },
+					{ from: 'd2', to: 'd4' },
+				],
+			}).container,
+		).toHaveArrowCount(2);
 	});
 
 	it.each([
@@ -115,6 +141,7 @@ describe('MiniBoard', () => {
 		['has box-shadow', 'toHaveBoxShadow'],
 	])('%s', (_name, method) => {
 		const wrapper = expectBoardWrapper(renderMiniBoard().container);
+		// biome-ignore lint/suspicious/noExplicitAny: dynamic method call in test
 		(wrapper as any)[method]();
 	});
 });

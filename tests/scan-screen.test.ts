@@ -58,24 +58,48 @@ describe('ScanScreen', () => {
 
 	// --- Rendering ---
 	it.each([
-		['renders with aria-label "Scan trainer"', {}, (c: HTMLElement) => {
-			expect(c.querySelector('[role="dialog"]')).toHaveAttribute('aria-label', 'Scan trainer');
-		}],
-		['renders close button', {}, () => {
-			expect(screen.getByLabelText('Close scan')).toBeInTheDocument();
-		}],
-		['renders title "Scan"', {}, () => {
-			expect(screen.getByText('Scan')).toBeInTheDocument();
-		}],
-		['renders timer', {}, () => {
-			expect(screen.getByText(/⏱/)).toBeInTheDocument();
-		}],
-		['renders 3 star indicators', {}, (c: HTMLElement) => {
-			expect(c.querySelectorAll('.star').length).toBe(3);
-		}],
-		['renders submit button', {}, () => {
-			expect(screen.getByText('Submit Scan')).toBeInTheDocument();
-		}],
+		[
+			'renders with aria-label "Scan trainer"',
+			{},
+			(c: HTMLElement) => {
+				expect(c.querySelector('[role="dialog"]')).toHaveAttribute('aria-label', 'Scan trainer');
+			},
+		],
+		[
+			'renders close button',
+			{},
+			() => {
+				expect(screen.getByLabelText('Close scan')).toBeInTheDocument();
+			},
+		],
+		[
+			'renders title "Scan"',
+			{},
+			() => {
+				expect(screen.getByText('Scan')).toBeInTheDocument();
+			},
+		],
+		[
+			'renders timer',
+			{},
+			() => {
+				expect(screen.getByText(/⏱/)).toBeInTheDocument();
+			},
+		],
+		[
+			'renders 3 star indicators',
+			{},
+			(c: HTMLElement) => {
+				expect(c.querySelectorAll('.star').length).toBe(3);
+			},
+		],
+		[
+			'renders submit button',
+			{},
+			() => {
+				expect(screen.getByText('Submit Scan')).toBeInTheDocument();
+			},
+		],
 	])('%s', (_name, props, assert) => {
 		const { container } = renderScan(props);
 		assert(container);

@@ -12,7 +12,7 @@ var queue = [];
 
 function resolvePath(file) {
 	var base = self.location.href.replace(/\/[^/]*$/, '');
-	return base + '/' + file;
+	return `${base}/${file}`;
 }
 
 function send(data) {
@@ -56,10 +56,10 @@ function initEngine() {
 	try {
 		var wasmPath = resolvePath('stockfish.wasm');
 
-		var locateFile = function (path) {
+		var locateFile = (path) => {
 			if (path.indexOf('.wasm') > -1) {
 				if (path.indexOf('.wasm.map') > -1) {
-					return wasmPath + '.map';
+					return `${wasmPath}.map`;
 				}
 				return wasmPath;
 			}
@@ -67,7 +67,7 @@ function initEngine() {
 		};
 
 		if (typeof Stockfish === 'function') {
-			Stockfish({ locateFile: locateFile }).then(function (sf) {
+			Stockfish({ locateFile: locateFile }).then((sf) => {
 				engine = sf;
 				engine.listen = onEngineOutput;
 				engine.sendCommand('uci');
@@ -76,7 +76,7 @@ function initEngine() {
 			send({ type: 'error', data: 'Stockfish function not found after loading script.' });
 		}
 	} catch (e) {
-		send({ type: 'error', data: 'Failed to initialize engine: ' + e.message });
+		send({ type: 'error', data: `Failed to initialize engine: ${e.message}` });
 	}
 }
 
@@ -84,10 +84,10 @@ try {
 	importScripts(resolvePath('stockfish.js'));
 	initEngine();
 } catch (e) {
-	send({ type: 'error', data: 'Failed to load stockfish.js: ' + e.message });
+	send({ type: 'error', data: `Failed to load stockfish.js: ${e.message}` });
 }
 
-self.onmessage = function (e) {
+self.onmessage = (e) => {
 	var msg = e.data;
 
 	if (msg.type === 'command') {

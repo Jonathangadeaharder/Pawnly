@@ -48,15 +48,15 @@ const styles = {
 
 let transform = $state('translateY(0)');
 
-function onmousedown(e: MouseEvent) {
+function onmousedown(_e: MouseEvent) {
 	transform = 'translateY(2px)';
 }
 
-function onmouseup(e: MouseEvent) {
+function onmouseup(_e: MouseEvent) {
 	transform = 'translateY(0)';
 }
 
-function onmouseleave(e: MouseEvent) {
+function onmouseleave(_e: MouseEvent) {
 	transform = 'translateY(0)';
 }
 </script>

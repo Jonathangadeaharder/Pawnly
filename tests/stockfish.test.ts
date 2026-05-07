@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { describeCalculateAccuracyTests, describeClassifyMoveTests, describeExportsTests, STARTING_FEN } from './helpers';
+import {
+	describeCalculateAccuracyTests,
+	describeClassifyMoveTests,
+	describeExportsTests,
+} from './helpers';
 
-describeExportsTests('../src/lib/stockfish.svelte', ['createStockfish', 'classifyMove', 'calculateAccuracy']);
+describeExportsTests('../src/lib/stockfish.svelte', [
+	'createStockfish',
+	'classifyMove',
+	'calculateAccuracy',
+]);
 
 describeClassifyMoveTests('../src/lib/stockfish.svelte');
 
