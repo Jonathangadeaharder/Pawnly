@@ -69,18 +69,15 @@ describe('scanPositions array', () => {
 	it('should have valid square format in all answer key arrays', () => {
 		for (const pos of scanPositions) {
 			const ak = pos.answerKey;
-			for (const sq of [...(ak.checks ?? []), ...(ak.captures ?? []), ...(ak.threats ?? [])]) {
+			const allSqs = [
+				...(ak.checks ?? []),
+				...(ak.captures ?? []),
+				...(ak.threats ?? []),
+				...(ak.loose ?? []),
+				...(ak.doubleAttack ?? []),
+			];
+			for (const sq of allSqs) {
 				expect(sq).toMatch(SQUARE_RE);
-			}
-			if (ak.loose) {
-				for (const sq of ak.loose) {
-					expect(sq).toMatch(SQUARE_RE);
-				}
-			}
-			if (ak.doubleAttack) {
-				for (const sq of ak.doubleAttack) {
-					expect(sq).toMatch(SQUARE_RE);
-				}
 			}
 		}
 	});
@@ -92,17 +89,16 @@ describe('scanPositions array', () => {
 	});
 
 	it('should have threats with opponent pieces', () => {
-		for (const pos of scanPositions) {
-			if (!pos.answerKey.threats || pos.answerKey.threats.length === 0) continue;
+		const withThreats = scanPositions.filter((p) => p.answerKey.threats && p.answerKey.threats.length > 0);
+		for (const pos of withThreats) {
 			expectOpponentPiecesOnSquares(pos.answerKey.threats ?? [], pos.playerColor, pos.fen);
 		}
 	});
 
 	it('should only have loose for level >= 8', () => {
-		for (const pos of scanPositions) {
-			if (pos.level < 8) {
-				expect(pos.answerKey.loose).toBeUndefined();
-			}
+		const lowLevel = scanPositions.filter((p) => p.level < 8);
+		for (const pos of lowLevel) {
+			expect(pos.answerKey.loose).toBeUndefined();
 		}
 	});
 
@@ -134,9 +130,9 @@ describe('scanPositions array', () => {
 	});
 
 	it('should have loose squares with opponent pieces', () => {
-		for (const pos of scanPositions) {
-			if (!pos.answerKey.loose) continue;
-			expectOpponentPiecesOnSquares(pos.answerKey.loose, pos.playerColor, pos.fen);
+		const withLoose = scanPositions.filter((p) => p.answerKey.loose);
+		for (const pos of withLoose) {
+			expectOpponentPiecesOnSquares(pos.answerKey.loose!, pos.playerColor, pos.fen);
 		}
 	});
 });
