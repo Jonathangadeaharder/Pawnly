@@ -3,7 +3,8 @@ import type { Handle } from '@sveltejs/kit';
 export const handle: Handle = async ({ event, resolve }) => {
 	const { pathname } = event.url;
 
-	if (pathname.startsWith('/ingest')) {
+	const isIngestPath = pathname === '/ingest' || pathname.startsWith('/ingest/');
+	if (isIngestPath) {
 		const useAssetHost =
 			pathname.startsWith('/ingest/static/') || pathname.startsWith('/ingest/array/');
 		const hostname = useAssetHost ? 'eu-assets.i.posthog.com' : 'eu.i.posthog.com';
@@ -14,7 +15,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 		url.port = '443';
 		url.pathname = pathname.replace(/^\/ingest/, '');
 
-		const headers = new Headers(event.request.headers);
+		const headers = new Headers();
+		for (const name of ['accept', 'content-type', 'origin', 'referer', 'user-agent']) {
+			const value = event.request.headers.get(name);
+			if (value) headers.set(name, value);
+		}
 		headers.set('host', hostname);
 
 		const clientIp = event.request.headers.get('x-forwarded-for') || event.getClientAddress();

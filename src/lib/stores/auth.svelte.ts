@@ -21,7 +21,7 @@ function createAuthStore() {
 		if (browser) {
 			if (newSession?.user) {
 				posthog.identify(newSession.user.id);
-			} else if (_event === 'SIGNED_OUT') {
+			} else {
 				posthog.reset();
 			}
 		}
