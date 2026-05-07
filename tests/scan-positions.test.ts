@@ -16,14 +16,11 @@ import {
 const ALL_MODES: ScanMode[] = ['check', 'capture', 'threat', 'loose', 'doubleAttack'];
 const SQUARE_RE = /^[a-h][1-8]$/;
 
-function expectOpponentPiecesOnSquares(
-	squares: string[],
-	playerColor: 'w' | 'b',
-	fen: string,
-) {
+function expectOpponentPiecesOnSquares(squares: string[], playerColor: 'w' | 'b', fen: string) {
 	const chess = new Chess(fen);
 	const opponentColor = playerColor === 'w' ? 'b' : 'w';
 	for (const sq of squares) {
+		// biome-ignore lint/suspicious/noExplicitAny: chess.js type mismatch in test
 		const piece = chess.get(sq as any);
 		expect(piece).toBeDefined();
 		if (piece) {
@@ -32,7 +29,9 @@ function expectOpponentPiecesOnSquares(
 	}
 }
 
-function createMarked(overrides: Partial<Record<ScanMode, Set<string>>> = {}): Record<ScanMode, Set<string>> {
+function createMarked(
+	overrides: Partial<Record<ScanMode, Set<string>>> = {},
+): Record<ScanMode, Set<string>> {
 	return {
 		check: new Set(),
 		capture: new Set(),
@@ -89,7 +88,9 @@ describe('scanPositions array', () => {
 	});
 
 	it('should have threats with opponent pieces', () => {
-		const withThreats = scanPositions.filter((p) => p.answerKey.threats && p.answerKey.threats.length > 0);
+		const withThreats = scanPositions.filter(
+			(p) => p.answerKey.threats && p.answerKey.threats.length > 0,
+		);
 		for (const pos of withThreats) {
 			expectOpponentPiecesOnSquares(pos.answerKey.threats ?? [], pos.playerColor, pos.fen);
 		}
@@ -113,6 +114,7 @@ describe('scanPositions array', () => {
 				...(pos.answerKey.doubleAttack ?? []),
 			];
 			for (const sq of allSquares) {
+				// biome-ignore lint/suspicious/noExplicitAny: chess.js type mismatch in test
 				const piece = chess.get(sq as any);
 				expect(piece).not.toBeUndefined();
 			}

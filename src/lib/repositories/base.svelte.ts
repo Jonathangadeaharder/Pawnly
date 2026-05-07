@@ -36,7 +36,7 @@ export function createRepository<T extends { id: string }>(config: RepositoryCon
 	async function update(id: string, data: Partial<T>): Promise<void> {
 		const { error: err } = await supabase
 			.from(config.table)
-			.update(data as any)
+			.update(data as Record<string, unknown>)
 			.eq('id', id);
 		if (err) throw err;
 		items = items.map((item) => (item.id === id ? { ...item, ...data } : item));
@@ -98,15 +98,11 @@ export function createProgressRepository<T extends { id: string }>(table: string
 		progress = [...progress, record];
 	}
 
-	async function upsert(
-		existing: T | undefined,
-		updates: Partial<T>,
-		newRecord: T,
-	): Promise<void> {
+	async function upsert(existing: T | undefined, updates: Partial<T>, newRecord: T): Promise<void> {
 		if (existing) {
 			const { error: err } = await supabase
 				.from(table)
-				.update(updates as any)
+				.update(updates as Record<string, unknown>)
 				.eq('id', existing.id);
 			if (err) throw err;
 			progress = progress.map((p) => (p.id === existing.id ? { ...p, ...updates } : p));

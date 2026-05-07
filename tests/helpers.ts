@@ -56,9 +56,11 @@ export function mockSupabaseAuth() {
 }
 
 export function expectBoardSvg(container: HTMLElement) {
+	// biome-ignore lint/style/noNonNullAssertion: test helper asserts presence
 	const svg = container.querySelector('svg')!;
 	return {
 		toHaveDefaultColors() {
+			// biome-ignore lint/style/noNonNullAssertion: test helper asserts presence
 			const firstRect = svg.querySelector('rect')!;
 			expect(firstRect).toHaveAttribute('fill', Brand.colors.boardLight);
 		},

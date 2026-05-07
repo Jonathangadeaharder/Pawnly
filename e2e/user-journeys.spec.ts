@@ -253,9 +253,14 @@ test.describe('Chess — Profile Data Dynamic', () => {
 		const signupToggle = page
 			.getByRole('button', { name: /sign up|create account|register/i })
 			.or(page.locator('a').filter({ hasText: /sign up/i }));
-		await signupToggle.first().click().catch(() => {});
+		await signupToggle
+			.first()
+			.click()
+			.catch(() => {});
 		await page.waitForLoadState('networkidle');
-		await expect(page).toHaveTitle(/Sign up/i).catch(() => {});
+		await expect(page)
+			.toHaveTitle(/Sign up/i)
+			.catch(() => {});
 	});
 });
 

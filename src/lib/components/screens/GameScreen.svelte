@@ -107,7 +107,7 @@ function gameOverByTimeout(_side: 'w' | 'b') {
 	showGameOver = true;
 }
 
-function handlePlayerMove(from: Square, to: Square) {
+function handlePlayerMove(_from: Square, _to: Square) {
 	if (game.isGameOver || game.turn !== 'w') return;
 
 	startClock();
@@ -155,7 +155,7 @@ function handleUndo() {
 async function handleAnalyze() {
 	if (!game.moves.length) return;
 	isAnalyzing = true;
-	const moveSans = game.moves.map((m) => m.san!);
+	const moveSans = game.moves.map((m) => m.san).filter(Boolean);
 	const analysis = createAnalysis(moveSans);
 	analysisResult = analysis;
 	await analysis.analyze();

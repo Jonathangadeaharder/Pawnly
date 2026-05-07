@@ -39,6 +39,7 @@ describe('achievements data', () => {
 		['conditions', 'condition'],
 	])('%s are non-empty', (_name, field) => {
 		for (const a of achievements) {
+			// biome-ignore lint/suspicious/noExplicitAny: dynamic field access in test
 			expect((a as any)[field].length).toBeGreaterThan(0);
 		}
 	});
@@ -64,10 +65,18 @@ describe('getUnlockedAchievements', () => {
 	});
 
 	it('unlocks all achievements when stats are maxed', () => {
-		expect(getUnlockedAchievements(stats({ games: 100, puzzles: 100, lessons: 10, rating: 2000, streak: 30 }))).toHaveLength(6);
+		expect(
+			getUnlockedAchievements(
+				stats({ games: 100, puzzles: 100, lessons: 10, rating: 2000, streak: 30 }),
+			),
+		).toHaveLength(6);
 	});
 
 	it('unlocks multiple achievements at once', () => {
-		expect(getUnlockedAchievements(stats({ games: 1, puzzles: 50, lessons: 5, rating: 1200, streak: 7 }))).toHaveLength(6);
+		expect(
+			getUnlockedAchievements(
+				stats({ games: 1, puzzles: 50, lessons: 5, rating: 1200, streak: 7 }),
+			),
+		).toHaveLength(6);
 	});
 });

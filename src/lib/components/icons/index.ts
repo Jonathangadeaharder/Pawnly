@@ -1,7 +1,7 @@
-export { default as Icon } from './Icon.svelte';
 export { default as FlameIcon } from './FlameIcon.svelte';
 export { default as HeartIcon } from './HeartIcon.svelte';
 export { default as HomeIcon } from './HomeIcon.svelte';
+export { default as Icon } from './Icon.svelte';
 export { default as LearnIcon } from './LearnIcon.svelte';
 export { default as PlayIcon } from './PlayIcon.svelte';
 export { default as SparkIcon } from './SparkIcon.svelte';

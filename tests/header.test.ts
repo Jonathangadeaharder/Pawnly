@@ -29,7 +29,12 @@ describe('Header', () => {
 	});
 
 	it.each([
-		['renders subtitle when sub is provided', { sub: 'Manage your preferences' }, 'Manage your preferences', true],
+		[
+			'renders subtitle when sub is provided',
+			{ sub: 'Manage your preferences' },
+			'Manage your preferences',
+			true,
+		],
 		['does not render subtitle when sub is omitted', {}, 'Manage your preferences', false],
 	])('%s', async (_name, props, text, shouldExist) => {
 		const { queryByText } = renderHeader(props);
@@ -46,7 +51,11 @@ describe('Header', () => {
 
 	it('calls onBack when back button is clicked', async () => {
 		let called = false;
-		const { getByText } = renderHeader({ onBack: () => { called = true; } });
+		const { getByText } = renderHeader({
+			onBack: () => {
+				called = true;
+			},
+		});
 		await fireEvent.click(getByText('← Back'));
 		expect(called).toBe(true);
 	});

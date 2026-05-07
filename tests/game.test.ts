@@ -304,8 +304,16 @@ describe('getPieces', () => {
 
 describe('Game over detection', () => {
 	it.each([
-		['detects checkmate', 'rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 0 1', { isCheckmate: true, isGameOver: true, isCheck: true, result: '0-1' }],
-		['detects stalemate', 'k7/2Q5/1K6/8/8/8/8/8 b - - 0 1', { isStalemate: true, isGameOver: true, result: '1/2-1/2' }],
+		[
+			'detects checkmate',
+			'rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 0 1',
+			{ isCheckmate: true, isGameOver: true, isCheck: true, result: '0-1' },
+		],
+		[
+			'detects stalemate',
+			'k7/2Q5/1K6/8/8/8/8/8 b - - 0 1',
+			{ isStalemate: true, isGameOver: true, result: '1/2-1/2' },
+		],
 		['detects check', '4k3/8/8/8/4Q3/8/8/4K3 b - - 0 1', { isCheck: true }],
 	])('%s', async (_name, fen, expected) => {
 		const game = await createGame(fen);

@@ -1,10 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
-import { describeCalculateAccuracyTests, describeClassifyMoveTests, describeExportsTests, STARTING_FEN } from './helpers';
+import {
+	describeCalculateAccuracyTests,
+	describeClassifyMoveTests,
+	describeExportsTests,
+	STARTING_FEN,
+} from './helpers';
 
 vi.mock('../src/lib/stockfish.svelte', async () => {
-	const actual = await vi.importActual<typeof import('../src/lib/chess-utils')>(
-		'../src/lib/chess-utils',
-	);
+	const actual =
+		await vi.importActual<typeof import('../src/lib/chess-utils')>('../src/lib/chess-utils');
 	return {
 		createStockfish: () => ({
 			isReady: true,
@@ -22,7 +26,11 @@ vi.mock('../src/lib/stockfish.svelte', async () => {
 	};
 });
 
-describeExportsTests('../src/lib/analysis.svelte', ['createAnalysis', 'classifyMove', 'calculateAccuracy']);
+describeExportsTests('../src/lib/analysis.svelte', [
+	'createAnalysis',
+	'classifyMove',
+	'calculateAccuracy',
+]);
 
 describeClassifyMoveTests('../src/lib/analysis.svelte');
 describeCalculateAccuracyTests('../src/lib/analysis.svelte');
