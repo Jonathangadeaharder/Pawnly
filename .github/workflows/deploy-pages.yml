@@ -32,6 +32,9 @@ jobs:
           node-version: '22'
           cache: pnpm
 
+      - name: Configure pnpm to auto-approve build scripts
+        run: pnpm config set approve-builds-on-install true
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
