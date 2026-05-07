@@ -18,10 +18,12 @@ function createAuthStore() {
 		session = newSession;
 		user = newSession?.user ?? null;
 		loading = false;
-		if (browser && newSession?.user) {
-			posthog.identify(newSession.user.id);
-		} else if (browser && !newSession) {
-			posthog.reset();
+		if (browser) {
+			if (newSession?.user) {
+				posthog.identify(newSession.user.id);
+			} else if (_event === 'SIGNED_OUT') {
+				posthog.reset();
+			}
 		}
 	});
 

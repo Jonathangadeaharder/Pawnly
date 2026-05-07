@@ -16,22 +16,27 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 		const headers = new Headers(event.request.headers);
 		headers.set('host', hostname);
-		headers.set('accept-encoding', '');
 
 		const clientIp = event.request.headers.get('x-forwarded-for') || event.getClientAddress();
 		if (clientIp) {
 			headers.set('x-forwarded-for', clientIp);
 		}
 
-		const response = await fetch(url.toString(), {
-			method: event.request.method,
-			headers,
-			body: event.request.body,
-			// @ts-expect-error - duplex is required for streaming request bodies
-			duplex: 'half'
-		});
+		try {
+			const response = await fetch(url.toString(), {
+				method: event.request.method,
+				headers,
+				body: event.request.method !== 'GET' && event.request.method !== 'HEAD'
+					? event.request.body
+					: null,
+				// @ts-expect-error - duplex is required for streaming request bodies
+				duplex: 'half'
+			});
 
-		return response;
+			return response;
+		} catch {
+			return new Response(null, { status: 200 });
+		}
 	}
 
 	return resolve(event);
