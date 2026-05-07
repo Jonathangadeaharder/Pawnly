@@ -41,5 +41,8 @@
 		"@supabase/supabase-js": "^2.105.3",
 		"chess.js": "^1.4.0",
 		"stockfish": "^18.0.7"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": ["esbuild", "stockfish", "supabase"]
 	}
 }
