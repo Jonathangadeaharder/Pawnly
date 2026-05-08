@@ -7,33 +7,13 @@ services:
       - '${PORT:-8080}:80'
     environment:
       - AI_PROVIDER=${AI_PROVIDER:-mini}
-      - LOCAL_AI_BASE_URL=http://ollama:11434
+      - LOCAL_AI_BASE_URL=http://ollama-shared:11434
       - MINI_MODEL=${MINI_MODEL:-phi3:mini}
       - OLLAMA_MODEL=${OLLAMA_MODEL:-gemma2:2b}
     restart: unless-stopped
-    depends_on:
-      - ollama
+    networks:
+      - coolify
 
-  ollama:
-    image: ollama/ollama:latest
-    ports:
-      - '127.0.0.1:11434:11434'
-    volumes:
-      - ollama-data:/root/.ollama
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          memory: 4G
-    entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        ollama serve &
-        sleep 3
-        ollama pull phi3:mini || true
-        ollama pull nomic-embed-text || true
-        wait
-
-volumes:
-  ollama-data:
+networks:
+  coolify:
+    external: true
