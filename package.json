@@ -40,6 +40,7 @@
 	"dependencies": {
 		"@supabase/supabase-js": "^2.105.3",
 		"chess.js": "^1.4.0",
+		"posthog-js": "^1.372.10",
 		"stockfish": "^18.0.7"
 	},
 	"pnpm": {
