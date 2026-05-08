@@ -8,5 +8,15 @@ export default defineConfig({
 	test: {
 		environment: 'jsdom',
 		setupFiles: ['./tests/setup.ts'],
+		exclude: ['e2e/**', 'node_modules/**'],
+		coverage: {
+			provider: 'v8',
+			reporter: ['text', 'html', 'clover'],
+			thresholds: {
+				lines: 85,
+				branches: 80,
+				functions: 85,
+			},
+		},
 	},
 });
