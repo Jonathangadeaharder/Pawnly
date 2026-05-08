@@ -7,9 +7,7 @@
 	},
 	"coverageAnalysis": "perTest",
 	"mutate": [
-		"src/lib/game.svelte.ts",
-		"src/lib/board.svelte.ts",
-		"src/lib/analysis.svelte.ts"
+		"src/lib/*.svelte.ts"
 	],
 	"thresholds": {
 		"high": 80,
