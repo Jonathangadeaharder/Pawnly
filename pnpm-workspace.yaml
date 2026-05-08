@@ -1,4 +1,0 @@
-allowBuilds:
-  esbuild: true
-  stockfish: true
-  supabase: true
