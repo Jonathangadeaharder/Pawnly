@@ -4,12 +4,14 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '${PORT:-8080}:80'
+      - '${PORT:-8081}:80'
     environment:
       - AI_PROVIDER=${AI_PROVIDER:-mini}
       - LOCAL_AI_BASE_URL=http://ollama-shared:11434
       - MINI_MODEL=${MINI_MODEL:-phi3:mini}
       - OLLAMA_MODEL=${OLLAMA_MODEL:-gemma2:2b}
+      - PUBLIC_POSTHOG_HOST=${PUBLIC_POSTHOG_HOST:-https://us.posthog.com}
+      - PUBLIC_POSTHOG_PROJECT_TOKEN=${PUBLIC_POSTHOG_PROJECT_TOKEN:-}
     restart: unless-stopped
     networks:
       - coolify
