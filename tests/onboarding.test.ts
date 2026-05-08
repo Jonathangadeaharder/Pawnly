@@ -98,6 +98,6 @@ describe('OnboardingScreen', () => {
 
 	it('renders step description text', () => {
 		const { getByText } = renderOnboarding();
-		expect(getByText(/Your friendly chess coach/)).toBeInTheDocument();
+		expect(getByText(/Your friendly coach/)).toBeInTheDocument();
 	});
 });

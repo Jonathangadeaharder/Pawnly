@@ -1,6 +1,6 @@
 export const Brand = {
 	name: 'Pawnly',
-	tagline: 'Chess, one warm move at a time.',
+	tagline: 'Pawnly — chess, one warm move at a time.',
 
 	colors: {
 		cream: '#F6EFE2',

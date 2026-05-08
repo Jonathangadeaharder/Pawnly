@@ -196,7 +196,7 @@ $effect(() => {
 <div
 	class="game-screen"
 	role="dialog"
-	aria-label="Chess game"
+	aria-label="Pawnly game"
 >
 	<!-- Header -->
 	<div class="game-header">

@@ -6,7 +6,7 @@ describe('LearnScreen', () => {
 	it('renders header with title and subtitle', () => {
 		render(LearnScreen, { props: { onOpenLesson: vi.fn() } });
 		expect(screen.getByText('Learn')).toBeInTheDocument();
-		expect(screen.getByText('Your chess journey')).toBeInTheDocument();
+		expect(screen.getByText('Your Pawnly journey')).toBeInTheDocument();
 	});
 
 	it('renders progress overview card', () => {

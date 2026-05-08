@@ -15,10 +15,10 @@ describe('PuzzleScreen', () => {
 		vi.clearAllMocks();
 	});
 
-	it('renders with aria-label "Chess puzzle"', () => {
+	it('renders with aria-label "Pawnly puzzle"', () => {
 		const { container } = render(PuzzleScreen, { props: {} });
 		const dialog = container.querySelector('[role="dialog"]');
-		expect(dialog).toHaveAttribute('aria-label', 'Chess puzzle');
+		expect(dialog).toHaveAttribute('aria-label', 'Pawnly puzzle');
 	});
 
 	it('renders close button with aria-label', () => {

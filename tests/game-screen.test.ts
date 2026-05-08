@@ -34,10 +34,10 @@ describe('GameScreen', () => {
 		vi.clearAllMocks();
 	});
 
-	it('renders with aria-label "Chess game"', () => {
+	it('renders with aria-label "Pawnly game"', () => {
 		const { container } = render(GameScreen, { props: {} });
 		const screen = container.querySelector('[role="dialog"]');
-		expect(screen).toHaveAttribute('aria-label', 'Chess game');
+		expect(screen).toHaveAttribute('aria-label', 'Pawnly game');
 	});
 
 	it('renders exit button with aria-label', () => {
