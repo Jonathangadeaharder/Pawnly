@@ -1,4 +1,6 @@
+packages: []
+
 allowBuilds:
-  esbuild: set this to true or false
-  stockfish: set this to true or false
-  supabase: set this to true or false
+  esbuild: true
+  stockfish: true
+  supabase: true
