@@ -1,15 +1,9 @@
 import type { HandleClientError } from '@sveltejs/kit';
-import posthog from 'posthog-js';
-import { PUBLIC_POSTHOG_PROJECT_TOKEN } from '$env/static/public';
+import { init, captureError } from '$lib/telemetry';
 
-posthog.init(PUBLIC_POSTHOG_PROJECT_TOKEN, {
-	api_host: '/ingest',
-	ui_host: 'https://eu.posthog.com',
-	capture_exceptions: true,
-	person_profiles: 'identified_only',
-});
+init();
 
 export const handleError: HandleClientError = async ({ error, status, message }) => {
-	posthog.captureException(error);
+	captureError(error);
 	return { message, status };
 };
