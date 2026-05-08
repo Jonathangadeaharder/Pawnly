@@ -1,17 +1,15 @@
-# Production deployment with Ollama sidecar for AI features.
-# The "mini" provider runs small models (phi3, tinyllama) on CPU
-# via the Ollama service. The SvelteKit static build is served by nginx.
-
 services:
   app:
-    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - '${PORT:-8080}:80'
     environment:
+      - AI_PROVIDER=${AI_PROVIDER:-mini}
       - LOCAL_AI_BASE_URL=http://ollama:11434
-    volumes:
-      - ./build:/usr/share/nginx/html:ro
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - MINI_MODEL=${MINI_MODEL:-phi3:mini}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-gemma2:2b}
     restart: unless-stopped
     depends_on:
       - ollama
