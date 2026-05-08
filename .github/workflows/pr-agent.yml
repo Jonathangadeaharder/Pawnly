@@ -12,6 +12,13 @@ concurrency:
 
 jobs:
   pr-agent:
+    if: >
+      github.event_name == 'pull_request' ||
+      (
+        github.event_name == 'issue_comment' &&
+        github.event.issue.pull_request != null &&
+        contains(fromJson('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+      )
     runs-on: self-hosted
     permissions:
       contents: read
@@ -45,13 +52,18 @@ jobs:
           PR_URL="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number || github.event.issue.number }}"
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             pr-agent --pr_url="$PR_URL" review
-          elif echo "$COMMENT_BODY" | grep -q "^/review"; then
+          elif echo "$COMMENT_BODY" | grep -qE '^/review([[:space:]]|$)'; then
             pr-agent --pr_url="$PR_URL" review
-          elif echo "$COMMENT_BODY" | grep -q "^/describe"; then
+          elif echo "$COMMENT_BODY" | grep -qE '^/describe([[:space:]]|$)'; then
             pr-agent --pr_url="$PR_URL" describe
-          elif echo "$COMMENT_BODY" | grep -q "^/improve"; then
+          elif echo "$COMMENT_BODY" | grep -qE '^/improve([[:space:]]|$)'; then
             pr-agent --pr_url="$PR_URL" improve
-          elif echo "$COMMENT_BODY" | grep -q "^/ask"; then
-            QUESTION="${COMMENT_BODY#/ask }"
+          elif echo "$COMMENT_BODY" | grep -qE '^/ask([[:space:]].+)?$'; then
+            QUESTION="${COMMENT_BODY#/ask}"
+            QUESTION="${QUESTION# }"
+            if [ -z "$QUESTION" ]; then
+              echo "Usage: /ask <question>"
+              exit 1
+            fi
             pr-agent --pr_url="$PR_URL" ask "$QUESTION"
           fi
