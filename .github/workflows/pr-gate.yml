@@ -113,6 +113,37 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  infra-validation:
+    name: Infra Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate docker-compose.yml
+        run: |
+          echo "Checking docker-compose.yml exists..."
+          test -f docker-compose.yml || { echo "::error::docker-compose.yml missing"; exit 1; }
+          echo "Checking ORIGIN env var is present..."
+          grep -q 'ORIGIN=' docker-compose.yml || { echo "::error::docker-compose.yml missing ORIGIN env var"; exit 1; }
+          echo "Checking Traefik TLS labels present..."
+          grep -q 'tls.certresolver=letsencrypt' docker-compose.yml || { echo "::error::docker-compose.yml missing TLS certresolver label"; exit 1; }
+          echo "Checking HEALTHCHECK in Dockerfile..."
+          test -f Dockerfile || echo "::warning::No Dockerfile found"
+          if [ -f Dockerfile ]; then
+            grep -q 'HEALTHCHECK' Dockerfile || { echo "::error::Dockerfile missing HEALTHCHECK instruction"; exit 1; }
+          fi
+          echo "All infra checks passed."
+
+      - name: Validate env var defaults
+        run: |
+          echo "Checking PostHog host is EU region..."
+          if grep -q 'us.posthog.com' docker-compose.yml 2>/dev/null; then
+            echo "::error::docker-compose.yml has wrong PostHog host (us, should be eu)"
+            exit 1
+          fi
+          echo "PostHog host check passed."
+
   required-checks:
     name: Required Checks (PR)
     runs-on: ubuntu-latest
@@ -122,6 +153,7 @@ jobs:
       - sonarcloud
       - dependency-scan
       - secret-scanning
+      - infra-validation
     if: always()
     steps:
       - name: Verify all jobs passed
@@ -130,13 +162,15 @@ jobs:
              [ "${{ needs.node-quality.result }}" != "success" ] || \
              [ "${{ needs.sonarcloud.result }}" != "success" ] || \
              [ "${{ needs.dependency-scan.result }}" != "success" ] || \
-             [ "${{ needs.secret-scanning.result }}" != "success" ]; then
+             [ "${{ needs.secret-scanning.result }}" != "success" ] || \
+             [ "${{ needs.infra-validation.result }}" != "success" ]; then
             echo "::error::One or more PR gate jobs failed."
             echo "repo-hygiene: ${{ needs.repo-hygiene.result }}"
             echo "node-quality: ${{ needs.node-quality.result }}"
             echo "sonarcloud: ${{ needs.sonarcloud.result }}"
             echo "dependency-scan: ${{ needs.dependency-scan.result }}"
             echo "secret-scanning: ${{ needs.secret-scanning.result }}"
+            echo "infra-validation: ${{ needs.infra-validation.result }}"
             exit 1
           fi
           echo "All PR gate jobs passed."
