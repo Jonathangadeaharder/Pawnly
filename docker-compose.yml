@@ -12,6 +12,13 @@ services:
       - OLLAMA_MODEL=${OLLAMA_MODEL:-gemma2:2b}
       - PUBLIC_POSTHOG_HOST=${PUBLIC_POSTHOG_HOST:-https://us.posthog.com}
       - PUBLIC_POSTHOG_PROJECT_TOKEN=${PUBLIC_POSTHOG_PROJECT_TOKEN:-}
+      - PUBLIC_SUPABASE_URL=${PUBLIC_SUPABASE_URL:-}
+      - PUBLIC_SUPABASE_ANON_KEY=${PUBLIC_SUPABASE_ANON_KEY:-}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pawnly.rule=Host(`pawnly.159.223.26.67.sslip.io`)
+      - traefik.http.routers.pawnly.entrypoints=http
+      - traefik.http.services.pawnly.loadbalancer.server.port=80
     restart: unless-stopped
     networks:
       - coolify
