@@ -10,10 +10,11 @@ services:
       - LOCAL_AI_BASE_URL=http://ollama-shared:11434
       - MINI_MODEL=${MINI_MODEL:-phi3:mini}
       - OLLAMA_MODEL=${OLLAMA_MODEL:-gemma2:2b}
-      - PUBLIC_POSTHOG_HOST=${PUBLIC_POSTHOG_HOST:-https://us.posthog.com}
+      - PUBLIC_POSTHOG_HOST=${PUBLIC_POSTHOG_HOST:-https://eu.i.posthog.com}
       - PUBLIC_POSTHOG_PROJECT_TOKEN=${PUBLIC_POSTHOG_PROJECT_TOKEN:-}
       - PUBLIC_SUPABASE_URL=${PUBLIC_SUPABASE_URL:-}
       - PUBLIC_SUPABASE_ANON_KEY=${PUBLIC_SUPABASE_ANON_KEY:-}
+      - ORIGIN=${ORIGIN:-http://localhost:8081}
     labels:
       - traefik.enable=true
       - traefik.http.routers.pawnly.rule=Host(`pawnly.159.223.26.67.sslip.io`)
