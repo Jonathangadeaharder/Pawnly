@@ -19,6 +19,10 @@ services:
       - traefik.enable=true
       - traefik.http.routers.pawnly.rule=Host(`pawnly.159.223.26.67.sslip.io`)
       - traefik.http.routers.pawnly.entrypoints=http
+      - traefik.http.routers.pawnly-https.rule=Host(`pawnly.159.223.26.67.sslip.io`)
+      - traefik.http.routers.pawnly-https.entrypoints=https
+      - traefik.http.routers.pawnly-https.tls=true
+      - traefik.http.routers.pawnly-https.tls.certresolver=letsencrypt
       - traefik.http.services.pawnly.loadbalancer.server.port=80
     restart: unless-stopped
     networks:
