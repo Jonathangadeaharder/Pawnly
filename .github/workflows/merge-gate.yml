@@ -1,0 +1,209 @@
+name: Merge Gate
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: merge-gate-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  repo-hygiene:
+    name: Repo Hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for iCloud sync conflicts
+        run: |
+          if find . \
+            -path ./node_modules -prune -o \
+            -path ./.git -prune -o \
+            -path ./static/stockfish -prune -o \
+            -name "* [0-9]*" -print | grep -q .; then
+            echo "::error::iCloud sync conflicts detected"
+            find . \
+              -path ./node_modules -prune -o \
+              -path ./.git -prune -o \
+              -path ./static/stockfish -prune -o \
+              -name "* [0-9]*" -print
+            exit 1
+          fi
+
+  node-quality:
+    name: Node Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Type check
+        run: pnpm run check
+
+      - name: Unit tests with coverage
+        run: pnpm vitest run --coverage
+
+      - name: Build
+        run: pnpm run build
+
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectKey: Jonathangadeaharder_Chess
+          organization: jonathangadeaharder
+
+  dependency-scan:
+    name: Dependency Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+          ignore-unfixed: true
+
+  secret-scanning:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  codeql:
+    name: CodeQL Security
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      matrix:
+        language: [javascript-typescript]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+  e2e-critical:
+    name: E2E Critical (chromium)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: pnpm exec playwright test
+
+      - name: Upload Playwright artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results-merge
+          path: test-results/
+          retention-days: 14
+
+  required-checks-merge:
+    name: Required Checks (Merge)
+    runs-on: ubuntu-latest
+    needs:
+      - repo-hygiene
+      - node-quality
+      - sonarcloud
+      - dependency-scan
+      - secret-scanning
+      - codeql
+      - e2e-critical
+    if: always()
+    steps:
+      - name: Verify all jobs passed
+        run: |
+          if [ "${{ needs.repo-hygiene.result }}" != "success" ] || \
+             [ "${{ needs.node-quality.result }}" != "success" ] || \
+             [ "${{ needs.sonarcloud.result }}" != "success" ] || \
+             [ "${{ needs.dependency-scan.result }}" != "success" ] || \
+             [ "${{ needs.secret-scanning.result }}" != "success" ] || \
+             [ "${{ needs.codeql.result }}" != "success" ] || \
+             [ "${{ needs.e2e-critical.result }}" != "success" ]; then
+            echo "::error::One or more merge gate jobs failed."
+            echo "repo-hygiene: ${{ needs.repo-hygiene.result }}"
+            echo "node-quality: ${{ needs.node-quality.result }}"
+            echo "sonarcloud: ${{ needs.sonarcloud.result }}"
+            echo "dependency-scan: ${{ needs.dependency-scan.result }}"
+            echo "secret-scanning: ${{ needs.secret-scanning.result }}"
+            echo "codeql: ${{ needs.codeql.result }}"
+            echo "e2e-critical: ${{ needs.e2e-critical.result }}"
+            exit 1
+          fi
+          echo "All merge gate jobs passed."
