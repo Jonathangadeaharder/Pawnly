@@ -9,6 +9,9 @@ export default defineConfig({
 	reporter: 'html',
 	use: {
 		baseURL: 'http://localhost:5175',
+		launchOptions: {
+			args: ['--mute-audio'],
+		},
 	},
 	projects: [
 		{
