@@ -1,7 +1,10 @@
 import type { Handle } from '@sveltejs/kit';
+import { pageview } from '$lib/telemetry';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const { pathname } = event.url;
+
+	pageview(pathname);
 
 	const isIngestPath = pathname === '/ingest' || pathname.startsWith('/ingest/');
 	if (isIngestPath) {

@@ -47,7 +47,9 @@
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
+			"core-js",
 			"esbuild",
+			"protobufjs",
 			"stockfish",
 			"supabase"
 		]
