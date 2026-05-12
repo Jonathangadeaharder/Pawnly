@@ -22,7 +22,10 @@ let {
 const initialTimeControl = timeControl;
 
 const game = createGame();
-const engine = createStockfish();
+let engineError = $state<string | null>(null);
+const engine = createStockfish((message: string) => {
+	engineError = message;
+});
 
 let isThinking = $state(false);
 let whiteTime = $state(parseTimeControl(initialTimeControl));
@@ -188,7 +191,6 @@ $effect(() => {
 $effect(() => {
 	return () => {
 		if (clockInterval) clearInterval(clockInterval);
-		engine.quit();
 	};
 });
 </script>
