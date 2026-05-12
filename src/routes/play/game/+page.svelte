@@ -8,7 +8,7 @@ function handleExit() {
 </script>
 
 <svelte:head>
-	<title>Game — Chess</title>
+	<title>Game — Pawnly</title>
 </svelte:head>
 
 <GameScreen onExit={handleExit} />

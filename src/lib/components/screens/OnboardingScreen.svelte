@@ -11,12 +11,12 @@ const steps = [
 	{
 		title: 'Welcome to Pawnly!',
 		mascot: 'happy' as const,
-		text: 'Your friendly chess coach is here to make learning fun. No pressure, just play!',
+		text: 'Your friendly coach is here to make learning fun. No pressure, just play!',
 	},
 	{
 		title: 'Learn by playing',
 		mascot: 'thinking' as const,
-		text: "We'll teach you chess through short, interactive lessons. No boring lectures — just hands-on practice.",
+		text: "We'll teach you through short, interactive lessons. No boring lectures — just hands-on practice.",
 	},
 	{
 		title: 'Daily rituals',

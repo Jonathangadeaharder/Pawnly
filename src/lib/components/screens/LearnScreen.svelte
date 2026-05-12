@@ -25,7 +25,7 @@ const progressPercent = $derived((completedCount / lessons.length) * 100);
 
 <div class="h-full overflow-y-auto" style:padding-bottom="120px">
 	<PaperBg style="min-height:100%">
-		<Header title="Learn" sub="Your chess journey" />
+		<Header title="Learn" sub="Your Pawnly journey" />
 
 		<!-- Progress overview -->
 		<div style:padding="0 16px 16px">

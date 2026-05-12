@@ -18,6 +18,6 @@ describe('Brand tokens', () => {
 
 	it('exports brand name and tagline', () => {
 		expect(Brand.name).toBe('Pawnly');
-		expect(Brand.tagline).toBe('Chess, one warm move at a time.');
+		expect(Brand.tagline).toBe('Pawnly — chess, one warm move at a time.');
 	});
 });

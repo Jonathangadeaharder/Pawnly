@@ -214,7 +214,7 @@ $effect(() => {
 
 	<!-- Board -->
 	<div class="board-container">
-		<div class="board-wrapper" onclick={handleBoardClick} role="button" tabindex="-1" aria-label="Chess board - tap squares to mark">
+		<div class="board-wrapper" onclick={handleBoardClick} role="button" tabindex="-1" aria-label="Board — tap squares to mark">
 			<MiniBoard
 				size={boardSize}
 				{pieces}

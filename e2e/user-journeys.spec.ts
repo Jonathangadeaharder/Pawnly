@@ -10,7 +10,7 @@ import {
 	test,
 } from './helpers';
 
-test.describe('Chess — Auth', () => {
+test.describe('Pawnly — Auth', () => {
 	test('login page renders email/password form', async ({ page }) => {
 		await navigateTo(page, '/auth');
 		await expect(page.getByRole('textbox', { name: 'Email' })).toBeVisible();
@@ -27,7 +27,7 @@ test.describe('Chess — Auth', () => {
 	});
 });
 
-test.describe('Chess — Home Page', () => {
+test.describe('Pawnly — Home Page', () => {
 	test('home page shows streak and rating', async ({ authedPage: page }) => {
 		await expect(page.getByText('Streak')).toBeVisible();
 		await expect(page.getByText('Your rating')).toBeVisible();
@@ -54,7 +54,7 @@ test.describe('Chess — Home Page', () => {
 	});
 });
 
-test.describe('Chess — Navigation', () => {
+test.describe('Pawnly — Navigation', () => {
 	test('bottom nav Home works', async ({ authedPage: page }) => {
 		await page.goto('/play');
 		await page.getByRole('button', { name: 'Home' }).click();
@@ -78,7 +78,7 @@ test.describe('Chess — Navigation', () => {
 	});
 });
 
-test.describe('Chess — Play Page', () => {
+test.describe('Pawnly — Play Page', () => {
 	test('play page shows time control and difficulty options', async ({ authedPage: page }) => {
 		await navigateTo(page, '/play');
 		await expect(page.getByText('Time control')).toBeVisible();
@@ -91,7 +91,7 @@ test.describe('Chess — Play Page', () => {
 	});
 });
 
-test.describe('Chess — Train Page', () => {
+test.describe('Pawnly — Train Page', () => {
 	test('train page shows daily challenge and puzzles', async ({ authedPage: page }) => {
 		await assertPageContains(page, '/train', 'Daily Challenge');
 		await expect(page.getByText('Scan Trainer')).toBeVisible();
@@ -110,7 +110,7 @@ test.describe('Chess — Train Page', () => {
 	});
 });
 
-test.describe('Chess — Learn Page', () => {
+test.describe('Pawnly — Learn Page', () => {
 	test('learn page shows lessons', async ({ authedPage: page }) => {
 		await assertPageContains(page, '/learn', /lessons/i);
 	});
@@ -136,7 +136,7 @@ test.describe('Chess — Learn Page', () => {
 	});
 });
 
-test.describe('Chess — You Page', () => {
+test.describe('Pawnly — You Page', () => {
 	test('you page shows profile and stats', async ({ authedPage: page }) => {
 		await assertPageContains(page, '/you', 'Rating');
 		await expect(page.getByText('Achievements')).toBeVisible();
@@ -154,7 +154,7 @@ test.describe('Chess — You Page', () => {
 	});
 });
 
-test.describe('Chess — API Errors', () => {
+test.describe('Pawnly — API Errors', () => {
 	test('FIXED: no 404 API errors on home load', async ({ authedPage: page }) => {
 		const apiErrors: string[] = [];
 		page.on('response', (resp) => {
@@ -168,14 +168,14 @@ test.describe('Chess — API Errors', () => {
 	});
 });
 
-test.describe('Chess — Login Flow', () => {
+test.describe('Pawnly — Login Flow', () => {
 	test('login with existing user redirects to home', async ({ page }) => {
 		await loginUser(page, TEST_CREDENTIALS.existingEmail, TEST_CREDENTIALS.existingPassword);
 		await expect(page).toHaveURL('/');
 	});
 });
 
-test.describe('Chess — Play Game', () => {
+test.describe('Pawnly — Play Game', () => {
 	test('game page renders chessboard after starting', async ({ authedPage: page }) => {
 		await startGame(page);
 		const chessboard = page
@@ -200,7 +200,7 @@ test.describe('Chess — Play Game', () => {
 	});
 });
 
-test.describe('Chess — Console Errors', () => {
+test.describe('Pawnly — Console Errors', () => {
 	test('no page errors on any major page', async ({ authedPage: page }) => {
 		const errors: string[] = [];
 		page.on('pageerror', (err) => errors.push(err.message));
@@ -213,7 +213,7 @@ test.describe('Chess — Console Errors', () => {
 	});
 });
 
-test.describe('Chess — Auth Edge Cases', () => {
+test.describe('Pawnly — Auth Edge Cases', () => {
 	test('login with wrong password shows error', async ({ page }) => {
 		await fillAuthForm(page, TEST_CREDENTIALS.existingEmail, 'WrongPassword999!');
 		const errorText = page.getByText(/invalid|error|wrong|incorrect|failed|not found/i);
@@ -236,7 +236,7 @@ test.describe('Chess — Auth Edge Cases', () => {
 	});
 });
 
-test.describe('Chess — Profile Data Dynamic', () => {
+test.describe('Pawnly — Profile Data Dynamic', () => {
 	test('you page shows dynamic stats not hardcoded', async ({ authedPage: page }) => {
 		await navigateTo(page, '/you');
 		await expect(page.locator('body')).not.toContainText('1140');
@@ -264,7 +264,7 @@ test.describe('Chess — Profile Data Dynamic', () => {
 	});
 });
 
-test.describe('Chess — Learn Page Interaction', () => {
+test.describe('Pawnly — Learn Page Interaction', () => {
 	test('learn page shows training modules', async ({ authedPage: page }) => {
 		await navigateTo(page, '/learn');
 		const moduleText = page.locator('body');
@@ -281,7 +281,7 @@ test.describe('Chess — Learn Page Interaction', () => {
 	});
 });
 
-test.describe('Chess — Game Interaction', () => {
+test.describe('Pawnly — Game Interaction', () => {
 	test('game page loads board', async ({ authedPage: page }) => {
 		await navigateTo(page, '/play/game');
 		const board = page

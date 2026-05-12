@@ -140,7 +140,7 @@ $effect(() => {
 <div
 	class="puzzle-screen"
 	role="dialog"
-	aria-label="Chess puzzle"
+	aria-label="Pawnly puzzle"
 >
 	<!-- Header -->
 	<div class="puzzle-header">

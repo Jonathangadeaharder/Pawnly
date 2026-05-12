@@ -1,4 +1,4 @@
-# Pawnly — Chess, one warm move at a time
+# Pawnly — chess, one warm move at a time
 
 Mobile-first chess learning app built with SvelteKit. Play vs Stockfish, solve puzzles, take interactive lessons, and track your progress.
 
@@ -63,7 +63,7 @@ pnpm dev
 | `/` | Dashboard with greeting, streak, quick actions, rating |
 | `/auth` | Login/signup |
 | `/play` | Game setup (time control, difficulty) |
-| `/play/game` | Active chess game |
+| `/play/game` | Active game |
 | `/learn` | Lesson list with progress |
 | `/train` | Puzzle grid, daily challenge, scan trainer |
 | `/you` | Profile, stats, achievements |

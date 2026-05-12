@@ -1,7 +1,7 @@
 import { test as base, expect, type Page } from '@playwright/test';
 
 export const TEST_CREDENTIALS = {
-	existingEmail: process.env.E2E_USER_EMAIL ?? 'chess@example.com',
+	existingEmail: process.env.E2E_USER_EMAIL ?? 'pawnly@example.com',
 	existingPassword: process.env.E2E_USER_PASSWORD ?? '',
 	testPassword: process.env.E2E_TEST_PASSWORD ?? '',
 };
@@ -73,7 +73,7 @@ export const test = base.extend<AuthFixture>({
 
 export const APPS = [
 	{
-		name: 'Chess',
+		name: 'Pawnly',
 		base: 'http://localhost:5175',
 		routes: ['/', '/play', '/play/game', '/puzzles', '/you', '/auth'] as const,
 	},

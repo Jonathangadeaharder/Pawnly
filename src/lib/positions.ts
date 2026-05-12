@@ -1,5 +1,5 @@
 /**
- * Predefined chess positions for lessons and demos
+ * Predefined positions for lessons and demos
  */
 
 /** Italian opening after 1.e4 e5 2.Nf3 Nc6 3.Bc4 */
